@@ -1,303 +1,150 @@
 deployment link : http://138.197.91.58/
-# E-Commerce Application
+🪑 FurniFind – Modern Furniture E-Commerce Platform
 
-A modern, full-featured e-commerce platform built with Spring Boot and Thymelea### Application Structure
+FurniFind is a full-featured e-commerce web application designed for discovering and purchasing stylish furniture online. Built with Spring Boot and Thymeleaf, it offers a seamless shopping experience for customers and robust management tools for administrators.
+🌐 Live Demo: http://138.197.91.58
 
-#### Key Directories
+📦 Features
+🛍️ Customer Experience
+Product Catalog: Browse a wide range of furniture items with detailed descriptions and images.
 
-- `/src/main/java/com/ecommerce/app` - Java source files
-- `/src/main/resources/templates` - Thymeleaf templates
-- `/src/main/resources/static` - Static web resources
-  - `/js` - JavaScript modules
-  - `/css` - Stylesheets
-  - `/images` - Static images
-- `/src/main/resources/application.properties` - Primary configuration, featuring client-side enhancements and hybrid server/browser storage for cart and wishlist management.
+Advanced Filtering: Search and filter products by category, price, and other attributes.
 
-## Project Overview
+Shopping Cart: Add items to a persistent cart with real-time updates.
 
-This application is a comprehensive e-commerce solution that provides:
+Wishlist: Save favorite products for future reference.
 
-- Product catalog with advanced filtering and search
-- Shopping cart with real-time updates
-- Hybrid wishlist system (works with or without login)
-- User authentication and profile management
-- Order processing and tracking
-- Admin dashboard for catalog and order management
-- Responsive design with modern UI components
+User Accounts: Register and log in to manage orders and personal information.
 
-### Key Features
+Order Tracking: View order history and track current orders.
 
-1. **Product Management**
+🛠️ Admin Dashboard
+Product Management: Add, edit, and delete products, including images and descriptions.
 
-   - Category-based organization
-   - Support for sale prices
-   - Multiple product images with primary image designation
-   - Product tags for improved searchability
-   - Stock management
-   - Support for subscription-based products
+Order Management: View and update the status of customer orders.
 
-2. **Shopping Experience**
+User Management: Manage customer accounts and permissions.
 
-   - Persistent shopping cart
-   - Real-time cart updates without page refresh
-   - Mini cart preview
-   - Quantity updates with stock validation
-   - Price tracking at item addition
+🧰 Technology Stack
+Backend: Spring Boot 3.1.5, Java 17
 
-3. **Wishlist System**
+Frontend: Thymeleaf, HTML, CSS, JavaScript
 
-   - Browser-based storage for anonymous users
-   - Server synchronization for logged-in users
-   - Real-time wishlist counter updates
-   - Easy product information retrieval
-   - Synchronization between devices
+Database: MySQL
 
-4. **Order Management**
-   - Multi-step checkout process
-   - Address management
-   - Order history
-   - Order status tracking
+Build Tool: Maven
 
-## Technology Stack
+Security: Spring Security for authentication and authorization
 
-- **Backend**: Spring Boot 3.1.5, Java 17
-- **Frontend**: Thymeleaf, HTML, CSS, JavaScript
-- **Database**: MySQL
-- **Build Tool**: Maven
-- **Other Tools**: Lombok for boilerplate reduction
+Others: Lombok for reducing boilerplate code
 
-## Prerequisites
 
-- Java 17 or higher
-- Maven 3.6.3 or higher
-- MySQL 8.0 or higher
 
-## Getting Started
+⚙️ Installation & Setup
+Prerequisites
+Java 17 or higher
 
-### Configuration
+Maven 3.6.3 or higher
 
-The application uses a centralized configuration system that supports environment variables. You can set up the configuration in several ways:
+MySQL 8.0 or higher
 
-1. **Environment Variables**: Set the variables in your system or deployment environment
-2. **`.env` File**: Copy the `.env.example` file to `.env` and customize the values
-3. **Application Properties**: Modify the `application.properties` file directly (not recommended for production)
-
-Key configuration options:
-
-```
-# Database
-DB_URL=jdbc:mysql://localhost:3306/ecommercedb
+Configuration
+Set up environment variables or configure the application.properties file:
+# Database Configuration
+DB_URL=jdbc:mysql://localhost:3306/furnifind_db
 DB_USERNAME=your_username
 DB_PASSWORD=your_password
 
 # Security
 JWT_SECRET=your_jwt_secret
-DEBUG_MODE=false  # Important: set to false in production!
-```
+DEBUG_MODE=false
 
-See the complete list of available configuration options in the `.env.example` file.
 
-### Database Setup
+Running the Application
+Use Maven to run the application:
 
-The application will automatically create the database tables on startup. Sample data will be loaded if available.
-
-### Running the Application
-
-You can run the application using Maven:
-
-```bash
 mvn spring-boot:run
-```
+Access the application at http://localhost:8080
 
-Or using the provided VS Code task:
 
-1. Open the Command Palette (Ctrl+Shift+P)
-2. Select "Tasks: Run Task"
-3. Choose "Run Spring Boot Application"
 
-Once started, the application will be available at `http://localhost:8080`
+🗂️ Project Structure
+ src/
+├── main/
+│   ├── java/com/furnifind/
+│   │   ├── controller/       # MVC and REST controllers
+│   │   ├── model/            # Domain entities
+│   │   ├── repository/       # Data access interfaces
+│   │   ├── service/          # Business logic
+│   │   └── config/           # Application configuration
+│   └── resources/
+│       ├── templates/        # Thymeleaf templates
+│       ├── static/           # Static resources (CSS, JS, images)
+│       └── application.properties
 
-## Application Structure
 
-### Project Structure
+🔐 Security & Authentication
+Authentication: Implemented using Spring Security with session-based authentication.
 
-#### Core Packages
+Authorization: Role-based access control for USER and ADMIN roles.
 
-- `com.ecommerce.app.controller` - Web controllers for MVC endpoints
-- `com.ecommerce.app.controller.api` - REST API controllers
-- `com.ecommerce.app.model` - Domain entities and relationships
-- `com.ecommerce.app.repository` - Data access interfaces
-- `com.ecommerce.app.service` - Business logic interfaces
-- `com.ecommerce.app.service.impl` - Service implementations
-- `com.ecommerce.app.dto` - Data Transfer Objects
-- `com.ecommerce.app.config` - Application configuration
-- `com.ecommerce.app.util` - Utility classes
+Password Management: Secure password storage using BCrypt.
 
-#### Domain Model
+CSRF Protection: Enabled for all forms.
 
-Key entities and their relationships:
+🛒 REST API Endpoints
+Cart API (/api/cart)
+GET /api/cart – Retrieve cart contents
 
-1. **Product**
+POST /api/cart/add – Add item to cart
 
-   - Properties: name, description, price, salePrice, stockQuantity
-   - Relationships:
-     - ManyToOne with Category
-     - OneToMany with ProductImage
-     - ManyToMany with Tag
-     - OneToMany with Review
+POST /api/cart/update – Update item quantity
 
-2. **Cart & CartItem**
+DELETE /api/cart/remove – Remove item from cart
 
-   - Cart has OneToMany CartItems
-   - CartItem tracks product price at time of addition
-   - Supports multiple active carts per user
+DELETE /api/cart/clear – Clear the cart
 
-3. **Wishlist & WishlistItem**
+Wishlist API (/api/wishlist)
+GET /api/wishlist – Retrieve wishlist items
 
-   - OneToOne relationship with User
-   - WishlistItem has unique constraint on product/wishlist combination
-   - Tracks item addition time
+POST /api/wishlist/add – Add item to wishlist
 
-4. **Order & OrderItem**
+DELETE /api/wishlist/remove – Remove item from wishlist
 
-   - Order captures shipping/billing addresses
-   - OrderItem preserves product price at purchase time
-   - Supports multiple payment methods
+DELETE /api/wishlist/clear – Clear the wishlist
 
-5. **User**
-   - Manages authentication without Spring Security
-   - Relationships:
-     - OneToMany with Order
-     - OneToMany with Cart
-     - OneToOne with Wishlist
-     - OneToMany with Review
+Product API (/api/products)
+GET /api/products – Retrieve paginated list of products
 
-### Configuration System
+GET /api/products/{id} – Retrieve product details
 
-The application uses a unified configuration system that works across both server and client:
+GET /api/products/category/{categoryId} – Retrieve products by category
 
-#### Server-Side Configuration
+🚀 Deployment
+The application is deployed on a cloud platform and can be accessed at:
 
-Server-side configuration is managed through:
+👉 http://138.197.91.58
 
-- Environment variables
-- `application.properties`
-- `AppEnvironment.java` (centralized configuration class)
+Ensure the following for production:
 
-#### Client-Side Configuration
+DEBUG_MODE is set to false
 
-Frontend configuration is managed through:
+Proper CORS configurations are in place
 
-- `app-config.js` - Central JavaScript configuration
-- Server-injected configuration via `ConfigurationExporter`
+Secure handling of environment variables
 
-### REST API Endpoints
+🧪 Testing
+Unit Tests: Implemented for service and repository layers.
 
-#### Cart API (`/api/cart`)
+Integration Tests: Cover critical workflows like user registration and order processing.
 
-- GET `/api/cart` - Get cart contents
-- GET `/api/cart/count` - Get item count
-- POST `/api/cart/add` - Add item
-- POST `/api/cart/update` - Update item quantity
-- DELETE `/api/cart/remove` - Remove item
-- DELETE `/api/cart/clear` - Clear cart
+Frontend Testing: Basic validation for forms and user interactions.
 
-#### Wishlist API (`/api/wishlist`)
+📝 Documentation
+API Documentation: Detailed API specifications are available in the docs/ directory.
 
-- GET `/api/wishlist` - Get wishlist
-- GET `/api/wishlist/count` - Get item count
-- POST `/api/wishlist/add` - Add item
-- DELETE `/api/wishlist/remove` - Remove item
-- DELETE `/api/wishlist/clear` - Clear wishlist
-- POST `/api/wishlist/sync` - Sync browser wishlist
+User Guide: Instructions for using the application are provided for both customers and administrators.
 
-#### Product API (`/api/products`)
 
-- GET `/api/products` - Get products (paginated)
-- GET `/api/products/all` - Get all products
-- GET `/api/products/{id}` - Get product details
-- GET `/api/products/category/{categoryId}` - Get products by category
-
-### JavaScript Integration
-
-The frontend uses dedicated modules for cart and wishlist management:
-
-1. **Cart Management**
-
-   - Real-time counter updates
-   - Persistent storage
-   - Price calculation
-   - Quantity validation
-
-2. **Wishlist Management**
-   - Browser localStorage for anonymous users
-   - Server sync for authenticated users
-   - Counter management
-   - Product data caching
-
-## Authentication System
-
-The application uses a custom authentication system implemented through session management. This replaces the previously used Spring Security.
-
-Key authentication components:
-
-- `AuthInterceptor` - Intercepts requests to verify authentication status
-- `RequiresAuth` annotation - Marks controllers requiring authentication
-- `AuthHelper` - Manages session-based authentication
-
-## Hardcoded Data and Configuration
-
-The following files contain hardcoded data that should be moved to the database or configuration:
-
-1. `src/main/resources/static/js/home-product-meta.js` - Contains hardcoded product metadata
-2. `src/main/resources/static/js/modal.js` and `modal-unified.js` - Contains configuration values
-3. `src/main/java/com/ecommerce/app/util/TemplateDataExtractor.java` - Contains test/mock data
-4. `src/main/java/com/ecommerce/app/controller/AdminController.java.bak` - Contains test data
-
-## Security Considerations
-
-### Authentication & Authorization
-
-1. Uses session-based authentication without Spring Security
-2. Admin access controlled via session attributes
-3. API endpoints check authentication status
-4. CSRF protection implemented for forms
-5. Session timeout configured via `app.security.session.timeout`
-
-### Data Protection
-
-1. Database credentials must be provided via environment variables
-2. Sensitive data excluded from client-side configuration export
-3. Price consistency maintained across cart/order workflow
-4. Input validation implemented on both client and server
-
-### Production Setup
-
-1. Debug mode must be disabled (`app.debug.enabled=false`)
-2. Rate limiting available for API endpoints
-3. File upload restrictions enforced
-4. CORS configurations must be reviewed
-5. Error handling prevents information leakage
-
-## Contributing
-
-### Development Process
-
-1. Create a feature branch from `main`
-2. Make your changes
-3. Submit a pull request
-
-### Code Style
-
-This project follows standard Java code style conventions.
-
-## Documentation
-
-Additional documentation:
-
-- [Hardcoded Data Remediation](./hardcoded-data-remediation.md) - Details on the refactoring to remove hardcoded values
-- [Security Changes](./security-changes-README.md) - Information about security-related changes
-
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
+📄 License
+This project is licensed under the MIT License – see the LICENSE file for details.

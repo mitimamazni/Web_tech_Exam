@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Setting up...</title>
+    <script th:inline="javascript">
+      /*<![CDATA[*/
+      var username = /*[[${username}]]*/ "";
+      var adminRedirect = /*[[${adminRedirect}]]*/ false;
+
+      if (username) {
+        localStorage.setItem("username", username);
+      }
+
+      // Redirect based on user type
+      if (adminRedirect === true) {
+        // Admin users go directly to admin dashboard
+        window.location.replace("/admin");
+      } else {
+        // Regular users go to home page
+        window.location.replace("/");
+      }
+      /*]]>*/
+    </script>
+  </head>
+  <body>
+    <p>Setting up your session...</p>
+  </body>
+</html>

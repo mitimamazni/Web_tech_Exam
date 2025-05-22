@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head th:replace="~{fragments/layout :: head('Admin - Category Management')}">
+    <title>Admin - Category Management</title>
+  </head>
+
+  <body>
+    <div th:replace="~{fragments/layout :: navbar}"></div>
+    <div
+      th:replace="~{fragments/layout :: page-title('Category Management')}"
+    ></div>
+    <div th:replace="~{fragments/layout :: alerts}"></div>
+
+    <!-- Admin Header Section -->
+    <div class="admin-header">
+      <div class="container">
+        <div class="admin-navigation">
+          <a th:href="@{/admin}" class="admin-nav-link">Dashboard</a>
+          <a th:href="@{/admin/products}" class="admin-nav-link">Products</a>
+          <a th:href="@{/admin/orders}" class="admin-nav-link">Orders</a>
+          <a th:href="@{/admin/users}" class="admin-nav-link">Users</a>
+          <a th:href="@{/admin/categories}" class="admin-nav-link active"
+            >Categories</a
+          >
+        </div>
+      </div>
+    </div>
+
+    <!-- Category Management Section -->
+    <section class="admin-content">
+      <div class="container">
+        <div class="row">
+          <!-- Category Form -->
+          <div class="col-md-4">
+            <div class="admin-card">
+              <div class="card-header">
+                <h3 th:text="${editing ? 'Edit Category' : 'Add Category'}">
+                  Add Category
+                </h3>
+              </div>
+              <div class="card-body">
+                <form
+                  th:action="@{${editing ? '/admin/categories/' + category.id + '/update' : '/admin/categories/create'}}"
+                  method="post"
+                  th:object="${category}"
+                >
+                  <input
+                    type="hidden"
+                    name="_csrf"
+                    th:value="${_csrf?.token}"
+                  />
+                  <input type="hidden" th:if="${editing}" th:field="*{id}" />
+
+                  <div class="form-group">
+                    <label for="name">Category Name *</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="name"
+                      th:field="*{name}"
+                      required
+                    />
+                  </div>
+
+                  <div class="form-group">
+                    <label for="description">Description</label>
+                    <textarea
+                      class="form-control"
+                      id="description"
+                      th:field="*{description}"
+                      rows="3"
+                    ></textarea>
+                  </div>
+
+                  <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">
+                      <i
+                        class="fas"
+                        th:classappend="${editing ? 'fa-save' : 'fa-plus-circle'}"
+                      ></i>
+                      <span
+                        th:text="${editing ? 'Update Category' : 'Add Category'}"
+                        >Add Category</span
+                      >
+                    </button>
+                    <a
+                      th:if="${editing}"
+                      th:href="@{/admin/categories}"
+                      class="btn btn-secondary"
+                      >Cancel</a
+                    >
+                  </div>
+                </form>
+              </div>
+            </div>
+
+            <div class="admin-card mt-4">
+              <div class="card-header">
+                <h3>Category Management</h3>
+              </div>
+              <div class="card-body">
+                <div class="quick-links">
+                  <a
+                    th:href="@{/admin/categories/tags}"
+                    class="btn btn-info w-100"
+                  >
+                    <i class="fas fa-tags"></i> Manage Tags
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Category List -->
+          <div class="col-md-8">
+            <div class="admin-card">
+              <div class="card-header">
+                <h3>Categories</h3>
+              </div>
+              <div class="card-body">
+                <div class="table-responsive">
+                  <table class="table table-hover">
+                    <thead>
+                      <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Products</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr th:if="${categories.empty}">
+                        <td colspan="4" class="text-center">
+                          No categories found
+                        </td>
+                      </tr>
+                      <tr th:each="cat : ${categories}">
+                        <td th:text="${cat.id}">1</td>
+                        <td th:text="${cat.name}">Coffee</td>
+                        <td
+                          th:text="${cat.id != null ? productService.countProductsByCategory(cat.id) : 0}"
+                        >
+                          5
+                        </td>
+                        <td>
+                          <div class="action-buttons">
+                            <a
+                              th:href="@{'/admin/categories/' + ${cat.id} + '/edit'}"
+                              class="btn btn-sm btn-warning"
+                            >
+                              <i class="fas fa-edit"></i>
+                            </a>
+                            <form
+                              th:action="@{'/admin/categories/' + ${cat.id} + '/delete'}"
+                              method="post"
+                              style="display: inline"
+                            >
+                              <input
+                                type="hidden"
+                                name="_csrf"
+                                th:value="${_csrf?.token}"
+                              />
+                              <button
+                                type="submit"
+                                class="btn btn-sm btn-danger"
+                                onclick="return confirm('Are you sure you want to delete this category? All associated products will be uncategorized.')"
+                              >
+                                <i class="fas fa-trash"></i>
+                              </button>
+                            </form>
+                          </div>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div th:replace="~{fragments/layout :: footer}"></div>
+    <div th:replace="~{fragments/layout :: scripts}"></div>
+  </body>
+</html>

@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head th:replace="~{fragments/layout :: head('My Profile')}">
+    <title>My Profile</title>
+  </head>
+  <body>
+    <div th:replace="~{fragments/layout :: navbar}"></div>
+    <div th:replace="~{fragments/layout :: page-title('My Profile')}"></div>
+    <div th:replace="~{fragments/layout :: alerts}"></div>
+
+    <main class="shop-page-container profile-page">
+      <div class="profile-container">
+        <!-- User Info Section -->
+        <div class="profile-section">
+          <div class="profile-header">
+            <div
+              class="profile-picture"
+              th:classappend="${'letter-' + #strings.toLowerCase(profileLetter)}"
+              style="
+                background-color: var(--furnifind-secondary);
+                color: var(--furnifind-light);
+              "
+            >
+              <span th:text="${profileLetter}">A</span>
+            </div>
+            <div class="profile-info">
+              <h2
+                class="profile-name book-title"
+                th:text="${user.getFullName()}"
+              >
+                User Name
+              </h2>
+              <p class="profile-username" th:text="${'@' + user.getUsername()}">
+                @username
+              </p>
+              <div class="membership-info">
+                <span class="member-since">Member since: </span>
+                <span
+                  th:text="${#temporals.format(user.createdAt, 'MMMM dd, yyyy')}"
+                  >January 1, 2023</span
+                >
+              </div>
+            </div>
+          </div>
+
+          <div class="profile-details">
+            <div class="detail-row">
+              <div class="detail-label">Email</div>
+              <div class="detail-value" th:text="${user.email}">
+                user@example.com
+              </div>
+            </div>
+            <div class="detail-row" th:if="${user.phoneNumber != null}">
+              <div class="detail-label">Phone</div>
+              <div class="detail-value" th:text="${user.phoneNumber}">
+                123-456-7890
+              </div>
+            </div>
+            <div class="detail-row">
+              <div class="detail-label">Account Type</div>
+              <div
+                class="detail-value"
+                th:text="${user.roles.contains('ROLE_ADMIN') ? 'Administrator' : 'Standard User'}"
+              >
+                User
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Orders Section -->
+        <div class="profile-section">
+          <h3 class="section-title book-subtitle">My Purchase History</h3>
+          <div class="recent-orders">
+            <table th:if="${!recentOrders.isEmpty()}" class="orders-table">
+              <thead>
+                <tr>
+                  <th>Order #</th>
+                  <th>Date</th>
+                  <th>Status</th>
+                  <th>Total</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr th:each="order : ${recentOrders}">
+                  <td th:text="${'#' + order.id}">123</td>
+                  <td
+                    th:text="${#temporals.format(order.createdAt, 'MMM dd, yyyy')}"
+                  >
+                    Jan 1, 2023
+                  </td>
+                  <td>
+                    <span
+                      class="order-status"
+                      th:classappend="${'status-' + #strings.toLowerCase(order.status)}"
+                      th:text="${order.status}"
+                    >
+                      PENDING
+                    </span>
+                  </td>
+                  <td th:text="${'$' + order.totalAmount}">$99.99</td>
+                  <td>
+                    <a th:href="@{#/{id}(id=${order.id})}" class="btn-small"
+                      >View</a
+                    >
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <div th:if="${recentOrders.isEmpty()}" class="no-orders">
+              <p>You haven't placed any orders yet.</p>
+              <a th:href="@{/products}" class="btn-primary">Shop Now</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Profile Actions Section -->
+        <div class="profile-section">
+          <h3 class="section-title">Account Actions</h3>
+          <div class="account-actions">
+            <a th:href="@{#}" class="action-card">
+              <div class="action-icon">
+                <ion-icon name="cube-outline"></ion-icon>
+              </div>
+              <div class="action-text">My Orders</div>
+            </a>
+            <a th:href="@{/wishlist}" class="action-card">
+              <div class="action-icon">
+                <ion-icon name="heart-outline"></ion-icon>
+              </div>
+              <div class="action-text">My Wishlist</div>
+            </a>
+            <a th:href="@{/cart}" class="action-card">
+              <div class="action-icon">
+                <ion-icon name="bag-outline"></ion-icon>
+              </div>
+              <div class="action-text">My Cart</div>
+            </a>
+          </div>
+        </div>
+
+        <!-- Addresses Section -->
+        <div class="profile-section">
+          <h3 class="section-title">
+            My Addresses
+            <a th:href="@{/address/add}" class="btn-add-address">
+              <ion-icon name="add-circle-outline"></ion-icon> Add New Address
+            </a>
+          </h3>
+
+          <div class="addresses-container">
+            <div th:if="${addresses.isEmpty()}" class="no-addresses">
+              <p>You haven't added any addresses yet.</p>
+              <a th:href="@{/address/add}" class="btn-primary">Add Address</a>
+            </div>
+
+            <div th:if="${!addresses.isEmpty()}" class="addresses-list">
+              <div
+                th:each="address : ${addresses}"
+                class="address-card"
+                th:classappend="${address.isDefault ? 'is-default' : ''}"
+              >
+                <div class="address-badge" th:if="${address.isDefault}">
+                  Default
+                </div>
+
+                <div class="address-type" th:text="${address.addressType}">
+                  SHIPPING
+                </div>
+
+                <div class="address-content">
+                  <p class="address-street" th:text="${address.streetAddress}">
+                    123 Main St, Apt 4B
+                  </p>
+                  <p
+                    class="address-city-state"
+                    th:text="${address.city + ', ' + address.state + ' ' + address.postalCode}"
+                  >
+                    New York, NY 10001
+                  </p>
+                  <p class="address-country" th:text="${address.country}">
+                    United States
+                  </p>
+                </div>
+
+                <div class="address-actions">
+                  <a
+                    th:href="@{/address/edit/{id}(id=${address.id})}"
+                    class="btn-icon"
+                    title="Edit Address"
+                  >
+                    <ion-icon name="create-outline"></ion-icon>
+                  </a>
+
+                  <form
+                    th:if="${!address.isDefault}"
+                    th:action="@{/address/set-default/{id}(id=${address.id})}"
+                    method="post"
+                    class="inline-form"
+                  >
+                    <button
+                      type="submit"
+                      class="btn-icon"
+                      title="Set as Default"
+                    >
+                      <ion-icon name="star-outline"></ion-icon>
+                    </button>
+                  </form>
+
+                  <form
+                    th:action="@{/address/delete/{id}(id=${address.id})}"
+                    method="post"
+                    class="inline-form"
+                  >
+                    <button
+                      type="submit"
+                      class="btn-icon btn-delete"
+                      title="Delete Address"
+                      onclick="return confirm('Are you sure you want to delete this address?')"
+                    >
+                      <ion-icon name="trash-outline"></ion-icon>
+                    </button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Add New Section for Furniture Recommendations -->
+        <div class="profile-section">
+          <h3 class="section-title book-subtitle">Recommended For You</h3>
+          <div class="book-recommendations">
+            <p class="recommendations-text">
+              Based on your browsing history, you might like these furniture
+              pieces:
+            </p>
+            <div class="recommendations-placeholder">
+              <div class="empty-content">
+                <ion-icon
+                  name="bed-outline"
+                  style="font-size: 3rem; color: var(--furnifind-secondary)"
+                ></ion-icon>
+                <p>
+                  Start adding furniture to your wishlist to get personalized
+                  recommendations!
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <div th:replace="~{fragments/layout :: footer}"></div>
+    <div th:replace="~{fragments/layout :: scripts}"></div>
+  </body>
+</html>

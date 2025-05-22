@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head th:replace="~{fragments/layout :: head(title='Error')}">
+    <title>Error</title>
+  </head>
+  <body>
+    <div th:replace="~{fragments/layout :: navbar}"></div>
+
+    <div class="error-container">
+      <div class="error-content">
+        <div class="error-code" th:text="${status ?: 'Error'}">Error</div>
+        <h1 class="error-title" th:text="${error ?: 'Something went wrong'}">
+          Something went wrong
+        </h1>
+        <p
+          class="error-message"
+          th:text="${message ?: 'We encountered an unexpected issue while processing your request.'}"
+        >
+          We encountered an unexpected issue while processing your request.
+        </p>
+        <div class="error-image">
+          <img
+            th:src="@{/images/coffee-error.svg}"
+            alt="Coffee Error"
+            onerror="this.src='https://cdn-icons-png.flaticon.com/512/5218/5218532.png'"
+          />
+        </div>
+        <p class="error-suggestion">Let's get you back on track!</p>
+        <div class="error-actions">
+          <a th:href="@{/}" class="error-btn primary">Go Home</a>
+          <a href="javascript:history.back()" class="error-btn secondary"
+            >Go Back</a
+          >
+        </div>
+
+        <!-- Technical details for developers, hidden by default -->
+        <div class="error-details" th:if="${trace != null}">
+          <details>
+            <summary>Technical Details</summary>
+            <pre th:text="${trace}"></pre>
+          </details>
+        </div>
+      </div>
+    </div>
+
+    <div th:replace="~{fragments/layout :: footer}"></div>
+
+    <!-- Scripts -->
+    <script
+      type="module"
+      src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"
+    ></script>
+    <script
+      nomodule
+      src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"
+    ></script>
+    <script th:src="@{/js/script.js}"></script>
+  </body>
+</html>

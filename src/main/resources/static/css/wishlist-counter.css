@@ -1,0 +1,90 @@
+/* Wishlist Counter Styling and Animations */
+
+/* Base styling for wishlist counter */
+.wishlist-counter {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background-color: var(--furnifind-secondary);
+  color: white;
+  border-radius: 50%;
+  min-width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 600;
+  z-index: 100;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+}
+
+/* Mobile bottom navigation specific styling */
+.mobile-bottom-navigation .wishlist-counter {
+  top: -5px;
+  right: -5px;
+  min-width: 16px;
+  height: 16px;
+  font-size: 10px;
+}
+
+/* Wishlist tooltip */
+.wishlist-tooltip {
+  position: absolute;
+  top: -40px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: var(--eerie-black);
+  color: var(--white);
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  z-index: 5;
+}
+
+/* Show tooltip on hover */
+.wishlist-btn:hover .wishlist-tooltip {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Wishlist tooltip arrow */
+.wishlist-tooltip::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 5px;
+  border-style: solid;
+  border-color: var(--eerie-black) transparent transparent transparent;
+}
+
+/* Mobile-specific tooltip adjustments */
+.mobile-bottom-navigation .wishlist-tooltip {
+  top: -35px;
+  font-size: 10px;
+  padding: 1px 6px;
+}
+
+/* Hide tooltip on mobile when screen is too small */
+@media (max-width: 480px) {
+  .mobile-bottom-navigation .wishlist-tooltip {
+    display: none;
+  }
+}
+
+/* Wishlist icon animation */
+.wishlist-btn ion-icon[name="heart-outline"] {
+  transition: transform 0.3s ease;
+}
+
+.wishlist-btn:active ion-icon[name="heart-outline"] {
+  transform: scale(1.3);
+  color: var(--furnifind-secondary);
+}

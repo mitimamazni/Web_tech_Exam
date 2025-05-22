@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head th:replace="~{fragments/layout :: head('Template Data Collection')}">
+    <title>Template Data Collection</title>
+  </head>
+
+  <body>
+    <div th:replace="~{fragments/layout :: navbar}"></div>
+    <div
+      th:replace="~{fragments/layout :: page-title('Template Data Collection')}"
+    ></div>
+    <div th:replace="~{fragments/layout :: alerts}"></div>
+
+    <main class="admin-container">
+      <div class="admin-content">
+        <div class="card">
+          <div class="card-header">
+            <h3>Template Data Collection</h3>
+            <p>
+              This utility collects data from templates and prepares it for
+              database insertion.
+            </p>
+          </div>
+          <div class="card-body">
+            <div class="collection-actions">
+              <button id="collectAllBtn" class="btn-primary">
+                <ion-icon name="download-outline"></ion-icon> Collect All Data
+              </button>
+
+              <form
+                th:action="@{/admin/template-data/extract}"
+                method="post"
+                style="display: inline-block"
+              >
+                <button type="submit" id="extractBtn" class="btn-secondary">
+                  <ion-icon name="database-outline"></ion-icon> Extract to
+                  Database
+                </button>
+              </form>
+
+              <button id="generateSqlBtn" class="btn-secondary">
+                <ion-icon name="code-outline"></ion-icon> Generate SQL Export
+              </button>
+            </div>
+
+            <div class="collection-options">
+              <h4>Collect Specific Data</h4>
+              <div class="option-buttons">
+                <button id="collectProductsBtn" class="btn-outline-primary">
+                  Products
+                </button>
+                <button id="collectCategoriesBtn" class="btn-outline-primary">
+                  Categories
+                </button>
+                <button id="collectUsersBtn" class="btn-outline-primary">
+                  Users
+                </button>
+                <button id="collectOrdersBtn" class="btn-outline-primary">
+                  Orders
+                </button>
+              </div>
+            </div>
+
+            <div
+              id="resultContainer"
+              class="result-container"
+              style="display: none"
+            >
+              <div class="result-header">
+                <h4>Collection Results</h4>
+                <button id="copyResultBtn" class="btn-text">
+                  <ion-icon name="copy-outline"></ion-icon> Copy
+                </button>
+              </div>
+              <pre id="resultContent" class="result-content"></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <div th:replace="~{fragments/layout :: footer}"></div>
+
+    <script type="module">
+      import TemplateDataCollector from "/js/template-data-collector.js";
+
+      // DOM elements
+      const collectAllBtn = document.getElementById("collectAllBtn");
+      const generateSqlBtn = document.getElementById("generateSqlBtn");
+      const collectProductsBtn = document.getElementById("collectProductsBtn");
+      const collectCategoriesBtn = document.getElementById(
+        "collectCategoriesBtn"
+      );
+      const collectUsersBtn = document.getElementById("collectUsersBtn");
+      const collectOrdersBtn = document.getElementById("collectOrdersBtn");
+      const resultContainer = document.getElementById("resultContainer");
+      const resultContent = document.getElementById("resultContent");
+      const copyResultBtn = document.getElementById("copyResultBtn");
+
+      // Function to show error in the result container
+      function showError(error) {
+        resultContainer.style.display = "block";
+        resultContent.innerHTML = `<div class="error-message">Error: ${error.message || error}</div>`;
+        resultContent.classList.add("error");
+      }
+
+      // Handle Collect All Data
+      collectAllBtn.addEventListener("click", async () => {
+        try {
+          collectAllBtn.disabled = true;
+          collectAllBtn.innerHTML =
+            '<ion-icon name="hourglass-outline"></ion-icon> Collecting...';
+
+          const data = await TemplateDataCollector.collectAllData();
+
+          showResult(JSON.stringify(data, null, 2));
+
+          collectAllBtn.disabled = false;
+          collectAllBtn.innerHTML =
+            '<ion-icon name="download-outline"></ion-icon> Collect All Data';
+        } catch (error) {
+          showError(error);
+          collectAllBtn.disabled = false;
+          collectAllBtn.innerHTML =
+            '<ion-icon name="download-outline"></ion-icon> Collect All Data';
+        }
+          console.error("Error collecting all data:", error);
+          showResult("Error: " + error.message);
+
+          collectAllBtn.disabled = false;
+          collectAllBtn.innerHTML =
+            '<ion-icon name="download-outline"></ion-icon> Collect All Data';
+        }
+      });
+
+      // Handle Generate SQL Export
+      generateSqlBtn.addEventListener("click", async () => {
+        try {
+          generateSqlBtn.disabled = true;
+          generateSqlBtn.innerHTML =
+            '<ion-icon name="hourglass-outline"></ion-icon> Generating...';
+
+          const sqlStatements = await TemplateDataCollector.exportSql();
+
+          let sqlOutput = "";
+          for (const [tableName, sql] of Object.entries(sqlStatements)) {
+            sqlOutput += `-- ${tableName.toUpperCase()} SQL\n`;
+            sqlOutput += sql;
+            sqlOutput += "\n\n";
+          }
+
+          showResult(sqlOutput);
+
+          generateSqlBtn.disabled = false;
+          generateSqlBtn.innerHTML =
+            '<ion-icon name="code-outline"></ion-icon> Generate SQL Export';
+        } catch (error) {
+          console.error("Error generating SQL export:", error);
+          showResult("Error: " + error.message);
+
+          generateSqlBtn.disabled = false;
+          generateSqlBtn.innerHTML =
+            '<ion-icon name="code-outline"></ion-icon> Generate SQL Export';
+        }
+      });
+
+      // Handle Collect Products
+      collectProductsBtn.addEventListener("click", async () => {
+        try {
+          collectProductsBtn.disabled = true;
+
+          const products = await TemplateDataCollector.collectProducts();
+          showResult(JSON.stringify(products, null, 2));
+
+          collectProductsBtn.disabled = false;
+        } catch (error) {
+          console.error("Error collecting products:", error);
+          showResult("Error: " + error.message);
+
+          collectProductsBtn.disabled = false;
+        }
+      });
+
+      // Handle Collect Categories
+      collectCategoriesBtn.addEventListener("click", async () => {
+        try {
+          collectCategoriesBtn.disabled = true;
+
+          const categories = await TemplateDataCollector.collectCategories();
+          showResult(JSON.stringify(categories, null, 2));
+
+          collectCategoriesBtn.disabled = false;
+        } catch (error) {
+          console.error("Error collecting categories:", error);
+          showResult("Error: " + error.message);
+
+          collectCategoriesBtn.disabled = false;
+        }
+      });
+
+      // Handle Collect Users
+      collectUsersBtn.addEventListener("click", async () => {
+        try {
+          collectUsersBtn.disabled = true;
+
+          const users = await TemplateDataCollector.collectUsers();
+          showResult(JSON.stringify(users, null, 2));
+
+          collectUsersBtn.disabled = false;
+        } catch (error) {
+          console.error("Error collecting users:", error);
+          showResult("Error: " + error.message);
+
+          collectUsersBtn.disabled = false;
+        }
+      });
+
+      // Handle Collect Orders
+      collectOrdersBtn.addEventListener("click", async () => {
+        try {
+          collectOrdersBtn.disabled = true;
+
+          const orders = await TemplateDataCollector.collectOrders();
+          showResult(JSON.stringify(orders, null, 2));
+
+          collectOrdersBtn.disabled = false;
+        } catch (error) {
+          console.error("Error collecting orders:", error);
+          showResult("Error: " + error.message);
+
+          collectOrdersBtn.disabled = false;
+        }
+      });
+
+      // Handle copy result
+      copyResultBtn.addEventListener("click", () => {
+        navigator.clipboard
+          .writeText(resultContent.textContent)
+          .then(() => {
+            copyResultBtn.innerHTML =
+              '<ion-icon name="checkmark-outline"></ion-icon> Copied!';
+            setTimeout(() => {
+              copyResultBtn.innerHTML =
+                '<ion-icon name="copy-outline"></ion-icon> Copy';
+            }, 2000);
+          })
+          .catch((err) => {
+            console.error("Failed to copy: ", err);
+          });
+      });
+
+      // Helper to show results
+      function showResult(content) {
+        resultContent.textContent = content;
+        resultContainer.style.display = "block";
+        resultContainer.scrollIntoView({ behavior: "smooth" });
+      }
+    </script>
+
+    <style>
+      .admin-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+
+      .card {
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        margin-bottom: 30px;
+      }
+
+      .card-header {
+        padding: 20px;
+        border-bottom: 1px solid #eee;
+      }
+
+      .card-header h3 {
+        margin: 0 0 10px;
+        color: var(--coffee-dark);
+      }
+
+      .card-body {
+        padding: 20px;
+      }
+
+      .collection-actions {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 30px;
+      }
+
+      .collection-options {
+        margin-top: 30px;
+      }
+
+      .collection-options h4 {
+        margin-bottom: 15px;
+        color: var(--coffee-dark);
+      }
+
+      .option-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .result-container {
+        margin-top: 30px;
+        border: 1px solid #eee;
+        border-radius: 6px;
+      }
+
+      .result-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 15px;
+        background: #f9f9f9;
+        border-bottom: 1px solid #eee;
+        border-radius: 6px 6px 0 0;
+      }
+
+      .result-header h4 {
+        margin: 0;
+        color: var(--coffee-dark);
+      }
+
+      .result-content {
+        padding: 15px;
+        max-height: 500px;
+        overflow: auto;
+        margin: 0;
+        background: #f5f5f5;
+        border-radius: 0 0 6px 6px;
+        font-family: monospace;
+        white-space: pre-wrap;
+        word-break: break-word;
+      }
+
+      .btn-text {
+        background: none;
+        border: none;
+        color: var(--coffee-primary);
+        cursor: pointer;
+        padding: 5px 10px;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+
+      .btn-text:hover {
+        text-decoration: underline;
+      }
+    </style>
+  </body>
+</html>

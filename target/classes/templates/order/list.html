@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head th:replace="~{fragments/layout :: head('My Orders')}">
+    <title>My Orders</title>
+  </head>
+  <body>
+    <div th:replace="~{fragments/layout :: navbar}"></div>
+    <div th:replace="~{fragments/layout :: page-title('My Orders')}"></div>
+    <div th:replace="~{fragments/layout :: alerts}"></div>
+
+    <main class="shop-page-container">
+      <div class="orders-container">
+        <div class="orders-wrapper">
+          <div class="no-orders" th:if="${orders.isEmpty()}">
+            <div class="empty-state">
+              <div class="empty-state-icon">
+                <ion-icon name="bag-outline"></ion-icon>
+              </div>
+              <h2>No Orders Yet</h2>
+              <p>You haven't placed any orders yet.</p>
+              <a th:href="@{/products}" class="btn-primary">Start Shopping</a>
+            </div>
+          </div>
+
+          <div class="orders-list" th:if="${!orders.isEmpty()}">
+            <div class="order-item" th:each="order : ${orders}">
+              <div class="order-header">
+                <div class="order-info">
+                  <div class="order-id">
+                    <span class="label">Order #:</span>
+                    <span class="value" th:text="${order.id}">12345</span>
+                  </div>
+                  <div class="order-date">
+                    <span class="label">Placed on:</span>
+                    <span
+                      class="value"
+                      th:text="${#temporals.format(order.createdAt, 'MMM dd, yyyy')}"
+                      >Jan 1, 2023</span
+                    >
+                  </div>
+                </div>
+                <div class="order-status">
+                  <span
+                    class="status-badge"
+                    th:classappend="${'status-' + #strings.toLowerCase(order.status)}"
+                    th:text="${order.status}"
+                    >PENDING</span
+                  >
+                </div>
+              </div>
+              <div class="order-details">
+                <div class="order-total">
+                  <span class="label">Total:</span>
+                  <span class="value" th:text="${'$' + order.totalAmount}"
+                    >$99.99</span
+                  >
+                </div>
+                <div class="order-actions">
+                  <a
+                    th:href="@{/orders/{id}(id=${order.id})}"
+                    class="btn-secondary"
+                    >View Details</a
+                  >
+
+                  <form
+                    th:if="${order.status == T(com.ecommerce.app.model.OrderStatus).PENDING}"
+                    th:action="@{/orders/{id}/cancel(id=${order.id})}"
+                    method="post"
+                    class="cancel-form"
+                    onsubmit="return confirm('Are you sure you want to cancel this order?')"
+                  >
+                    <button type="submit" class="btn-danger">
+                      Cancel Order
+                    </button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <div th:replace="~{fragments/layout :: footer}"></div>
+    <div th:replace="~{fragments/layout :: scripts}"></div>
+
+    <style>
+      .orders-container {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 2rem 1rem;
+      }
+
+      .empty-state {
+        text-align: center;
+        padding: 3rem 1rem;
+      }
+
+      .empty-state-icon {
+        font-size: 5rem;
+        color: #ccc;
+        margin-bottom: 1rem;
+      }
+
+      .empty-state h2 {
+        color: #555;
+        margin-bottom: 0.5rem;
+      }
+
+      .empty-state p {
+        color: #777;
+        margin-bottom: 1.5rem;
+      }
+
+      .orders-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+      }
+
+      .order-item {
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+      }
+
+      .order-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 1.5rem;
+        background-color: #f8f9fa;
+        border-bottom: 1px solid #eee;
+      }
+
+      .order-info {
+        display: flex;
+        gap: 2rem;
+      }
+
+      .order-id,
+      .order-date {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .label {
+        color: #666;
+        font-weight: 500;
+      }
+
+      .value {
+        color: #333;
+      }
+
+      .status-badge {
+        padding: 0.35rem 0.75rem;
+        border-radius: 4px;
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: white;
+        text-transform: capitalize;
+      }
+
+      .status-pending {
+        background-color: #ffa726;
+      }
+
+      .status-processing {
+        background-color: #29b6f6;
+      }
+
+      .status-shipped {
+        background-color: #66bb6a;
+      }
+
+      .status-delivered {
+        background-color: #26a69a;
+      }
+
+      .status-cancelled {
+        background-color: #ef5350;
+      }
+
+      .order-details {
+        padding: 1.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .order-total {
+        font-size: 1.125rem;
+      }
+
+      .order-total .value {
+        font-weight: 600;
+        color: var(--book-primary);
+      }
+
+      .order-actions {
+        display: flex;
+        gap: 1rem;
+      }
+
+      .btn-secondary {
+        padding: 0.5rem 1rem;
+        background-color: var(--book-primary);
+        color: white;
+        border: none;
+        border-radius: 4px;
+        text-decoration: none;
+        font-weight: 500;
+        transition: background-color 0.2s;
+      }
+
+      .btn-secondary:hover {
+        background-color: var(--book-accent);
+      }
+
+      .btn-danger {
+        padding: 0.5rem 1rem;
+        background-color: #f44336;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background-color 0.2s;
+      }
+
+      .btn-danger:hover {
+        background-color: #e53935;
+      }
+
+      @media (max-width: 768px) {
+        .order-header {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 1rem;
+        }
+
+        .order-info {
+          flex-direction: column;
+          gap: 0.5rem;
+        }
+
+        .order-details {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 1.5rem;
+        }
+      }
+    </style>
+  </body>
+</html>

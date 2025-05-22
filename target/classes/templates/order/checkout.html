@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head th:replace="~{fragments/layout :: head('Checkout')}">
+    <title>Checkout</title>
+  </head>
+  <body>
+    <div th:replace="~{fragments/layout :: navbar}"></div>
+    <div th:replace="~{fragments/layout :: page-title('Checkout')}"></div>
+    <div th:replace="~{fragments/layout :: alerts}"></div>
+
+    <main class="shop-page-container">
+      <!-- Toast notification container -->
+      <div class="toast-container"></div>
+
+      <div class="checkout-container">
+        <div class="checkout-header">
+          <h2>Complete Your Order</h2>
+          <div class="checkout-steps">
+            <div class="step active">
+              <span class="step-number">1</span>
+              <span class="step-name">Review</span>
+            </div>
+            <div class="step-divider"></div>
+            <div class="step active">
+              <span class="step-number">2</span>
+              <span class="step-name">Shipping</span>
+            </div>
+            <div class="step-divider"></div>
+            <div class="step active">
+              <span class="step-number">3</span>
+              <span class="step-name">Place Order</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="checkout-grid">
+          <!-- Left Column - Cart Items -->
+          <div class="cart-review-section">
+            <div class="section-header">
+              <h3>Order Summary</h3>
+              <span
+                class="item-count"
+                th:text="${cartItems.size() + ' item' + (cartItems.size() != 1 ? 's' : '')}"
+                >3 items</span
+              >
+            </div>
+
+            <div class="cart-items">
+              <div class="cart-item" th:each="item : ${cartItems}">
+                <div class="item-image">
+                  <img
+                    th:if="${item.product.imageUrl}"
+                    th:src="${item.product.imageUrl}"
+                    alt="Product Image"
+                  />
+                  <div class="no-image" th:unless="${item.product.imageUrl}">
+                    No Image
+                  </div>
+                </div>
+                <div class="item-details">
+                  <h4 class="item-name" th:text="${item.product.name}">
+                    Product Name
+                  </h4>
+                  <p class="item-price">
+                    <span th:text="${'$' + item.price}">$19.99</span> x
+                    <span th:text="${item.quantity}">2</span>
+                  </p>
+                </div>
+                <div class="item-subtotal">
+                  <span th:text="${'$' + item.getTotalPrice()}">$39.98</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="cart-summary">
+              <div class="summary-row">
+                <span>Subtotal</span>
+                <span th:text="${'$' + total}">$99.99</span>
+              </div>
+              <div class="summary-row">
+                <span>Shipping</span>
+                <span>Free</span>
+              </div>
+              <div class="summary-row">
+                <span>Tax</span>
+                <span>Calculated at next step</span>
+              </div>
+              <div class="summary-divider"></div>
+              <div class="summary-row total">
+                <span>Total</span>
+                <span th:text="${'$' + total}">$99.99</span>
+              </div>
+            </div>
+
+            <div class="continue-shopping">
+              <a th:href="@{/cart}" class="btn-text">
+                <ion-icon name="arrow-back-outline"></ion-icon> Return to Cart
+              </a>
+            </div>
+          </div>
+
+          <!-- Right Column - Shipping & Payment -->
+          <div class="checkout-form-section">
+            <div class="section-header">
+              <h3>Shipping Information</h3>
+            </div>
+
+            <form th:action="@{/orders/place}" method="post" id="checkout-form">
+              <div
+                th:if="${addresses != null && !addresses.isEmpty()}"
+                class="saved-addresses"
+              >
+                <h4>Select a saved address</h4>
+                <div class="address-options">
+                  <div
+                    th:each="address, status : ${addresses}"
+                    class="address-option"
+                  >
+                    <input
+                      type="radio"
+                      name="addressId"
+                      th:id="${'address-' + address.id}"
+                      th:value="${address.id}"
+                      th:checked="${address.isDefault || status.index == 0}"
+                    />
+                    <label
+                      th:for="${'address-' + address.id}"
+                      class="address-label"
+                    >
+                      <div class="address-label-content">
+                        <div
+                          class="address-type"
+                          th:text="${address.addressType}"
+                        >
+                          SHIPPING
+                        </div>
+                        <div
+                          class="address-line"
+                          th:text="${address.streetAddress}"
+                        >
+                          123 Main St
+                        </div>
+                        <div
+                          class="address-line"
+                          th:text="${address.city + ', ' + address.state + ' ' + address.postalCode}"
+                        >
+                          New York, NY 10001
+                        </div>
+                        <div class="address-line" th:text="${address.country}">
+                          United States
+                        </div>
+                        <span th:if="${address.isDefault}" class="default-badge"
+                          >Default</span
+                        >
+                      </div>
+                    </label>
+                  </div>
+                </div>
+
+                <div class="or-divider">
+                  <span>OR</span>
+                </div>
+              </div>
+
+              <div class="new-address-option">
+                <input
+                  type="radio"
+                  id="use-new-address"
+                  name="addressId"
+                  value="new"
+                />
+                <label for="use-new-address">Use a new address</label>
+              </div>
+
+              <div id="new-address-form" class="new-address-form hidden">
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="streetAddress">Street Address*</label>
+                    <input
+                      type="text"
+                      id="streetAddress"
+                      name="streetAddress"
+                    />
+                  </div>
+                </div>
+
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="city">City*</label>
+                    <input type="text" id="city" name="city" />
+                  </div>
+
+                  <div class="form-group">
+                    <label for="state">State/Province*</label>
+                    <input type="text" id="state" name="state" />
+                  </div>
+                </div>
+
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="postalCode">Postal Code*</label>
+                    <input type="text" id="postalCode" name="postalCode" />
+                  </div>
+
+                  <div class="form-group">
+                    <label for="country">Country*</label>
+                    <input type="text" id="country" name="country" />
+                  </div>
+                </div>
+
+                <div class="form-row">
+                  <div class="form-checkbox">
+                    <input
+                      type="checkbox"
+                      id="saveAddress"
+                      name="saveAddress"
+                    />
+                    <label for="saveAddress"
+                      >Save this address for future orders</label
+                    >
+                  </div>
+                </div>
+              </div>
+
+              <div class="payment-info">
+                <div class="section-header">
+                  <h3>Payment Method</h3>
+                </div>
+                <p class="payment-notice">
+                  Payment will be handled at a later stage.
+                </p>
+              </div>
+
+              <div class="form-actions">
+                <button type="submit" class="btn-primary">Place Order</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <div th:replace="~{fragments/layout :: footer}"></div>
+    <div th:replace="~{fragments/layout :: scripts}"></div>
+
+    <!-- Include order notification and checkout flow scripts -->
+    <script th:src="@{/js/order-notifications.js}"></script>
+    <script th:src="@{/js/checkout-flow.js}"></script>
+    <script th:src="@{/js/checkout-notifications.js}"></script>
+
+    <style>
+      .checkout-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem 1rem;
+      }
+
+      .checkout-header {
+        text-align: center;
+        margin-bottom: 2rem;
+      }
+
+      .checkout-header h2 {
+        margin-bottom: 1rem;
+        color: #333;
+        font-size: 1.75rem;
+      }
+
+      .checkout-steps {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        max-width: 600px;
+        margin: 0 auto;
+      }
+
+      .step {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        opacity: 0.5;
+      }
+
+      .step.active {
+        opacity: 1;
+      }
+
+      .step-number {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background-color: #ccc;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+      }
+
+      .active .step-number {
+        background-color: var(--book-primary);
+      }
+
+      .step-divider {
+        width: 80px;
+        height: 2px;
+        background-color: #ccc;
+        margin: 0 0.75rem;
+      }
+
+      .checkout-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+      }
+
+      .cart-review-section,
+      .checkout-form-section {
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        padding: 2rem;
+      }
+
+      .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 2px solid #eee;
+      }
+
+      .section-header h3 {
+        margin: 0;
+        color: #333;
+        font-size: 1.25rem;
+      }
+
+      .cart-items {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+        max-height: 400px;
+        overflow-y: auto;
+      }
+
+      .cart-item {
+        display: flex;
+        gap: 1rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid #eee;
+      }
+
+      .item-image {
+        width: 80px;
+        height: 80px;
+        border-radius: 4px;
+        overflow: hidden;
+      }
+
+      .item-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .no-image {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #eee;
+        color: #999;
+        font-size: 0.75rem;
+      }
+
+      .item-details {
+        flex: 1;
+      }
+
+      .item-name {
+        margin: 0 0 0.5rem;
+        font-size: 1rem;
+      }
+
+      .item-price {
+        margin: 0;
+        color: #666;
+      }
+
+      .item-subtotal {
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+      }
+
+      .cart-summary {
+        margin-top: 1.5rem;
+        padding-top: 1rem;
+        border-top: 1px solid #eee;
+      }
+
+      .summary-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.5rem;
+        color: #555;
+      }
+
+      .summary-divider {
+        height: 1px;
+        background-color: #ddd;
+        margin: 0.75rem 0;
+      }
+
+      .summary-row.total {
+        font-weight: 600;
+        font-size: 1.125rem;
+        color: #333;
+      }
+
+      .continue-shopping {
+        margin-top: 1.5rem;
+      }
+
+      .btn-text {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: #795548;
+        text-decoration: none;
+        font-weight: 500;
+      }
+
+      .btn-text:hover {
+        color: #6d4c41;
+      }
+
+      .saved-addresses {
+        margin-bottom: 1.5rem;
+      }
+
+      .saved-addresses h4 {
+        margin: 0 0 1rem;
+        color: #555;
+        font-size: 1rem;
+      }
+
+      .address-options {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .address-option {
+        position: relative;
+      }
+
+      .address-option input {
+        position: absolute;
+        opacity: 0;
+        cursor: pointer;
+      }
+
+      .address-label {
+        display: block;
+        padding: 1.25rem;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+
+      .address-option input:checked + .address-label {
+        border-color: #795548;
+        box-shadow: 0 0 0 2px rgba(121, 85, 72, 0.2);
+      }
+
+      .address-label-content {
+        position: relative;
+      }
+
+      .address-type {
+        font-size: 0.75rem;
+        color: #666;
+        margin-bottom: 0.5rem;
+        text-transform: capitalize;
+      }
+
+      .address-line {
+        margin-bottom: 0.25rem;
+        color: #333;
+      }
+
+      .default-badge {
+        position: absolute;
+        top: 0;
+        right: 0;
+        background-color: #795548;
+        color: white;
+        font-size: 0.75rem;
+        padding: 2px 8px;
+        border-radius: 3px;
+      }
+
+      .or-divider {
+        position: relative;
+        text-align: center;
+        height: 1px;
+        background-color: #eee;
+        margin: 1.5rem 0;
+      }
+
+      .or-divider span {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: white;
+        padding: 0 1rem;
+        color: #777;
+        font-size: 0.875rem;
+      }
+
+      .new-address-option {
+        margin-bottom: 1rem;
+      }
+
+      .new-address-form {
+        margin-top: 1.5rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid #eee;
+      }
+
+      .new-address-form.hidden {
+        display: none;
+      }
+
+      .dim-section {
+        opacity: 0.5;
+        pointer-events: none;
+      }
+
+      .form-row {
+        display: flex;
+        flex-wrap: wrap;
+        margin-bottom: 1rem;
+        gap: 1rem;
+      }
+
+      .form-group {
+        flex: 1;
+        min-width: 200px;
+      }
+
+      .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: #555;
+        font-weight: 500;
+      }
+
+      .form-group input {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 1rem;
+      }
+
+      .form-checkbox {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .payment-info {
+        margin: 2rem 0;
+      }
+
+      .payment-notice {
+        padding: 1rem;
+        background-color: #f9f9f9;
+        border-radius: 4px;
+        color: #555;
+      }
+
+      .form-actions {
+        margin-top: 2rem;
+        display: flex;
+        justify-content: flex-end;
+      }
+
+      .btn-primary {
+        padding: 0.75rem 2rem;
+        background-color: #795548;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        font-size: 1.125rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background-color 0.2s;
+      }
+
+      .btn-primary:hover {
+        background-color: #6d4c41;
+      }
+
+      .field-error {
+        color: #f44336;
+        font-size: 0.75rem;
+        margin-top: 0.25rem;
+      }
+
+      .notification-toast {
+        display: flex;
+        background-color: white;
+        border-radius: 6px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        margin-bottom: 0.75rem;
+        overflow: hidden;
+        max-width: 350px;
+        animation: toast-slide-in 0.3s ease-out forwards;
+      }
+
+      @keyframes toast-slide-in {
+        from {
+          transform: translateX(100%);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+
+      .success-toast {
+        border-left: 4px solid #4caf50;
+      }
+
+      .error-toast {
+        border-left: 4px solid #f44336;
+      }
+
+      .info-toast {
+        border-left: 4px solid #2196f3;
+      }
+
+      .toast-banner {
+        padding: 0.75rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .success-toast .toast-banner {
+        color: #4caf50;
+      }
+
+      .error-toast .toast-banner {
+        color: #f44336;
+      }
+
+      .info-toast .toast-banner {
+        color: #2196f3;
+      }
+
+      .toast-banner ion-icon {
+        font-size: 1.5rem;
+      }
+
+      .toast-detail {
+        flex: 1;
+        padding: 0.75rem;
+        position: relative;
+      }
+
+      .toast-message {
+        margin: 0;
+        color: #333;
+      }
+
+      .toast-close-btn {
+        position: absolute;
+        top: 0.5rem;
+        right: 0.5rem;
+        background: none;
+        border: none;
+        color: #999;
+        cursor: pointer;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .toast-close-btn ion-icon {
+        font-size: 1.25rem;
+      }
+
+      @media (max-width: 992px) {
+        .checkout-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .cart-review-section {
+          order: 1;
+        }
+
+        .checkout-form-section {
+          order: 0;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .checkout-steps {
+          flex-direction: column;
+          gap: 1rem;
+        }
+
+        .step-divider {
+          width: 2px;
+          height: 20px;
+        }
+
+        .address-options {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // Handle switching between saved and new address
+        const useNewAddressRadio = document.getElementById("use-new-address");
+        const newAddressForm = document.getElementById("new-address-form");
+        const savedAddressRadios = document.querySelectorAll(
+          'input[name="addressId"]:not(#use-new-address)'
+        );
+
+        if (useNewAddressRadio && newAddressForm) {
+          useNewAddressRadio.addEventListener("change", function () {
+            if (this.checked) {
+              newAddressForm.classList.remove("hidden");
+            }
+          });
+
+          savedAddressRadios.forEach((radio) => {
+            radio.addEventListener("change", function () {
+              if (this.checked) {
+                newAddressForm.classList.add("hidden");
+              }
+            });
+          });
+        }
+
+        // Form validation with improved UX
+        const checkoutForm = document.getElementById("checkout-form");
+
+        if (checkoutForm) {
+          // Highlight fields as user types
+          const requiredFields = [
+            "streetAddress",
+            "city",
+            "state",
+            "postalCode",
+            "country",
+          ];
+          requiredFields.forEach((field) => {
+            const input = document.getElementById(field);
+            if (input) {
+              input.addEventListener("blur", function () {
+                validateField(input);
+              });
+            }
+          });
+
+          checkoutForm.addEventListener("submit", function (e) {
+            const useNewAddress =
+              document.getElementById("use-new-address").checked;
+
+            if (useNewAddress) {
+              // Validate new address fields
+              let isValid = true;
+
+              requiredFields.forEach((field) => {
+                const input = document.getElementById(field);
+                if (!validateField(input)) {
+                  isValid = false;
+                }
+              });
+
+              if (!isValid) {
+                e.preventDefault();
+                showToast(
+                  "Error",
+                  "Please fill in all required address fields",
+                  "error"
+                );
+              }
+            } else {
+              // Check if a saved address is selected
+              const addressSelected = document.querySelector(
+                'input[name="addressId"]:checked'
+              );
+
+              if (!addressSelected || addressSelected.value === "new") {
+                e.preventDefault();
+                showToast("Error", "Please select a shipping address", "error");
+              } else {
+                // Show loading toast when submitting
+                showToast("Processing", "Placing your order...", "info");
+              }
+            }
+          });
+        }
+
+        // Function to validate a single form field
+        function validateField(input) {
+          if (!input) return true;
+
+          const isValid = input.value.trim() !== "";
+          input.style.borderColor = isValid ? "#ddd" : "#f44336";
+
+          // Add helper text for invalid fields
+          let helperId = `${input.id}-helper`;
+          let helperEl = document.getElementById(helperId);
+
+          if (!isValid) {
+            if (!helperEl) {
+              helperEl = document.createElement("div");
+              helperEl.id = helperId;
+              helperEl.className = "field-error";
+              helperEl.textContent = "This field is required";
+              input.parentNode.appendChild(helperEl);
+            }
+          } else if (helperEl) {
+            helperEl.remove();
+          }
+
+          return isValid;
+        }
+      });
+    </script>
+  </body>
+</html>

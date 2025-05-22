@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head th:replace="~{fragments/layout :: head('Admin - Order Details')}">
+    <title>Admin - Order Details</title>
+  </head>
+
+  <body>
+    <div th:replace="~{fragments/layout :: navbar}"></div>
+    <div th:replace="~{fragments/layout :: page-title('Order Details')}"></div>
+    <div th:replace="~{fragments/layout :: alerts}"></div>
+
+    <!-- Admin Header Section -->
+    <div class="admin-header">
+      <div class="container">
+        <div class="admin-navigation">
+          <a th:href="@{/admin}" class="admin-nav-link">Dashboard</a>
+          <a th:href="@{/admin/products}" class="admin-nav-link">Products</a>
+          <a th:href="@{/admin/orders}" class="admin-nav-link active">Orders</a>
+          <a th:href="@{/admin/users}" class="admin-nav-link">Users</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Order Details Section -->
+    <section class="admin-content">
+      <div class="container">
+        <div class="admin-card">
+          <div class="card-header">
+            <h3>Order #<span th:text="${order.id}">12345</span></h3>
+            <a th:href="@{/admin/orders}" class="btn btn-secondary"
+              >Back to Orders</a
+            >
+          </div>
+          <div class="card-body">
+            <div class="order-details">
+              <div class="order-meta">
+                <div class="meta-row">
+                  <span class="meta-label">Order Date:</span>
+                  <span
+                    class="meta-value"
+                    th:text="${#temporals.format(order.createdAt, 'dd-MMM-yyyy HH:mm')}"
+                    >01-Jan-2023 12:00</span
+                  >
+                </div>
+                <div class="meta-row">
+                  <span class="meta-label">Last Updated:</span>
+                  <span
+                    class="meta-value"
+                    th:text="${#temporals.format(order.updatedAt, 'dd-MMM-yyyy HH:mm')}"
+                    >01-Jan-2023 12:00</span
+                  >
+                </div>
+                <div class="meta-row">
+                  <span class="meta-label">Customer:</span>
+                  <span class="meta-value">
+                    <a
+                      th:href="@{'/admin/users/' + ${order.user.id}}"
+                      th:text="${order.user.firstName + ' ' + order.user.lastName}"
+                      >John Doe</a
+                    >
+                  </span>
+                </div>
+                <div class="meta-row">
+                  <span class="meta-label">Email:</span>
+                  <span class="meta-value" th:text="${order.user.email}"
+                    >john@example.com</span
+                  >
+                </div>
+                <div class="meta-row status-row">
+                  <span class="meta-label">Status:</span>
+                  <span
+                    class="meta-value status-badge"
+                    th:text="${order.status}"
+                    th:classappend="${'status-' + order.status.name().toLowerCase()}"
+                  >
+                    PENDING
+                  </span>
+                </div>
+                <div class="meta-row">
+                  <span class="meta-label">Total Amount:</span>
+                  <span
+                    class="meta-value total-amount"
+                    th:text="${'$' + order.totalAmount}"
+                    >$99.99</span
+                  >
+                </div>
+              </div>
+
+              <!-- Status Update Form -->
+              <div class="status-update">
+                <h5>Update Order Status</h5>
+                <form
+                  id="statusUpdateForm"
+                  th:action="@{'/admin/orders/' + ${order.id} + '/status'}"
+                  method="post"
+                >
+                  <input
+                    type="hidden"
+                    name="_csrf"
+                    th:value="${_csrf?.token}"
+                  />
+                  <div class="form-group">
+                    <select name="status" id="orderStatus" class="form-control">
+                      <option
+                        th:each="status : ${statusOptions}"
+                        th:value="${status}"
+                        th:text="${status}"
+                        th:selected="${order.status == status}"
+                      >
+                        PENDING
+                      </option>
+                    </select>
+                  </div>
+                  <button
+                    type="submit"
+                    class="btn btn-primary"
+                    id="updateStatusBtn"
+                  >
+                    Update Status
+                  </button>
+                  <div
+                    class="status-feedback mt-2"
+                    id="statusFeedback"
+                    style="display: none"
+                  >
+                    <div class="alert alert-success">
+                      Status updated successfully!
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Shipping Information -->
+        <div class="admin-card mt-4">
+          <div class="card-header">
+            <h3>Shipping Information</h3>
+          </div>
+          <div class="card-body">
+            <div class="shipping-address">
+              <p th:text="${order.shippingAddress}">
+                123 Main St, Anytown, CA 12345
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Order Items -->
+        <div class="admin-card mt-4">
+          <div class="card-header">
+            <h3>Order Items</h3>
+          </div>
+          <div class="card-body">
+            <div class="order-items">
+              <div class="order-items-grid">
+                <div
+                  class="order-item-card"
+                  th:each="item : ${order.orderItems}"
+                >
+                  <div class="order-item-image">
+                    <img
+                      th:if="${item.product != null && item.product.getImageUrl() != null}"
+                      th:src="${item.product.getImageUrl()}"
+                      alt="Product Image"
+                      class="img-fluid rounded"
+                    />
+                    <div
+                      th:unless="${item.product != null && item.product.getImageUrl() != null}"
+                      class="no-image-placeholder"
+                    >
+                      <i class="fas fa-image"></i>
+                      <span>No Image</span>
+                    </div>
+                  </div>
+                  <div class="order-item-details">
+                    <h5 class="item-title" th:text="${item.product.name}">
+                      Product Name
+                    </h5>
+                    <div class="item-meta">
+                      <div class="meta-row">
+                        <span class="meta-label">Price:</span>
+                        <span class="meta-value" th:text="${'$' + item.price}"
+                          >$19.99</span
+                        >
+                      </div>
+                      <div class="meta-row">
+                        <span class="meta-label">Quantity:</span>
+                        <span class="meta-value" th:text="${item.quantity}"
+                          >2</span
+                        >
+                      </div>
+                      <div class="meta-row">
+                        <span class="meta-label">Subtotal:</span>
+                        <span
+                          class="meta-value"
+                          th:text="${'$' + item.price.multiply(new java.math.BigDecimal(item.quantity))}"
+                          >$39.98</span
+                        >
+                      </div>
+                    </div>
+                    <div class="item-actions">
+                      <a
+                        th:href="@{'/admin/products/' + ${item.product.id}}"
+                        class="btn btn-sm btn-primary"
+                      >
+                        <i class="fas fa-eye"></i> View Product
+                      </a>
+                      <a
+                        th:if="${item.product.active}"
+                        th:href="@{'/shop/product/' + ${item.product.id}}"
+                        class="btn btn-sm btn-outline-secondary"
+                        target="_blank"
+                      >
+                        <i class="fas fa-external-link-alt"></i> Shop Page
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="order-total-card">
+                <div class="order-total-header">
+                  <h4>Order Summary</h4>
+                </div>
+                <div class="order-total-body">
+                  <div class="total-row">
+                    <span class="total-label">Items Total:</span>
+                    <span
+                      class="total-value"
+                      th:text="${'$' + order.totalAmount}"
+                      >$99.99</span
+                    >
+                  </div>
+                  <!-- You can add more rows here like shipping, tax, etc. if you have those fields -->
+                  <div class="total-row grand-total">
+                    <span class="total-label">Grand Total:</span>
+                    <span
+                      class="total-value"
+                      th:text="${'$' + order.totalAmount}"
+                      >$99.99</span
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div th:replace="~{fragments/layout :: footer}"></div>
+    <div th:replace="~{fragments/layout :: scripts}"></div>
+
+    <!-- Order Status Update Script -->
+    <script th:src="@{/js/order-status-update.js}"></script>
+  </body>
+</html>

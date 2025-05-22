@@ -1,0 +1,252 @@
+/* 
+ * navigation.css - Styling for the consistent navigation bar
+ */
+
+/* Dropdown menu styling */
+.dropdown-menu {
+  position: absolute;
+  left: 0;
+  top: 100%;
+  width: 200px;
+  background: var(--white);
+  padding: 20px 0;
+  border-radius: var(--border-radius-small);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+  display: none;
+  z-index: 10;
+}
+
+.menu-category:hover .dropdown-menu {
+  display: block;
+}
+
+.dropdown-item {
+  padding: 0;
+}
+
+.dropdown-item a,
+.dropdown-button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 20px;
+  color: var(--furnifind-dark);
+  font-size: 0.9rem;
+  transition: background-color 0.3s ease;
+  text-decoration: none;
+  border: none;
+  background: transparent;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+}
+
+.dropdown-item a:hover,
+.dropdown-button:hover {
+  background-color: var(--furnifind-light);
+}
+
+.dropdown-item ion-icon {
+  font-size: 1.2em;
+  color: var(--furnifind-accent);
+}
+
+/* Right aligned menu item */
+.menu-category-right {
+  margin-left: auto;
+}
+
+/* Cart counter improved styling */
+.cart-btn .count {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: var(--furnifind-accent);
+  color: white;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  font-size: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* Wishlist counter styling */
+.wishlist-btn .count {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: var(--furnifind-accent);
+  color: white;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  font-size: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* Mobile menu dropdown button */
+.mobile-menu-dropdown {
+  position: relative;
+}
+
+.mobile-dropdown-content {
+  position: absolute;
+  bottom: 60px;
+  right: 0;
+  width: 200px;
+  background: var(--white);
+  border-radius: var(--border-radius-small);
+  box-shadow: 0 -3px 10px rgba(0, 0, 0, 0.1);
+  display: none;
+  padding: 10px 0;
+  z-index: 10;
+}
+
+.mobile-menu-dropdown.active .mobile-dropdown-content {
+  display: block;
+}
+
+.mobile-dropdown-content a,
+.mobile-dropdown-content .dropdown-menu-button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 20px;
+  color: var(--furnifind-dark);
+  font-size: 0.9rem;
+  text-decoration: none;
+  background: none;
+  border: none;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+}
+
+.mobile-dropdown-content a:hover,
+.mobile-dropdown-content .dropdown-menu-button:hover {
+  background: var(--cultured);
+}
+
+.mobile-dropdown-content ion-icon {
+  font-size: 1.2em;
+}
+
+/* Mobile cart counter */
+.mobile-bottom-navigation .cart-btn .count {
+  position: absolute;
+  top: -3px;
+  right: -3px;
+  background: var(--furnifind-accent);
+  color: white;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  font-size: 0.7rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Mobile wishlist counter */
+.mobile-bottom-navigation .wishlist-btn .count {
+  position: absolute;
+  top: -3px;
+  right: -3px;
+  background: var(--furnifind-accent);
+  color: white;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  font-size: 0.7rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Page title banner styling */
+.page-title-banner {
+  background-color: var(--cultured);
+  padding: 30px 0;
+  margin-bottom: 30px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.page-title {
+  color: var(--furnifind-dark);
+  font-size: 2rem;
+  margin-bottom: 10px;
+  font-weight: 700;
+  font-family: var(--furnifind-heading-font);
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.breadcrumb-link {
+  color: var(--furnifind-accent);
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: color 0.3s ease;
+}
+
+.breadcrumb-link:hover {
+  text-decoration: underline;
+}
+
+.breadcrumb-separator {
+  color: var(--sonic-silver);
+  font-size: 0.9rem;
+}
+
+.breadcrumb-current {
+  color: var(--davys-gray);
+  font-size: 0.9rem;
+}
+
+/* Products grid icon styling */
+.products-icon-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 8px 15px;
+  background-color: var(--furnifind-accent);
+  color: var(--white) !important;
+  border-radius: var(--border-radius-small);
+  transition: all 0.3s ease;
+}
+
+.products-icon-btn:hover {
+  background-color: var(--furnifind-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.products-icon-btn ion-icon {
+  font-size: 1.2em;
+}
+
+@media (max-width: 768px) {
+  .products-icon-btn span {
+    display: none;
+  }
+
+  .products-icon-btn {
+    padding: 5px 10px;
+  }
+}

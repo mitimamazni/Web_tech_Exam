@@ -1,0 +1,163 @@
+/* 
+ * FurniFind Styles - Custom styling for FurniFind
+ * This file contains design styles for the FurniFind e-commerce platform
+ */
+
+/* Import the colors first (if not already imported in HTML) */
+@import url("furnifind-colors.css");
+
+/* Global styles */
+body {
+  font-family: var(--furnifind-body-font);
+  background-color: var(--furnifind-light);
+  color: var(--furnifind-dark);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--furnifind-heading-font);
+}
+
+/* Header styling */
+.header-logo h1 {
+  color: var(--furnifind-primary) !important;
+  font-family: var(--furnifind-heading-font) !important;
+}
+
+.header-logo ion-icon {
+  color: var(--furnifind-secondary) !important;
+}
+
+.header-logo span span {
+  color: var(--furnifind-accent) !important;
+}
+
+/* Button styling */
+.btn-primary,
+.action-button,
+.shop-now-btn {
+  background-color: var(--furnifind-primary);
+  border-color: var(--furnifind-primary);
+  color: white;
+  font-family: var(--furnifind-heading-font);
+}
+
+.btn-primary:hover,
+.action-button:hover,
+.shop-now-btn:hover {
+  background-color: var(--furnifind-dark);
+  border-color: var(--furnifind-dark);
+}
+
+.btn-secondary {
+  background-color: var(--furnifind-secondary);
+  border-color: var(--furnifind-secondary);
+}
+
+/* Accent elements */
+.accent,
+.accent-text,
+.highlight-text {
+  color: var(--furnifind-accent);
+}
+
+.accent-bg {
+  background-color: var(--furnifind-accent);
+}
+
+/* Card styling */
+.card,
+.product-card,
+.card-item {
+  border-color: rgba(92, 106, 118, 0.2); /* Slightly transparent primary */
+  background-color: #fff;
+}
+
+/* Navigation styling */
+.desktop-navigation-menu {
+  background-color: var(--furnifind-dark);
+}
+
+.desktop-menu-category-list > .menu-category > .menu-title {
+  color: white;
+}
+
+.sidebar-logo h1 ion-icon {
+  color: var(--furnifind-accent);
+}
+
+/* Sidebar styling */
+.sidebar {
+  background-color: var(--furnifind-dark);
+  color: white;
+}
+
+.sidebar-nav-link {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.sidebar-nav-link:hover,
+.sidebar-nav-link.active {
+  color: var(--furnifind-accent);
+}
+
+.sidebar-logo .accent {
+  color: var(--furnifind-accent);
+}
+
+/* Product section styling */
+.product-title {
+  font-family: var(--furnifind-heading-font);
+  color: var(--furnifind-dark);
+}
+
+.product-price {
+  color: var(--furnifind-secondary);
+}
+
+/* Footer styling */
+.footer {
+  background-color: var(--furnifind-dark);
+  color: white;
+}
+
+.footer a {
+  color: var(--furnifind-accent);
+}
+
+/* Profile and form sections */
+.form-control:focus {
+  border-color: var(--furnifind-accent);
+  box-shadow: 0 0 0 0.25rem rgba(228, 169, 81, 0.25);
+}
+
+/* Page titles */
+.page-title {
+  color: var(--furnifind-primary);
+  font-family: var(--furnifind-heading-font);
+  font-weight: 600;
+}
+
+/* Toast notifications */
+.notification-toast.success-toast .toast-banner {
+  background-color: var(--furnifind-success);
+}
+
+.notification-toast.error-toast .toast-banner {
+  background-color: var(--furnifind-danger);
+}
+
+/* Wishlist and cart buttons */
+.action-btn:hover ion-icon {
+  color: var(--furnifind-accent);
+}
+
+/* Custom counter colors */
+.count {
+  background-color: var(--furnifind-accent);
+  color: white;
+}

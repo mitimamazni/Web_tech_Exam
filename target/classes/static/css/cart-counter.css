@@ -1,0 +1,63 @@
+/* Cart counter styling */
+.action-btn .count,
+.cart-btn .count,
+.action-btn .count.cart-counter,
+.cart-btn .count.cart-counter {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background-color: var(--furnifind-secondary);
+  color: white;
+  min-width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  font-size: 12px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  z-index: 100;
+  border: 2px solid white;
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+/* Mobile-specific styles */
+.mobile-bottom-navigation .action-btn .count,
+.mobile-bottom-navigation .cart-btn .count,
+.mobile-bottom-navigation .action-btn .count.cart-counter,
+.mobile-bottom-navigation .cart-btn .count.cart-counter {
+  top: -5px;
+  right: -5px;
+  min-width: 18px;
+  height: 18px;
+  font-size: 10px;
+  display: flex;
+  z-index: 100;
+}
+
+/* Ensure animations work properly */
+.count,
+.cart-counter {
+  transition: transform 0.3s ease;
+}
+
+/* Cross-browser compatibility fixes */
+@media not all and (min-resolution: 0.001dpcm) {
+  .count,
+  .cart-counter {
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+  }
+}
+
+/* Firefox fix */
+@-moz-document url-prefix() {
+  .count,
+  .cart-counter {
+    position: absolute;
+    display: flex;
+  }
+}

@@ -1,0 +1,591 @@
+package com.ecommerce.app.controller;
+
+import com.ecommerce.app.model.*;
+import com.ecommerce.app.service.CategoryService;
+import com.ecommerce.app.service.OrderService;
+import com.ecommerce.app.service.ProductService;
+import com.ecommerce.app.service.UserService;
+import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+@Controller
+@RequestMapping("/admin")
+public class AdminController {
+
+    @Autowired
+    private ProductService productService;
+
+    @Autowired
+    private CategoryService categoryService;
+
+    @Autowired
+    private OrderService orderService;
+
+    @Autowired
+    private UserService userService;
+
+    // Add admin check method
+    private boolean isAdmin(HttpSession session) {
+        Boolean isAdmin = (Boolean) session.getAttribute("isAdmin");
+        return isAdmin != null && isAdmin;
+    }
+    
+    // Add authorization interceptor for all methods
+    @ModelAttribute
+    public String checkAdminAccess(HttpSession session, 
+                                RedirectAttributes redirectAttributes) {
+        if (!isAdmin(session)) {
+            redirectAttributes.addFlashAttribute("error", 
+                "You need admin privileges to access this page");
+            return "redirect:/login";
+        }
+        return null;
+    }
+
+    // Dashboard
+    @GetMapping
+    public String dashboard(Model model, HttpSession session) {
+        if (!isAdmin(session)) {
+            return "redirect:/";
+        }
+        
+        List<Product> products = productService.getAllProducts();
+        List<Category> categories = categoryService.getAllCategories();
+        List<Order> orders = orderService.getAllOrders();
+        List<User> users = userService.findAllUsers();
+        
+        model.addAttribute("productCount", products.size());
+        model.addAttribute("categoryCount", categories.size());
+        model.addAttribute("orderCount", orders.size());
+        model.addAttribute("userCount", users.size());
+        
+        // Add recent orders (up to 5)
+        int ordersToShow = Math.min(5, orders.size());
+        model.addAttribute("recentOrders", orders.subList(0, ordersToShow));
+        
+        return "admin/dashboard";
+    }
+    
+    // Helper method for creating product stats
+    private Map<String, Object> createProductStat(Long id, String name, int unitsSold, String revenue) {
+        Map<String, Object> product = new HashMap<>();
+        product.put("id", id);
+        product.put("name", name);
+        product.put("unitsSold", unitsSold);
+        product.put("revenue", revenue);
+        return product;
+    }
+    
+    // Handle report generation requests
+    @PostMapping("/analytics/reports/{reportType}")
+    public ResponseEntity<byte[]> generateReport(@PathVariable String reportType, 
+                                              @RequestParam Map<String, String> params,
+                                              HttpSession session) {
+        if (!isAdmin(session)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+        
+        // In a real application, this would connect to a reporting service
+        // For now, we'll just return a simple CSV file
+        
+        String reportContent = "";
+        String filename = "";
+        
+        switch (reportType) {
+            case "sales":
+                reportContent = generateSalesReportData(params);
+                filename = "sales-report.csv";
+                break;
+            case "inventory":
+                reportContent = generateInventoryReportData(params);
+                filename = "inventory-report.csv";
+                break;
+            case "customers":
+                reportContent = generateCustomerReportData(params);
+                filename = "customer-report.csv";
+                break;
+            default:
+                return ResponseEntity.badRequest().build();
+        }
+        
+        // Set up response headers
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+        headers.setContentDispositionFormData("attachment", filename);
+        
+        return ResponseEntity
+                .ok()
+                .headers(headers)
+                .body(reportContent.getBytes(StandardCharsets.UTF_8));
+    }
+    
+    // Helper methods for generating mock report data
+    private String generateSalesReportData(Map<String, String> params) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Date,Order ID,Product,Quantity,Unit Price,Total\n");
+        sb.append("2023-06-01,10001,\"Premium Coffee Beans\",2,24.99,49.98\n");
+        sb.append("2023-06-01,10001,\"Coffee Mug\",1,12.99,12.99\n");
+        sb.append("2023-06-02,10002,\"Espresso Machine\",1,349.99,349.99\n");
+        sb.append("2023-06-03,10003,\"Coffee Grinder\",1,89.99,89.99\n");
+        return sb.toString();
+    }
+    
+    private String generateInventoryReportData(Map<String, String> params) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Product ID,Product Name,SKU,In Stock,Reorder Level,Last Stocked,Turnover Rate\n");
+        sb.append("1,\"Premium Coffee Beans\",COF001,45,20,2023-05-15,High\n");
+        sb.append("2,\"Coffee Grinder\",GRD001,12,10,2023-05-20,Medium\n");
+        sb.append("3,\"Pour Over Kit\",POK001,8,15,2023-05-10,Low\n");
+        sb.append("4,\"Espresso Machine\",ESP001,3,5,2023-04-30,Low\n");
+        return sb.toString();
+    }
+    
+    private String generateCustomerReportData(Map<String, String> params) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Customer ID,Name,Email,Orders,Total Spent,Avg Order,First Order,Last Order\n");
+        sb.append("1001,\"John Smith\",john@example.com,5,$245.85,$49.17,2023-01-15,2023-05-20\n");
+        sb.append("1002,\"Sarah Johnson\",sarah@example.com,3,$189.97,$63.32,2023-02-10,2023-05-15\n");
+        sb.append("1003,\"Michael Brown\",michael@example.com,8,$412.45,$51.56,2022-11-05,2023-05-28\n");
+        sb.append("1004,\"Lisa Davis\",lisa@example.com,1,$24.99,$24.99,2023-05-01,2023-05-01\n");
+        return sb.toString();
+    }
+        StringBuilder sb = new StringBuilder();
+        sb.append("Customer ID,Name,Email,Orders,Total Spent,Avg Order,First Order,Last Order\n");
+        sb.append("1001,\"John Smith\",john@example.com,5,$245.85,$49.17,2023-01-15,2023-05-20\n");
+        sb.append("1002,\"Sarah Johnson\",sarah@example.com,3,$189.97,$63.32,2023-02-10,2023-05-15\n");
+        sb.append("1003,\"Michael Brown\",michael@example.com,8,$412.45,$51.56,2022-11-05,2023-05-28\n");
+        sb.append("1004,\"Lisa Davis\",lisa@example.com,1,$24.99,$24.99,2023-05-01,2023-05-01\n");
+        return sb.toString();
+    }
+    
+    // Product Management
+    @GetMapping("/products")
+    public String productList(Model model, 
+                            @RequestParam(defaultValue = "0") int page,
+                            HttpSession session) {
+        if (!isAdmin(session)) {
+            return "redirect:/";
+        }
+        
+        Page<Product> productPage = productService.getAllProductsPaged(
+            PageRequest.of(page, 10));
+        
+        model.addAttribute("products", productPage.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", productPage.getTotalPages());
+        
+        return "admin/product/list";
+    }
+
+    @GetMapping("/products/{id}")
+    public String productDetail(@PathVariable Long id, Model model, HttpSession session) {
+        if (!isAdmin(session)) {
+            return "redirect:/";
+        }
+        
+        Product product = productService.getProductById(id)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
+        
+        model.addAttribute("product", product);
+        
+        return "admin/product/detail";
+    }
+    
+    @GetMapping("/products/new")
+    public String newProductForm(Model model, HttpSession session) {
+        if (!isAdmin(session)) {
+            return "redirect:/";
+        }
+        
+        model.addAttribute("product", new Product());
+        model.addAttribute("categories", categoryService.getAllCategories());
+        model.addAttribute("tags", productService.getAllTags());
+        
+        return "admin/product/form";
+    }
+    
+    @GetMapping("/products/{id}/edit")
+    public String editProductForm(@PathVariable Long id, Model model, HttpSession session) {
+        if (!isAdmin(session)) {
+            return "redirect:/";
+        }
+        
+        Product product = productService.getProductById(id)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
+        
+        model.addAttribute("product", product);
+        model.addAttribute("categories", categoryService.getAllCategories());
+        model.addAttribute("tags", productService.getAllTags());
+        
+        return "admin/product/form";
+    }
+    
+    @PostMapping("/products/create")
+    public String createProduct(@Valid Product product, 
+                              BindingResult result,
+                              @RequestParam(required = false) Long categoryId,
+                              @RequestParam(required = false) List<Long> tagIds,
+                              @RequestParam(required = false) List<MultipartFile> imageFiles,
+                              Model model,
+                              RedirectAttributes redirectAttributes,
+                              HttpSession session) {
+        if (!isAdmin(session)) {
+            return "redirect:/";
+        }
+        
+        if (result.hasErrors()) {
+            model.addAttribute("categories", categoryService.getAllCategories());
+            model.addAttribute("tags", productService.getAllTags());
+            return "admin/product/form";
+        }
+        
+        try {
+            // Save the product first to get an ID
+            Product savedProduct = productService.saveProduct(product);
+            
+            // Set category if provided
+            if (categoryId != null) {
+                categoryService.getCategoryById(categoryId).ifPresent(category -> {
+                    savedProduct.setCategory(category);
+                    productService.saveProduct(savedProduct);
+                });
+            }
+            
+            // Set tags if provided
+            if (tagIds != null && !tagIds.isEmpty()) {
+                productService.setProductTags(savedProduct, tagIds);
+            }
+            
+            // Handle image uploads if any
+            if (imageFiles != null && !imageFiles.isEmpty()) {
+                productService.addProductImages(savedProduct, imageFiles, true); // First image as primary
+            }
+            
+            redirectAttributes.addFlashAttribute("success", "Product created successfully");
+            return "redirect:/admin/products/" + savedProduct.getId();
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Failed to create product: " + e.getMessage());
+            return "redirect:/admin/products/new";
+        }
+    }
+    
+    @PostMapping("/products/{id}/update")
+    public String updateProduct(@PathVariable Long id,
+                              @Valid Product product, 
+                              BindingResult result,
+                              @RequestParam(required = false) Long categoryId,
+                              @RequestParam(required = false) List<Long> tagIds,
+                              @RequestParam(required = false) List<MultipartFile> imageFiles,
+                              @RequestParam(required = false) List<Long> deleteImageIds,
+                              @RequestParam(required = false) Long primaryImageId,
+                              Model model,
+                              RedirectAttributes redirectAttributes,
+                              HttpSession session) {
+        if (!isAdmin(session)) {
+            return "redirect:/";
+        }
+        
+        if (result.hasErrors()) {
+            model.addAttribute("categories", categoryService.getAllCategories());
+            model.addAttribute("tags", productService.getAllTags());
+            return "admin/product/form";
+        }
+        
+        try {
+            // Get existing product
+            Product existingProduct = productService.getProductById(id)
+                    .orElseThrow(() -> new RuntimeException("Product not found"));
+            
+            // Update basic properties
+            existingProduct.setName(product.getName());
+            existingProduct.setDescription(product.getDescription());
+            existingProduct.setPrice(product.getPrice());
+            existingProduct.setSalePrice(product.getSalePrice());
+            existingProduct.setStockQuantity(product.getStockQuantity());
+            existingProduct.setActive(product.isActive());
+            existingProduct.setIsSubscription(product.getIsSubscription());
+            
+            // Save the updated product
+            Product savedProduct = productService.saveProduct(existingProduct);
+            
+            // Update category if provided
+            if (categoryId != null) {
+                categoryService.getCategoryById(categoryId).ifPresent(category -> {
+                    savedProduct.setCategory(category);
+                    productService.saveProduct(savedProduct);
+                });
+            } else {
+                // Remove category if none selected
+                savedProduct.setCategory(null);
+                productService.saveProduct(savedProduct);
+            }
+            
+            // Update tags if provided
+            productService.setProductTags(savedProduct, tagIds != null ? tagIds : List.of());
+            
+            // Delete images if requested
+            if (deleteImageIds != null && !deleteImageIds.isEmpty()) {
+                productService.deleteProductImages(savedProduct, deleteImageIds);
+            }
+            
+            // Set primary image if requested
+            if (primaryImageId != null) {
+                productService.setPrimaryProductImage(savedProduct, primaryImageId);
+            }
+            
+            // Add new images if uploaded
+            if (imageFiles != null && !imageFiles.stream().allMatch(MultipartFile::isEmpty)) {
+                boolean setFirstAsPrimary = primaryImageId == null && 
+                                           (savedProduct.getImages().isEmpty() || 
+                                            savedProduct.getImages().stream().noneMatch(ProductImage::getIsPrimary));
+                productService.addProductImages(savedProduct, imageFiles, setFirstAsPrimary);
+            }
+            
+            redirectAttributes.addFlashAttribute("success", "Product updated successfully");
+            return "redirect:/admin/products/" + savedProduct.getId();
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Failed to update product: " + e.getMessage());
+            return "redirect:/admin/products/" + id + "/edit";
+        }
+    }
+    
+    @PostMapping("/products/{id}/toggle")
+    public String toggleProductStatus(@PathVariable Long id,
+                                    RedirectAttributes redirectAttributes,
+                                    HttpSession session) {
+        if (!isAdmin(session)) {
+            return "redirect:/";
+        }
+        
+        try {
+            Product product = productService.getProductById(id)
+                    .orElseThrow(() -> new RuntimeException("Product not found"));
+            
+            // Toggle active status
+            product.setActive(!product.isActive());
+            productService.saveProduct(product);
+            
+            redirectAttributes.addFlashAttribute("success", 
+                "Product " + (product.isActive() ? "activated" : "deactivated") + " successfully");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Failed to toggle product status: " + e.getMessage());
+        }
+        
+        return "redirect:/admin/products";
+    }
+    
+    @PostMapping("/products/delete/{id}")
+    public String deleteProduct(@PathVariable Long id, 
+                                RedirectAttributes redirectAttributes,
+                                HttpSession session) {
+        if (!isAdmin(session)) {
+            return "redirect:/";
+        }
+        
+        productService.deleteProduct(id);
+        redirectAttributes.addFlashAttribute("success", "Product deleted successfully");
+        
+        return "redirect:/admin/products";
+    }
+
+    // Category Management
+    @GetMapping("/categories")
+    public String categoryList(Model model, HttpSession session) {
+        if (!isAdmin(session)) {
+            return "redirect:/";
+        }
+        
+        model.addAttribute("categories", categoryService.getAllCategories());
+        model.addAttribute("category", new Category());
+        
+        return "admin/category/list";
+    }
+
+    @PostMapping("/categories/save")
+    public String saveCategory(@Valid @ModelAttribute Category category,
+                              BindingResult result,
+                              RedirectAttributes redirectAttributes,
+                              Model model,
+                              HttpSession session) {
+        if (!isAdmin(session)) {
+            return "redirect:/";
+        }
+        
+        if (result.hasErrors()) {
+            model.addAttribute("categories", categoryService.getAllCategories());
+            return "admin/category/list";
+        }
+        
+        // Check if category name already exists
+        if (category.getId() == null && categoryService.existsByName(category.getName())) {
+            result.rejectValue("name", "error.category", "Category name already exists");
+            model.addAttribute("categories", categoryService.getAllCategories());
+            return "admin/category/list";
+        }
+        
+        categoryService.saveCategory(category);
+        redirectAttributes.addFlashAttribute("success", "Category saved successfully");
+        
+        return "redirect:/admin/categories";
+    }
+
+    @GetMapping("/categories/edit/{id}")
+    public String editCategoryForm(@PathVariable Long id, 
+                                   Model model, 
+                                   HttpSession session) {
+        if (!isAdmin(session)) {
+            return "redirect:/";
+        }
+        
+        Category category = categoryService.getCategoryById(id)
+                .orElseThrow(() -> new RuntimeException("Category not found"));
+        
+        model.addAttribute("category", category);
+        model.addAttribute("categories", categoryService.getAllCategories());
+        
+        return "admin/category/list";
+    }
+
+    @PostMapping("/categories/delete/{id}")
+    public String deleteCategory(@PathVariable Long id, 
+                                 RedirectAttributes redirectAttributes,
+                                 HttpSession session) {
+        if (!isAdmin(session)) {
+            return "redirect:/";
+        }
+        
+        categoryService.deleteCategory(id);
+        redirectAttributes.addFlashAttribute("success", "Category deleted successfully");
+        
+        return "redirect:/admin/categories";
+    }
+
+    // User Management
+    @GetMapping("/users")
+    public String userList(Model model, 
+                        @RequestParam(defaultValue = "0") int page,
+                        HttpSession session) {
+        if (!isAdmin(session)) {
+            return "redirect:/";
+        }
+        
+        Page<User> userPage = userService.getAllUsersPaged(
+            PageRequest.of(page, 10));
+        
+        model.addAttribute("users", userPage.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", userPage.getTotalPages());
+        
+        return "admin/user/list";
+    }
+    
+    @GetMapping("/users/{id}")
+    public String userDetail(@PathVariable Long id, Model model, HttpSession session) {
+        if (!isAdmin(session)) {
+            return "redirect:/";
+        }
+        
+        User user = userService.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        
+        // Get user orders
+        List<Order> userOrders = orderService.getOrdersByUser(user);
+        
+        model.addAttribute("user", user);
+        model.addAttribute("userOrders", userOrders);
+        
+        return "admin/user/detail";
+    }
+    
+    @PostMapping("/users/{id}/role")
+    public String updateUserRole(@PathVariable Long id, 
+                               @RequestParam("role") String role,
+                               RedirectAttributes redirectAttributes,
+                               HttpSession session) {
+        if (!isAdmin(session)) {
+            return "redirect:/";
+        }
+        
+        try {
+            userService.updateUserRole(id, role);
+            redirectAttributes.addFlashAttribute("success", "User role updated successfully");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Failed to update user role: " + e.getMessage());
+        }
+        
+        return "redirect:/admin/users/" + id;
+    }
+    
+    // Order Management with extended functionality
+    @GetMapping("/orders")
+    public String orderList(Model model, 
+                          @RequestParam(defaultValue = "0") int page,
+                          HttpSession session) {
+        if (!isAdmin(session)) {
+            return "redirect:/";
+        }
+        
+        Page<Order> orderPage = orderService.getAllOrdersPaged(
+            PageRequest.of(page, 10));
+        
+        model.addAttribute("orders", orderPage.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", orderPage.getTotalPages());
+        model.addAttribute("orderStatuses", OrderStatus.values());
+        
+        return "admin/order/list";
+    }
+    
+    @GetMapping("/orders/{id}")
+    public String orderDetail(@PathVariable Long id, Model model, HttpSession session) {
+        if (!isAdmin(session)) {
+            return "redirect:/";
+        }
+        
+        Order order = orderService.getOrderById(id)
+                .orElseThrow(() -> new RuntimeException("Order not found"));
+        
+        model.addAttribute("order", order);
+        model.addAttribute("statusOptions", OrderStatus.values());
+        
+        return "admin/order/detail";
+    }
+    
+    @PostMapping("/orders/{id}/status")
+    public String updateOrderStatus(@PathVariable Long id, 
+                                  @RequestParam("status") OrderStatus status,
+                                  RedirectAttributes redirectAttributes,
+                                  HttpSession session) {
+        if (!isAdmin(session)) {
+            return "redirect:/";
+        }
+        
+        try {
+            orderService.updateOrderStatus(id, status);
+            redirectAttributes.addFlashAttribute("success", "Order status updated successfully");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Failed to update order status: " + e.getMessage());
+        }
+        
+        return "redirect:/admin/orders/" + id;
+    }
+}

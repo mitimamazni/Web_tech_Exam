@@ -1,0 +1,67 @@
+/* 
+ * BookByte Theme Migration Guide
+ * This file contains CSS variable mappings to help migrate from coffee-themed
+ * variables to book-themed variables. In future updates, direct use of --coffee-*
+ * variables should be replaced with their --book-* equivalents.
+ */
+
+:root {
+  /* Legacy mappings - these ensure backward compatibility */
+  --coffee-primary: var(--book-primary);
+  --coffee-dark: var(--book-dark);
+  --coffee-light: var(--book-light);
+  --coffee-accent: var(--book-accent);
+  --coffee-medium: var(--book-secondary);
+  --coffee-bg: var(--book-bg);
+
+    /* New color scheme - Modern Furniture Theme */
+    --furnifind-primary: #5c6a76; /* Slate blue-gray */
+    --furnifind-secondary: #a67c52; /* Warm wood brown */
+    --furnifind-accent: #e4a951; /* Golden accent */
+    --furnifind-light: #f9f7f3; /* Warm off-white */
+    --furnifind-dark: #2d3748; /* Dark charcoal */
+    --furnifind-gray: #8d9ca8; /* Soft gray */
+    --furnifind-success: #68a678; /* Natural green */
+    --furnifind-danger: #e27676; /* Soft red */
+    --furnifind-warning: #f2d076; /* Muted yellow */
+    --furnifind-info: #76a8c7; /* Calm blue */
+  
+    /* Override existing variables for compatibility */
+    --book-primary: var(--furnifind-primary);
+    --book-secondary: var(--furnifind-secondary);
+    --book-accent: var(--furnifind-accent);
+    --book-dark: var(--furnifind-dark);
+    --book-light: var(--furnifind-light);
+    --coffee-accent: var(--furnifind-accent);
+    --coffee-dark: var(--furnifind-dark);
+    --bookbyte-primary: var(--furnifind-primary);
+    --bookbyte-secondary: var(--furnifind-secondary);
+    --bookbyte-accent: var(--furnifind-accent);
+    --bookbyte-light: var(--furnifind-light);
+    --bookbyte-dark: var(--furnifind-dark);
+  
+  /* Book theme color palette */
+
+  --book-tertiary: #8b5cf6; /* Purple */
+  --book-bg: #f8fafc; /* Off-white */
+  --book-text: #1e293b; /* Slate */
+  --book-muted: #94a3b8; /* Slate-300 */
+  --book-highlight: #f59e0b; /* Amber-500 */
+
+  /* Font families */
+  --book-title-font: "Playfair Display", Georgia, serif;
+  --book-body-font: "Merriweather", Georgia, serif;
+  --book-heading-font: "Roboto Slab", serif;
+}
+
+/*
+ * USAGE GUIDE:
+ * 
+ * 1. For new development, always use the --book-* variables
+ * 2. When refactoring existing code, replace --coffee-* with --book-* equivalents
+ * 3. The variable mappings above ensure backward compatibility
+ *
+ * Example:
+ *   Old: color: var(--coffee-accent);
+ *   New: color: var(--book-accent);
+ */

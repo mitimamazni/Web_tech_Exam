@@ -1,0 +1,423 @@
+/* 
+ * BookByte Admin Dashboard Styling 
+ * This file contains book-themed styling for admin dashboards
+ */
+
+/* Admin panel updates for BookByte */
+.admin-header {
+  background-color: var(--book-primary);
+  color: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.admin-title {
+  font-family: var(--book-title-font);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.admin-title ion-icon {
+  font-size: 1.8rem;
+}
+
+/* Admin sections */
+.admin-section {
+  background-color: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
+}
+
+.admin-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--book-light);
+}
+
+.admin-section-title {
+  font-family: var(--book-heading-font);
+  color: var(--book-primary);
+  margin: 0;
+}
+
+/* Admin metrics */
+.admin-metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.metric-card {
+  background: linear-gradient(to bottom right, var(--book-light), white);
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 5px rgba(15, 23, 42, 0.05);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.metric-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 15px rgba(15, 23, 42, 0.1);
+}
+
+.metric-icon {
+  font-size: 2rem;
+  color: var(--book-accent);
+  margin-bottom: 1rem;
+}
+
+.metric-title {
+  color: var(--book-muted);
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.5rem;
+}
+
+.metric-value {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: var(--book-primary);
+  margin-bottom: 0.5rem;
+}
+
+.metric-change {
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.metric-change.positive {
+  color: #10b981;
+}
+
+.metric-change.negative {
+  color: #ef4444;
+}
+
+/* Admin tables */
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.admin-table th {
+  background-color: var(--book-light);
+  color: var(--book-primary);
+  padding: 1rem;
+  text-align: left;
+  font-weight: 600;
+  font-family: var(--book-heading-font);
+}
+
+.admin-table td {
+  padding: 1rem;
+  border-bottom: 1px solid var(--book-light);
+  color: var(--book-text);
+}
+
+.admin-table tr:last-child td {
+  border-bottom: none;
+}
+
+.admin-table tr:hover td {
+  background-color: rgba(224, 242, 254, 0.3);
+}
+
+/* Book status badges */
+.book-status {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 50px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.book-status.in-stock {
+  background-color: rgba(16, 185, 129, 0.1);
+  color: #10b981;
+}
+
+.book-status.low-stock {
+  background-color: rgba(245, 158, 11, 0.1);
+  color: #f59e0b;
+}
+
+.book-status.out-of-stock {
+  background-color: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+}
+
+/* Admin buttons */
+.admin-btn {
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.admin-btn-primary {
+  background-color: var(--book-primary);
+  color: white;
+  border: none;
+}
+
+.admin-btn-secondary {
+  background-color: transparent;
+  color: var(--book-primary);
+  border: 1px solid var(--book-primary);
+}
+
+.admin-btn-danger {
+  background-color: transparent;
+  color: #ef4444;
+  border: 1px solid #ef4444;
+}
+
+.admin-btn-primary:hover {
+  background-color: var(--book-dark);
+}
+
+.admin-btn-secondary:hover {
+  background-color: var(--book-light);
+}
+
+.admin-btn-danger:hover {
+  background-color: rgba(239, 68, 68, 0.1);
+}
+
+/* Admin card layout */
+.admin-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.admin-book-card {
+  background-color: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
+  transition: transform 0.3s ease;
+}
+
+.admin-book-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 15px rgba(15, 23, 42, 0.15);
+}
+
+.admin-book-img {
+  height: 200px;
+  overflow: hidden;
+}
+
+.admin-book-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.admin-book-card:hover .admin-book-img img {
+  transform: scale(1.05);
+}
+
+.admin-book-details {
+  padding: 1.5rem;
+}
+
+.admin-book-title {
+  font-family: var(--book-title-font);
+  color: var(--book-primary);
+  margin-bottom: 0.5rem;
+  font-size: 1.2rem;
+}
+
+.admin-book-author {
+  color: var(--book-muted);
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
+
+.admin-book-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.admin-book-price {
+  font-weight: bold;
+  color: var(--book-text);
+}
+
+.admin-book-sales {
+  font-size: 0.9rem;
+  color: var(--book-muted);
+}
+
+/* Admin form elements */
+.admin-form-group {
+  margin-bottom: 1.5rem;
+}
+
+.admin-form-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: var(--book-text);
+}
+
+.admin-form-input,
+.admin-form-select,
+.admin-form-textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--book-light);
+  border-radius: 4px;
+  font-family: inherit;
+  font-size: 1rem;
+  color: var(--book-text);
+  background-color: white;
+  transition: border-color 0.2s ease;
+}
+
+.admin-form-input:focus,
+.admin-form-select:focus,
+.admin-form-textarea:focus {
+  outline: none;
+  border-color: var(--book-accent);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.admin-form-textarea {
+  min-height: 150px;
+  resize: vertical;
+}
+
+/* Admin search */
+.admin-search {
+  position: relative;
+  max-width: 400px;
+}
+
+.admin-search-input {
+  width: 100%;
+  padding: 0.75rem 1rem 0.75rem 2.5rem;
+  border: 1px solid var(--book-light);
+  border-radius: 50px;
+  font-family: inherit;
+  font-size: 0.95rem;
+  color: var(--book-text);
+  background-color: white;
+  transition: all 0.2s ease;
+}
+
+.admin-search-input:focus {
+  outline: none;
+  border-color: var(--book-accent);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.admin-search-icon {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--book-muted);
+  font-size: 1.1rem;
+}
+
+/* Admin analytics */
+.admin-chart-container {
+  background-color: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
+  margin-bottom: 2rem;
+}
+
+.admin-chart-title {
+  font-family: var(--book-heading-font);
+  color: var(--book-primary);
+  margin-bottom: 1.5rem;
+  font-size: 1.25rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--book-light);
+}
+
+/* Admin pagination */
+.admin-pagination {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 2rem;
+}
+
+.admin-page-item {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  border: 1px solid var(--book-light);
+  color: var(--book-text);
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.admin-page-item.active {
+  background-color: var(--book-primary);
+  color: white;
+  border-color: var(--book-primary);
+}
+
+.admin-page-item:hover:not(.active) {
+  background-color: var(--book-light);
+}
+
+/* Empty state */
+.admin-empty-state {
+  text-align: center;
+  padding: 3rem 1rem;
+}
+
+.admin-empty-icon {
+  font-size: 4rem;
+  color: var(--book-accent);
+  opacity: 0.5;
+  margin-bottom: 1.5rem;
+}
+
+.admin-empty-title {
+  font-family: var(--book-heading-font);
+  color: var(--book-primary);
+  margin-bottom: 0.5rem;
+}
+
+.admin-empty-text {
+  color: var(--book-muted);
+  margin-bottom: 2rem;
+  max-width: 400px;
+  margin-left: auto;
+  margin-right: auto;
+}

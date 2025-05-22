@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head th:replace="~{fragments/layout :: head('Admin - Order Management')}">
+    <title>Admin - Order Management</title>
+  </head>
+
+  <body>
+    <div th:replace="~{fragments/layout :: navbar}"></div>
+    <div
+      th:replace="~{fragments/layout :: page-title('Order Management')}"
+    ></div>
+    <div th:replace="~{fragments/layout :: alerts}"></div>
+
+    <!-- Admin Header Section -->
+    <div class="admin-header">
+      <div class="container">
+        <div class="admin-navigation">
+          <a th:href="@{/admin}" class="admin-nav-link">Dashboard</a>
+          <a th:href="@{/admin/products}" class="admin-nav-link">Products</a>
+          <a th:href="@{/admin/orders}" class="admin-nav-link active">Orders</a>
+          <a th:href="@{/admin/users}" class="admin-nav-link">Users</a>
+          <a th:href="@{/admin/categories}" class="admin-nav-link"
+            >Categories</a
+          >
+          <a th:href="@{/admin/analytics}" class="admin-nav-link">Analytics</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Order List Section -->
+    <section class="admin-content">
+      <div class="container">
+        <div class="table-wrapper">
+          <div class="table-title">
+            <div class="row">
+              <div class="col-8">
+                <h2>Order <b>Management</b></h2>
+              </div>
+              <div class="col-4">
+                <div class="filter-container">
+                  <form
+                    id="orderFilterForm"
+                    th:action="@{/admin/orders}"
+                    method="get"
+                  >
+                    <select
+                      name="status"
+                      class="form-control"
+                      onchange="this.form.submit()"
+                    >
+                      <option value="">All Statuses</option>
+                      <option
+                        th:each="status : ${orderStatuses}"
+                        th:value="${status.name()}"
+                        th:text="${status.name()}"
+                        th:selected="${param.status != null && param.status[0] == status.name()}"
+                      >
+                        PENDING
+                      </option>
+                    </select>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <table class="table table-striped table-hover">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Customer</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th>Total</th>
+                <th>Items</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr th:each="order : ${orders}">
+                <td th:text="${order.id}">1</td>
+                <td
+                  th:text="${order.user.firstName + ' ' + order.user.lastName}"
+                >
+                  John Doe
+                </td>
+                <td
+                  th:text="${#temporals.format(order.createdAt, 'dd-MMM-yyyy')}"
+                >
+                  01-Jan-2023
+                </td>
+                <td>
+                  <div class="order-status-container">
+                    <span
+                      class="badge status-badge"
+                      th:text="${order.status}"
+                      th:classappend="${'badge-' + order.status.name().toLowerCase()}"
+                      th:attr="data-order-id=${order.id}"
+                    >
+                      PENDING
+                    </span>
+                    <div class="status-dropdown" style="display: none">
+                      <select
+                        class="form-control form-control-sm status-select"
+                        th:attr="data-order-id=${order.id}"
+                      >
+                        <option
+                          th:each="status : ${orderStatuses}"
+                          th:value="${status}"
+                          th:text="${status}"
+                          th:selected="${order.status == status}"
+                        >
+                          PENDING
+                        </option>
+                      </select>
+                      <button class="btn btn-sm btn-primary update-status-btn">
+                        Save
+                      </button>
+                    </div>
+                  </div>
+                </td>
+                <td th:text="${'$' + order.totalAmount}">$99.99</td>
+                <td th:text="${order.orderItems.size()}">3</td>
+                <td>
+                  <a
+                    th:href="@{'/admin/orders/' + ${order.id}}"
+                    class="btn btn-sm btn-info"
+                  >
+                    View
+                  </a>
+                  <button class="btn btn-sm btn-secondary edit-status-btn">
+                    Edit Status
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <!-- Pagination -->
+          <div th:if="${totalPages > 0}" class="pagination-container">
+            <ul class="pagination">
+              <li
+                class="page-item"
+                th:classappend="${currentPage == 0} ? disabled"
+              >
+                <a
+                  class="page-link"
+                  th:href="@{/admin/orders(page=0, status=${param.status})}"
+                  >&laquo;</a
+                >
+              </li>
+              <li
+                class="page-item"
+                th:classappend="${currentPage == 0} ? disabled"
+              >
+                <a
+                  class="page-link"
+                  th:href="@{/admin/orders(page=${currentPage - 1}, status=${param.status})}"
+                  >&lt;</a
+                >
+              </li>
+
+              <li
+                class="page-item"
+                th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                th:classappend="${currentPage == i} ? active"
+              >
+                <a
+                  class="page-link"
+                  th:href="@{/admin/orders(page=${i}, status=${param.status})}"
+                  th:text="${i + 1}"
+                ></a>
+              </li>
+
+              <li
+                class="page-item"
+                th:classappend="${currentPage == totalPages - 1} ? disabled"
+              >
+                <a
+                  class="page-link"
+                  th:href="@{/admin/orders(page=${currentPage + 1}, status=${param.status})}"
+                  >&gt;</a
+                >
+              </li>
+              <li
+                class="page-item"
+                th:classappend="${currentPage == totalPages - 1} ? disabled"
+              >
+                <a
+                  class="page-link"
+                  th:href="@{/admin/orders(page=${totalPages - 1}, status=${param.status})}"
+                  >&raquo;</a
+                >
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div th:replace="~{fragments/layout :: footer}"></div>
+    <div th:replace="~{fragments/layout :: scripts}"></div>
+
+    <script>
+      $(document).ready(function () {
+        // Enable inline order status editing
+        $(".edit-status-btn").click(function (e) {
+          e.preventDefault();
+
+          // Find the container for this row
+          var container = $(this).closest("tr").find(".order-status-container");
+
+          // Hide the badge and show the dropdown
+          container.find(".status-badge").hide();
+          container.find(".status-dropdown").show();
+        });
+
+        // Handle status update button click
+        $(".update-status-btn").click(function () {
+          var container = $(this).closest(".order-status-container");
+          var orderId = container.find(".status-select").data("order-id");
+          var newStatus = container.find(".status-select").val();
+          var csrfToken = $("meta[name='_csrf']").attr("content");
+          var csrfHeader = $("meta[name='_csrf_header']").attr("content");
+
+          // Show loading indicator
+          $(this).html('<i class="fas fa-spinner fa-spin"></i>');
+
+          // Setup CSRF headers
+          var headers = {};
+          headers[csrfHeader] = csrfToken;
+
+          $.ajax({
+            type: "POST",
+            url: "/admin/orders/" + orderId + "/status",
+            headers: headers,
+            data: {
+              status: newStatus,
+            },
+            success: function (response) {
+              // Update the badge with the new status
+              var badge = container.find(".status-badge");
+              badge.text(newStatus);
+              badge.attr(
+                "class",
+                "badge status-badge badge-" + newStatus.toLowerCase()
+              );
+
+              // Hide the dropdown and show the updated badge
+              container.find(".status-dropdown").hide();
+              badge.show();
+
+              // Show toast notification
+              showToast(
+                "Success",
+                "Order status updated to " + newStatus,
+                "success"
+              );
+            },
+            error: function () {
+              // Show toast error notification
+              showToast("Error", "Failed to update order status", "error");
+
+              // Reset button
+              container.find(".update-status-btn").text("Save");
+            },
+          });
+        });
+
+        // Helper function for toast notifications
+        function showToast(title, message, type) {
+          $(
+            '<div class="toast toast-' +
+              type +
+              '">' +
+              '<div class="toast-header"><strong>' +
+              title +
+              "</strong></div>" +
+              '<div class="toast-body">' +
+              message +
+              "</div>" +
+              "</div>"
+          )
+            .appendTo("body")
+            .fadeIn(400)
+            .delay(3000)
+            .fadeOut(400, function () {
+              $(this).remove();
+            });
+        }
+
+        // Add CSS for toast notifications
+        $(
+          "<style>" +
+            ".toast { position: fixed; bottom: 20px; right: 20px; min-width: 250px; padding: 15px; z-index: 9999; border-radius: 4px; box-shadow: 0 0 10px rgba(0,0,0,0.2); }" +
+            ".toast-success { background-color: #4CAF50; color: white; }" +
+            ".toast-error { background-color: #F44336; color: white; }" +
+            ".toast-header { font-weight: bold; margin-bottom: 5px; }" +
+            "</style>"
+        ).appendTo("head");
+      });
+    </script>
+  </body>
+</html>

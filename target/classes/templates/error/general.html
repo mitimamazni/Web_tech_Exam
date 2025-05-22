@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head th:replace="~{fragments/layout :: head('Error')}">
+    <title>Error</title>
+  </head>
+  <body>
+    <div th:replace="~{fragments/layout :: navbar}"></div>
+    <div
+      th:replace="~{fragments/layout :: page-title('An Error Occurred')}"
+    ></div>
+
+    <div class="container my-5">
+      <div class="error-container">
+        <div class="error-icon">
+          <ion-icon
+            name="home-outline"
+            style="font-size: 3rem; color: var(--furnifind-primary)"
+          ></ion-icon>
+        </div>
+        <h2 class="error-title">Something went wrong</h2>
+        <p
+          class="error-message"
+          th:text="${error ?: 'An unexpected error occurred.'}"
+        >
+          Error details will appear here.
+        </p>
+        <div class="error-actions">
+          <a
+            href="/"
+            class="btn btn-primary"
+            style="
+              background-color: var(--furnifind-primary);
+              border-color: var(--furnifind-primary);
+            "
+          >
+            <ion-icon name="home-outline"></ion-icon> Back to Home
+          </a>
+          <a
+            href="javascript:history.back()"
+            class="btn btn-secondary"
+            style="
+              background-color: var(--furnifind-secondary);
+              border-color: var(--furnifind-secondary);
+            "
+          >
+            <ion-icon name="arrow-back-outline"></ion-icon> Go Back
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div th:replace="~{fragments/layout :: footer}"></div>
+    <div th:replace="~{fragments/layout :: scripts}"></div>
+  </body>
+</html>

@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head th:replace="~{fragments/layout :: head('Product Details')}">
+    <title>Product Details</title>
+  </head>
+
+  <body>
+    <div th:replace="~{fragments/layout :: navbar}"></div>
+    <div
+      th:replace="~{fragments/layout :: page-title('Product Details')}"
+    ></div>
+    <div th:replace="~{fragments/layout :: alerts}"></div>
+
+    <!-- Admin Header Section -->
+    <div class="admin-header">
+      <div class="container">
+        <div class="admin-navigation">
+          <a th:href="@{/admin}" class="admin-nav-link">Dashboard</a>
+          <a th:href="@{/admin/products}" class="admin-nav-link active"
+            >Products</a
+          >
+          <a th:href="@{/admin/orders}" class="admin-nav-link">Orders</a>
+          <a th:href="@{/admin/users}" class="admin-nav-link">Users</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Product Details Section -->
+    <section class="admin-content">
+      <div class="container">
+        <div class="admin-card">
+          <div class="card-header">
+            <h3>Product Details</h3>
+            <div class="header-actions">
+              <a th:href="@{/admin/products}" class="btn btn-secondary"
+                >Back to Products</a
+              >
+              <a
+                th:href="@{'/admin/products/' + ${product.id} + '/edit'}"
+                class="btn btn-warning"
+                >Edit Product</a
+              >
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="product-details">
+              <div class="product-header">
+                <div class="row">
+                  <div class="col-md-8">
+                    <h2 th:text="${product.name}">Product Name</h2>
+                    <div class="product-status">
+                      Status:
+                      <span
+                        class="badge"
+                        th:text="${product.active ? 'Active' : 'Inactive'}"
+                        th:classappend="${product.active ? 'badge-success' : 'badge-danger'}"
+                      >
+                        Active
+                      </span>
+                    </div>
+                  </div>
+                  <div class="col-md-4 text-end">
+                    <div class="price-info">
+                      <div
+                        class="regular-price"
+                        th:text="${'Regular Price: $' + product.price}"
+                      >
+                        Regular Price: $19.99
+                      </div>
+                      <div
+                        class="sale-price"
+                        th:if="${product.salePrice != null}"
+                        th:text="${'Sale Price: $' + product.salePrice}"
+                      >
+                        Sale Price: $15.99
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="product-images-carousel">
+                <div
+                  id="productCarousel"
+                  class="carousel slide"
+                  data-bs-ride="carousel"
+                >
+                  <div class="carousel-inner">
+                    <!-- If no images, show placeholder -->
+                    <div
+                      class="carousel-item active"
+                      th:if="${product.images.isEmpty()}"
+                    >
+                      <div class="no-image-placeholder">
+                        No Images Available
+                      </div>
+                    </div>
+
+                    <!-- Show actual images if available -->
+                    <div
+                      th:each="image, imageStat : ${product.images}"
+                      th:class="${'carousel-item' + (imageStat.index == 0 ? ' active' : '')}"
+                    >
+                      <img
+                        th:src="${image.imageUrl}"
+                        class="d-block w-100"
+                        alt="Product Image"
+                      />
+                      <div class="carousel-caption d-none d-md-block">
+                        <span
+                          class="badge badge-info"
+                          th:if="${image.isPrimary}"
+                          >Primary Image</span
+                        >
+                      </div>
+                    </div>
+                  </div>
+
+                  <button
+                    th:if="${product.images.size() > 1}"
+                    class="carousel-control-prev"
+                    type="button"
+                    data-bs-target="#productCarousel"
+                    data-bs-slide="prev"
+                  >
+                    <span
+                      class="carousel-control-prev-icon"
+                      aria-hidden="true"
+                    ></span>
+                    <span class="visually-hidden">Previous</span>
+                  </button>
+                  <button
+                    th:if="${product.images.size() > 1}"
+                    class="carousel-control-next"
+                    type="button"
+                    data-bs-target="#productCarousel"
+                    data-bs-slide="next"
+                  >
+                    <span
+                      class="carousel-control-next-icon"
+                      aria-hidden="true"
+                    ></span>
+                    <span class="visually-hidden">Next</span>
+                  </button>
+                </div>
+              </div>
+
+              <div class="product-meta">
+                <div class="meta-item">
+                  <span class="meta-label">ID:</span>
+                  <span class="meta-value" th:text="${product.id}">123</span>
+                </div>
+                <div class="meta-item">
+                  <span class="meta-label">Category:</span>
+                  <span
+                    class="meta-value"
+                    th:text="${product.category != null ? product.category.name : 'Uncategorized'}"
+                    >Coffee</span
+                  >
+                </div>
+                <div class="meta-item">
+                  <span class="meta-label">Stock:</span>
+                  <span class="meta-value" th:text="${product.stockQuantity}"
+                    >100</span
+                  >
+                </div>
+                <div class="meta-item">
+                  <span class="meta-label">Added:</span>
+                  <span
+                    class="meta-value"
+                    th:text="${#temporals.format(product.createdAt, 'dd-MMM-yyyy')}"
+                    >01-Jan-2023</span
+                  >
+                </div>
+                <div class="meta-item">
+                  <span class="meta-label">Last Updated:</span>
+                  <span
+                    class="meta-value"
+                    th:text="${#temporals.format(product.updatedAt, 'dd-MMM-yyyy')}"
+                    >01-Jan-2023</span
+                  >
+                </div>
+                <div class="meta-item">
+                  <span class="meta-label">Subscription:</span>
+                  <span
+                    class="meta-value"
+                    th:text="${product.isSubscription ? 'Yes' : 'No'}"
+                    >No</span
+                  >
+                </div>
+              </div>
+
+              <div class="product-tags" th:if="${!product.tags.isEmpty()}">
+                <h5>Tags:</h5>
+                <div class="tags-container">
+                  <span
+                    class="badge tag-badge"
+                    th:each="tag : ${product.tags}"
+                    th:text="${tag.name}"
+                    >Fresh</span
+                  >
+                </div>
+              </div>
+
+              <div class="product-description">
+                <h5>Description:</h5>
+                <div th:utext="${product.description}">
+                  Product description...
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Reviews Section -->
+        <div class="admin-card mt-4">
+          <div class="card-header">
+            <h3>Customer Reviews</h3>
+          </div>
+          <div class="card-body">
+            <div class="review-list">
+              <div th:if="${product.reviews.isEmpty()}" class="no-content">
+                No reviews available for this product.
+              </div>
+
+              <div th:each="review : ${product.reviews}" class="review-item">
+                <div class="review-header">
+                  <div class="reviewer-info">
+                    <span
+                      class="reviewer-name"
+                      th:text="${review.user.firstName + ' ' + review.user.lastName}"
+                      >John Doe</span
+                    >
+                    <span
+                      class="review-date"
+                      th:text="${#temporals.format(review.createdAt, 'dd-MMM-yyyy')}"
+                      >01-Jan-2023</span
+                    >
+                  </div>
+                  <div class="review-rating">
+                    <span class="rating-stars">
+                      <i
+                        class="fas fa-star"
+                        th:each="i : ${#numbers.sequence(1, review.rating)}"
+                      ></i>
+                      <i
+                        class="far fa-star"
+                        th:each="i : ${#numbers.sequence(review.rating + 1, 5)}"
+                      ></i>
+                    </span>
+                    <span class="rating-value" th:text="${review.rating + '/5'}"
+                      >4/5</span
+                    >
+                  </div>
+                </div>
+
+                <div class="review-content">
+                  <h5 th:text="${review.title}">Great Product!</h5>
+                  <p th:text="${review.content}">This product is amazing...</p>
+                </div>
+
+                <div class="review-actions">
+                  <form
+                    th:action="@{'/admin/reviews/' + ${review.id} + '/delete'}"
+                    method="post"
+                    style="display: inline"
+                  >
+                    <input
+                      type="hidden"
+                      name="_csrf"
+                      th:value="${_csrf?.token}"
+                    />
+                    <button
+                      type="submit"
+                      class="btn btn-sm btn-danger"
+                      onclick="return confirm('Are you sure you want to delete this review?')"
+                    >
+                      <i class="fas fa-trash"></i> Delete Review
+                    </button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div th:replace="~{fragments/layout :: footer}"></div>
+    <div th:replace="~{fragments/layout :: scripts}"></div>
+  </body>
+</html>

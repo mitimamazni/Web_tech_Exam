@@ -1,0 +1,446 @@
+/* 
+ * FurniFind Redesign - CSS Overrides
+ * This file contains design overrides for the FurniFind e-commerce platform
+ * It focuses on visual changes without altering functionality
+ */
+
+:root {
+  /* New color scheme - Modern Furniture Theme */
+  --furnifind-primary: #5c6a76; /* Slate blue-gray */
+  --furnifind-secondary: #a67c52; /* Warm wood brown */
+  --furnifind-accent: #e4a951; /* Golden accent */
+  --furnifind-light: #f9f7f3; /* Warm off-white */
+  --furnifind-dark: #2d3748; /* Dark charcoal */
+  --furnifind-gray: #8d9ca8; /* Soft gray */
+  --furnifind-success: #68a678; /* Natural green */
+  --furnifind-danger: #e27676; /* Soft red */
+  --furnifind-warning: #f2d076; /* Muted yellow */
+  --furnifind-info: #76a8c7; /* Calm blue */
+
+  /* Override existing variables for compatibility */
+  --book-primary: var(--furnifind-primary);
+  --book-secondary: var(--furnifind-secondary);
+  --book-accent: var(--furnifind-accent);
+  --book-dark: var(--furnifind-dark);
+  --book-light: var(--furnifind-light);
+  --coffee-accent: var(--furnifind-accent);
+  --coffee-dark: var(--furnifind-dark);
+  --bookbyte-primary: var(--furnifind-primary);
+  --bookbyte-secondary: var(--furnifind-secondary);
+  --bookbyte-accent: var(--furnifind-accent);
+  --bookbyte-light: var(--furnifind-light);
+  --bookbyte-dark: var(--furnifind-dark);
+
+  /* Typography */
+  --furnifind-heading-font: "Montserrat", sans-serif;
+  --furnifind-body-font: "Open Sans", sans-serif;
+}
+
+/* Global styles */
+body {
+  font-family: var(--furnifind-body-font);
+  background-color: var(--furnifind-light);
+  color: var(--furnifind-dark);
+  display: flex;
+  min-height: 100vh;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--furnifind-heading-font);
+}
+
+main {
+  margin-left: 250px; /* Space for sidebar */
+  width: calc(100% - 250px);
+  transition: all 0.3s ease;
+  padding: 0;
+}
+
+/* Sidebar styles */
+.sidebar {
+  position: fixed;
+  width: 250px;
+  height: 100vh;
+  left: 0;
+  top: 0;
+  background-color: white;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.05);
+  z-index: 100;
+  padding-top: 1rem;
+  transition: all 0.3s ease;
+  overflow-y: auto;
+}
+
+.sidebar-logo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem 0;
+}
+
+.sidebar-logo h1 {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.5rem;
+  color: var(--furnifind-dark);
+}
+
+.sidebar-nav {
+  padding: 1rem 0;
+}
+
+.sidebar-nav-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar-nav-item {
+  margin-bottom: 0.25rem;
+}
+
+.sidebar-nav-link {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1.5rem;
+  color: var(--furnifind-dark);
+  text-decoration: none;
+  transition: all 0.2s ease;
+  gap: 0.75rem;
+}
+
+.sidebar-nav-link:hover {
+  background-color: rgba(92, 106, 118, 0.08);
+  color: var(--furnifind-primary);
+}
+
+.sidebar-nav-link.active {
+  background-color: rgba(92, 106, 118, 0.12);
+  color: var(--furnifind-primary);
+  font-weight: 600;
+}
+
+.sidebar-nav-link ion-icon {
+  font-size: 1.25rem;
+}
+
+.sidebar-user-section {
+  padding: 1rem 1.5rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.sidebar-user-section a {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--furnifind-dark);
+  text-decoration: none;
+  padding: 0.5rem 0;
+  transition: all 0.2s ease;
+}
+
+.sidebar-user-section a:hover {
+  color: var(--furnifind-accent);
+}
+
+/* Sidebar toggle for mobile */
+.sidebar-toggle {
+  position: fixed;
+  left: 1rem;
+  top: 1rem;
+  z-index: 200;
+  background-color: white;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  display: none;
+}
+
+.sidebar-toggle ion-icon {
+  font-size: 1.5rem;
+  color: var(--furnifind-dark);
+}
+
+/* Utility bar */
+.utility-bar {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: calc(100% - 250px);
+  background-color: white;
+  z-index: 90;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.header-alert-news {
+  padding: 0.75rem 1.5rem;
+  background-color: var(--furnifind-accent);
+  color: var(--furnifind-dark);
+  flex-grow: 1;
+}
+
+.header-alert-news p {
+  margin: 0;
+  text-align: center;
+  font-size: 0.875rem;
+}
+
+.header-user-actions {
+  display: flex;
+  align-items: center;
+  padding: 0 1rem;
+}
+
+.action-btn {
+  position: relative;
+  padding: 0.5rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin: 0 0.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.action-btn ion-icon {
+  font-size: 1.5rem;
+  color: var(--furnifind-dark);
+}
+
+.count {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background-color: var(--furnifind-accent);
+  color: white;
+  font-size: 0.65rem;
+  font-weight: 600;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Responsive design */
+@media (max-width: 991px) {
+  .sidebar {
+    transform: translateX(-100%);
+  }
+
+  .sidebar-hidden {
+    transform: translateX(0);
+  }
+
+  .sidebar-toggle {
+    display: flex;
+  }
+
+  main {
+    margin-left: 0;
+    width: 100%;
+    padding-top: 0;
+  }
+
+  .main-expanded {
+    margin-left: 250px;
+    width: calc(100% - 250px);
+  }
+
+  .utility-bar {
+    width: 100%;
+  }
+}
+
+/* Banner adjustments */
+.banner {
+  margin-top: 45px; /* Space for utility bar */
+}
+
+.banner-img {
+  height: 500px;
+  object-fit: cover;
+}
+
+.showcase-banner img {
+  object-fit: cover;
+  height: 250px;
+}
+
+/* Category improvements */
+.category-item {
+  background-color: white;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.category-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+.category-content-flex {
+  display: flex;
+  align-items: center;
+}
+
+.category-item-title {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-right: 0.5rem;
+}
+
+.category-btn {
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  background-color: rgba(92, 106, 118, 0.08);
+  color: var(--furnifind-dark);
+  transition: all 0.2s ease;
+}
+
+.category-btn:hover {
+  background-color: var(--furnifind-primary);
+  color: white;
+}
+
+/* Testimonials styled for furniture */
+.testimonial-card {
+  background-color: white;
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  margin: 1rem 0.5rem;
+}
+
+.testimonial-name {
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.testimonial-title {
+  color: var(--furnifind-secondary);
+  font-size: 0.875rem;
+  margin-bottom: 1rem;
+}
+
+/* Quote section */
+.quote-section {
+  background-color: var(--furnifind-dark);
+  color: white;
+  padding: 4rem 2rem;
+  text-align: center;
+}
+
+.quote-text {
+  font-size: 1.75rem;
+  font-family: var(--furnifind-heading-font);
+  font-weight: 300;
+  line-height: 1.5;
+  max-width: 800px;
+  margin: 0 auto 1rem;
+}
+
+.quote-author {
+  font-size: 1rem;
+  color: var(--furnifind-accent);
+}
+
+/* Footer styling */
+footer {
+  background-color: var(--furnifind-dark);
+  color: white;
+  padding: 3rem 2rem;
+}
+
+.footer-category {
+  margin-bottom: 2rem;
+}
+
+.footer-category-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: var(--furnifind-light);
+}
+
+.footer-nav-list {
+  list-style: none;
+  padding: 0;
+}
+
+.footer-nav-link {
+  padding: 0.25rem 0;
+  display: block;
+  color: rgba(255, 255, 255, 0.75);
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.footer-nav-link:hover {
+  color: var(--furnifind-accent);
+}
+
+/* Furniture-specific category modals */
+.modal-content {
+  background-color: var(--furnifind-light);
+  border-radius: 8px;
+}
+
+.category-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1.5rem;
+}
+
+.category-card {
+  background-color: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+}
+
+.category-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+.category-card-img {
+  height: 150px;
+  width: 100%;
+  object-fit: cover;
+}
+
+.category-card-content {
+  padding: 1rem;
+}
+
+.category-card-title {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.category-card-price {
+  color: var(--furnifind-secondary);
+  font-weight: 500;
+}

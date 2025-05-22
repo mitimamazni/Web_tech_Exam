@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+>
+  <head th:replace="~{fragments/layout :: head('Book Details')}">
+    <title>Book Details</title>
+    <!-- Using global CSS since the head fragment doesn't support links parameter -->
+  </head>
+
+  <body>
+    <!-- Include the counter-unified.js script -->
+    <script th:src="@{/js/counter-unified.js}"></script>
+
+    <!-- Include Ionicons for icons -->
+    <script
+      type="module"
+      src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"
+    ></script>
+    <script
+      nomodule
+      src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"
+    ></script>
+
+    <!-- Toast notification container -->
+    <div class="toast-container"></div>
+
+    <div th:replace="~{fragments/layout :: navbar}"></div>
+    <div th:replace="~{fragments/layout :: alerts}"></div>
+
+    <main class="shop-page-container">
+      <div class="product-details-container" id="product-container">
+        <!-- Loading state -->
+        <div id="loading-indicator" class="loading-container">
+          <div class="loading-spinner"></div>
+          <p>Loading book details...</p>
+        </div>
+
+        <!-- Error state -->
+        <div id="error-container" class="error-container" style="display: none">
+          <div class="error-icon">
+            <ion-icon
+              name="alert-circle-outline"
+              style="font-size: 48px"
+            ></ion-icon>
+          </div>
+          <h2 class="error-title">Book Not Found</h2>
+          <p class="error-message">
+            We couldn't find the book you're looking for.
+          </p>
+          <a href="/products" class="btn-primary">Browse Books</a>
+        </div>
+
+        <!-- Product content will be loaded here -->
+        <div id="product-content" style="display: none">
+          <!-- Content will be dynamically inserted by JS -->
+        </div>
+      </div>
+    </main>
+
+    <div th:replace="~{fragments/layout :: footer}"></div>
+
+    <script th:inline="javascript">
+      document.addEventListener("DOMContentLoaded", function () {
+        const productId = getProductIdFromUrl();
+
+        if (!productId) {
+          showError("Invalid product ID");
+          return;
+        }
+
+        fetchProductDetails(productId);
+      });
+
+      // Extract product ID from URL
+      function getProductIdFromUrl() {
+        const path = window.location.pathname;
+        const segments = path
+          .split("/")
+          .filter((segment) => segment.length > 0);
+
+        if (segments.length >= 2 && segments[0] === "products") {
+          return segments[1];
+        }
+
+        return null;
+      }
+
+      // Fetch product details from API
+      function fetchProductDetails(id) {
+        showLoading(true);
+
+        fetch(`/api/products/${id}`)
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+          })
+          .then((data) => {
+            if (data.success && data.data) {
+              renderProductDetails(data.data);
+              showLoading(false);
+            } else {
+              throw new Error(data.message || "Failed to load product details");
+            }
+          })
+          .catch((error) => {
+            console.error("Error fetching product details:", error);
+            showError(error.message || "Failed to load product");
+          });
+      }
+
+      // Show/hide loading indicator
+      function showLoading(isLoading) {
+        document.getElementById("loading-indicator").style.display = isLoading
+          ? "flex"
+          : "none";
+
+        if (isLoading) {
+          document.getElementById("error-container").style.display = "none";
+          document.getElementById("product-content").style.display = "none";
+        }
+      }
+
+      // Show error message
+      function showError(message) {
+        showLoading(false);
+        const errorContainer = document.getElementById("error-container");
+        const errorMessage = errorContainer.querySelector(".error-message");
+
+        errorMessage.textContent =
+          message || "We couldn't find the product you're looking for.";
+        errorContainer.style.display = "flex";
+      }
+
+      // Render product details in the template
+      function renderProductDetails(product) {
+        const contentContainer = document.getElementById("product-content");
+
+        // Basic validation
+        if (!product || !product.id) {
+          showError("Invalid product data received");
+          return;
+        }
+
+        // Build the product HTML
+        contentContainer.innerHTML = `
+          <!-- Breadcrumb navigation -->
+          <div class="product-breadcrumb">
+            <ul class="breadcrumb">
+              <li><a href="/" class="breadcrumb-link">Home</a></li>
+              <li class="breadcrumb-separator">/</li>
+              <li>
+                <a href="/products" class="breadcrumb-link">Products</a>
+              </li>
+              <li class="breadcrumb-separator">/</li>
+              ${
+                product.category
+                  ? `
+              <li>
+                <a href="/products/category/${product.category.id}" class="breadcrumb-link">${product.category.name}</a>
+                <span class="breadcrumb-separator">/</span>
+              </li>`
+                  : ""
+              }
+              <li class="breadcrumb-current">${product.name}</li>
+            </ul>
+          </div>
+
+          <!-- Product gallery and details section -->
+          <div class="product-main-content">
+            <!-- Product gallery -->
+            <div class="product-gallery">
+              <div class="gallery-main-image">
+                <!-- Use the product's image_url from API -->
+                <img
+                  id="main-product-image"
+                  src="${getProductImage(product)}"
+                  alt="${product.name}"
+                />
+                <!-- Only show if stock is available -->
+                <span class="product-badge ${
+                  product.stockQuantity > 0 && product.active
+                    ? ""
+                    : "out-of-stock"
+                }">
+                  ${
+                    product.stockQuantity > 0 && product.active
+                      ? "Available"
+                      : "Out of Stock"
+                  }
+                </span>
+              </div>
+              <!-- Show thumbnails if available -->
+              ${
+                product.images && product.images.length > 0
+                  ? `
+              <div class="gallery-thumbnails">
+                ${product.images
+                  .map(
+                    (image, index) => `
+                  <div class="thumbnail ${
+                    index === 0 ? "active" : ""
+                  }" data-img="${image.imageUrl}">
+                    <img src="${image.imageUrl}" alt="${product.name} - ${
+                      index + 1
+                    }" />
+                  </div>
+                `
+                  )
+                  .join("")}
+              </div>`
+                  : ""
+              }
+            </div>
+
+            <!-- Product information -->
+            <div class="product-info">
+              <h1 class="product-title">${product.name}</h1>
+
+              <div class="product-meta">
+                <div class="product-id">Product ID: <span>${
+                  product.id
+                }</span></div>
+                ${
+                  product.category
+                    ? `
+                <div class="product-category">
+                  Category: <span>${product.category.name}</span>
+                </div>`
+                    : ""
+                }
+                <div class="product-availability ${
+                  product.stockQuantity > 0 ? "in-stock" : "out-of-stock"
+                }">
+                  <ion-icon name="${
+                    product.stockQuantity > 0
+                      ? "checkmark-circle-outline"
+                      : "close-circle-outline"
+                  }"></ion-icon>
+                  <span>${
+                    product.stockQuantity > 0 ? "In Stock" : "Out of Stock"
+                  }</span>
+                  ${
+                    product.stockQuantity > 0
+                      ? `<span>(${product.stockQuantity} available)</span>`
+                      : ""
+                  }
+                </div>
+              </div>
+
+              <div class="product-price-container">
+                <span class="product-price">$${formatPrice(
+                  product.price
+                )}</span>
+                ${
+                  product.salePrice
+                    ? `<span class="product-sale-price">$${formatPrice(
+                        product.salePrice
+                      )}</span>`
+                    : ""
+                }
+              </div>
+
+              <div class="product-description">
+                <p>${product.description || "No description available."}</p>
+              </div>
+
+              <!-- Product attributes -->
+              <div class="product-attributes">
+                <div class="attribute">
+                  <span class="attribute-name">ISBN:</span>
+                  <span class="attribute-value">${product.id}</span>
+                </div>
+                ${
+                  product.category
+                    ? `
+                <div class="attribute">
+                  <span class="attribute-name">Genre:</span>
+                  <span class="attribute-value">${product.category.name}</span>
+                </div>`
+                    : ""
+                }
+                <div class="attribute">
+                  <span class="attribute-name">Stock Level:</span>
+                  <span class="attribute-value">${product.stockQuantity}</span>
+                </div>
+                <div class="attribute">
+                  <span class="attribute-name">Status:</span>
+                  <span class="attribute-value">${
+                    product.active ? "Available" : "Unavailable"
+                  }</span>
+                </div>
+              </div>
+
+              ${
+                product.stockQuantity > 0 && product.active
+                  ? `
+              <!-- Quantity selector - limited by available stock -->
+              <div class="product-quantity">
+                <h4>Quantity:</h4>
+                <div class="quantity-selector">
+                  <button type="button" class="quantity-btn minus">
+                    <ion-icon name="remove-outline" style="font-size: 18px;"></ion-icon>
+                  </button>
+                  <input
+                    type="number"
+                    min="1"
+                    max="${product.stockQuantity}"
+                    value="1"
+                    class="quantity-input"
+                  />
+                  <button type="button" class="quantity-btn plus">
+                    <ion-icon name="add-outline" style="font-size: 18px;"></ion-icon>
+                  </button>
+                </div>
+                ${
+                  product.stockQuantity < 10
+                    ? `<span class="max-qty-note">Only ${product.stockQuantity} left!</span>`
+                    : ""
+                }
+              </div>
+
+              <div class="product-actions">
+                <div class="product-actions-container">
+                  <input type="hidden" class="product-id-input" value="${
+                    product.id
+                  }" />
+                  <input type="hidden" class="quantity-input-hidden" value="1" />
+                  
+                  <button type="button" class="add-to-cart-btn" data-cart-action="add" data-product-id="${
+                    product.id
+                  }">
+                    <ion-icon name="bag-add-outline" style="font-size: 20px;"></ion-icon>
+                    Add to Cart
+                  </button>
+                  <button type="button" class="wishlist-btn-product" data-wishlist-action="toggle" data-product-id="${
+                    product.id
+                  }">
+                    <ion-icon name="heart-outline" style="font-size: 24px;"></ion-icon>
+                  </button>
+                </div>
+              </div>`
+                  : `
+              <!-- Out of stock message -->
+              <div class="out-of-stock-message">
+                <p>This product is currently unavailable</p>
+                <button type="button" class="notify-btn">
+                  <ion-icon name="notifications-outline"></ion-icon>
+                  Notify me when available
+                </button>
+              </div>`
+              }
+
+              <div class="product-delivery-info">
+                <div class="delivery-item">
+                  <ion-icon name="rocket-outline" style="font-size: 24px;"></ion-icon>
+                  <div class="delivery-text">
+                    <h5>Fast Delivery</h5>
+                    <p>Orders ship within 24 hours</p>
+                  </div>
+                </div>
+                <div class="delivery-item">
+                  <ion-icon name="reload-outline" style="font-size: 24px;"></ion-icon>
+                  <div class="delivery-text">
+                    <h5>30-Day Returns</h5>
+                    <p>No questions asked</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="social-share">
+                <span>Share:</span>
+                <a href="#" class="social-icon"><ion-icon name="logo-facebook" style="font-size: 20px;"></ion-icon></a>
+                <a href="#" class="social-icon"><ion-icon name="logo-twitter" style="font-size: 20px;"></ion-icon></a>
+                <a href="#" class="social-icon"><ion-icon name="logo-pinterest" style="font-size: 20px;"></ion-icon></a>
+                <a href="#" class="social-icon"><ion-icon name="mail-outline" style="font-size: 20px;"></ion-icon></a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Product additional details tabs section -->
+          <div class="product-additional-details">
+            <div class="detail-tabs">
+              <button class="detail-tab-btn active" data-tab="description">
+                Description
+              </button>
+              <button class="detail-tab-btn" data-tab="details">
+                Additional Information
+              </button>
+              <button class="detail-tab-btn" data-tab="reviews">
+                Reviews (${product.reviews ? product.reviews.length : "0"})
+              </button>
+            </div>
+
+            <div class="detail-contents">
+              <div class="detail-content active" id="description">
+                <div class="tab-content-inner">
+                  <h3>About ${product.name}</h3>
+                  <p>${
+                    product.description ||
+                    "No detailed description available for this product."
+                  }</p>
+                </div>
+              </div>
+
+              <div class="detail-content" id="details">
+                <div class="tab-content-inner">
+                  <div class="specifications-table">
+                    <table>
+                      <tr>
+                        <th>ISBN</th>
+                        <td>${product.id}</td>
+                      </tr>
+                      ${
+                        product.category
+                          ? `
+                      <tr>
+                        <th>Genre</th>
+                        <td>${product.category.name}</td>
+                      </tr>`
+                          : ""
+                      }
+                      <tr>
+                        <th>Copies Available</th>
+                        <td>${product.stockQuantity}</td>
+                      </tr>
+                      <tr>
+                        <th>Price</th>
+                        <td>$${formatPrice(product.price)}</td>
+                      </tr>
+                      ${
+                        product.createdAt
+                          ? `
+                      <tr>
+                        <th>Published On</th>
+                        <td>${new Date(
+                          product.createdAt
+                        ).toLocaleDateString()}</td>
+                      </tr>`
+                          : ""
+                      }
+                      <tr>
+                        <th>Status</th>
+                        <td>${product.active ? "Available" : "Unavailable"}</td>
+                      </tr>
+                    </table>
+                  </div>
+                </div>
+              </div>
+
+              <div class="detail-content" id="reviews">
+                <div class="tab-content-inner">
+                  <div class="reviews-summary">
+                    <div class="overall-rating">
+                      <div class="rating-number">${
+                        product.averageRating || "No"
+                      }</div>
+                      <div class="rating-stars">
+                        ${generateStarRating(product.averageRating || 0)}
+                      </div>
+                      <div class="rating-count">
+                        ${
+                          product.reviews && product.reviews.length > 0
+                            ? `Based on ${product.reviews.length} reviews`
+                            : "No reviews yet"
+                        }
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div class="review-list">
+                    ${
+                      product.reviews && product.reviews.length > 0
+                        ? product.reviews
+                            .map(
+                              (review) => `
+                        <div class="review-item">
+                          <div class="review-header">
+                            <div class="review-author">${
+                              review.username || "Anonymous"
+                            }</div>
+                            <div class="review-date">${formatDate(
+                              review.createdAt
+                            )}</div>
+                            <div class="review-rating">${generateStarRating(
+                              review.rating
+                            )}</div>
+                          </div>
+                          <div class="review-content">${review.comment}</div>
+                        </div>
+                      `
+                            )
+                            .join("")
+                        : "<p>No reviews yet. Be the first to leave a review.</p>"
+                    }
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+
+        // Show the product content
+        contentContainer.style.display = "block";
+
+        // Initialize event listeners after rendering the content
+        initializeProductFunctionality(product);
+      }
+
+      // Utility function to get the main product image
+      function getProductImage(product) {
+        if (product.images && product.images.length > 0) {
+          // Try to find primary image
+          const primaryImage = product.images.find((img) => img.isPrimary);
+          if (primaryImage) return primaryImage.imageUrl;
+
+          // Otherwise use the first image
+          return product.images[0].imageUrl;
+        }
+
+        // If no images, use a placeholder
+        return product.imageUrl || "/images/product-placeholder.jpg";
+      }
+
+      // Format price with two decimal places
+      function formatPrice(price) {
+        return parseFloat(price).toFixed(2);
+      }
+
+      // Format date
+      function formatDate(dateString) {
+        if (!dateString) return "Unknown date";
+
+        try {
+          const date = new Date(dateString);
+          return date.toLocaleDateString();
+        } catch (e) {
+          return "Invalid date";
+        }
+      }
+
+      // Generate star rating HTML
+      function generateStarRating(rating) {
+        let starsHtml = "";
+
+        // Generate full stars
+        for (let i = 1; i <= Math.floor(rating); i++) {
+          starsHtml += '<ion-icon name="star"></ion-icon>';
+        }
+
+        // Add a half star if needed
+        if (rating % 1 >= 0.5) {
+          starsHtml += '<ion-icon name="star-half"></ion-icon>';
+        }
+
+        // Add empty stars to make 5 stars total
+        const emptyStars = 5 - Math.ceil(rating);
+        for (let i = 0; i < emptyStars; i++) {
+          starsHtml += '<ion-icon name="star-outline"></ion-icon>';
+        }
+
+        return starsHtml;
+      }
+
+      // Initialize product functionality after rendering
+      function initializeProductFunctionality(product) {
+        // Quantity selector
+        const quantityInput = document.querySelector(".quantity-input");
+        const quantityInputHidden = document.querySelector(
+          ".quantity-input-hidden"
+        );
+        const minusBtn = document.querySelector(".quantity-btn.minus");
+        const plusBtn = document.querySelector(".quantity-btn.plus");
+
+        if (quantityInput && quantityInputHidden && minusBtn && plusBtn) {
+          // Set initial value
+          const maxQty = parseInt(product.stockQuantity) || 1;
+          quantityInput.setAttribute("max", maxQty);
+
+          // Handle minus button click
+          minusBtn.addEventListener("click", () => {
+            let value = parseInt(quantityInput.value);
+            if (value > 1) {
+              value--;
+              quantityInput.value = value;
+              quantityInputHidden.value = value;
+            }
+          });
+
+          // Handle plus button click
+          plusBtn.addEventListener("click", () => {
+            let value = parseInt(quantityInput.value);
+            if (value < maxQty) {
+              value++;
+              quantityInput.value = value;
+              quantityInputHidden.value = value;
+            }
+          });
+
+          // Handle direct input change
+          quantityInput.addEventListener("change", () => {
+            let value = parseInt(quantityInput.value);
+
+            if (isNaN(value) || value < 1) {
+              value = 1;
+            } else if (value > maxQty) {
+              value = maxQty;
+            }
+
+            quantityInput.value = value;
+            quantityInputHidden.value = value;
+          });
+        }
+
+        // Product gallery thumbnails
+        const thumbnails = document.querySelectorAll(".thumbnail");
+        const mainImage = document.getElementById("main-product-image");
+
+        if (thumbnails.length && mainImage) {
+          thumbnails.forEach((thumb) => {
+            thumb.addEventListener("click", () => {
+              // Remove active class from all thumbnails
+              thumbnails.forEach((t) => t.classList.remove("active"));
+
+              // Add active class to clicked thumbnail
+              thumb.classList.add("active");
+
+              // Update main image
+              const imageUrl = thumb.getAttribute("data-img");
+              mainImage.src = imageUrl;
+            });
+          });
+        }
+
+        // Tab switching
+        const tabButtons = document.querySelectorAll(".detail-tab-btn");
+        const tabPanels = document.querySelectorAll(".detail-content");
+
+        tabButtons.forEach((tab) => {
+          tab.addEventListener("click", () => {
+            // Remove active class from all tabs
+            tabButtons.forEach((btn) => btn.classList.remove("active"));
+
+            // Add active class to clicked tab
+            tab.classList.add("active");
+
+            // Get tab ID
+            const targetTab = tab.getAttribute("data-tab");
+
+            // Update active tab panel
+            tabPanels.forEach((panel) => panel.classList.remove("active"));
+            document.getElementById(targetTab).classList.add("active");
+          });
+        });
+
+        // Add to cart functionality
+        const addToCartBtn = document.querySelector(".add-to-cart-btn");
+
+        if (addToCartBtn) {
+          addToCartBtn.addEventListener("click", function () {
+            const productId = this.getAttribute("data-product-id");
+            const quantityInput = document.querySelector(
+              ".quantity-input-hidden"
+            );
+            const quantity = quantityInput ? parseInt(quantityInput.value) : 1;
+
+            // Add product to cart using AJAX
+            fetch("/cart/add", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                "X-CSRF-TOKEN": document
+                  .querySelector('meta[name="_csrf"]')
+                  ?.getAttribute("content"),
+              },
+              body: JSON.stringify({
+                productId: productId,
+                quantity: quantity,
+              }),
+            })
+              .then((response) => {
+                if (!response.ok) {
+                  throw new Error("Network response was not ok");
+                }
+                return response.json();
+              })
+              .then((data) => {
+                if (data.redirect) {
+                  // Redirect if needed (e.g., to login page)
+                  window.location.href = data.redirect;
+                  return;
+                }
+
+                // Animation and UI update
+                this.classList.add("added");
+                setTimeout(() => {
+                  this.classList.remove("added");
+                  this.innerHTML =
+                    '<ion-icon name="checkmark-outline"></ion-icon> Added to Cart';
+                  setTimeout(() => {
+                    this.innerHTML =
+                      '<ion-icon name="bag-add-outline"></ion-icon> Add to Cart';
+                  }, 1500);
+                }, 1000);
+
+                // Show success message
+                if (typeof showToast === "function") {
+                  showToast("Success", "Product added to cart!", "success");
+                }
+
+                // Update cart count using the unified counter system
+                if (data.cartCount !== undefined && window.CounterSystem) {
+                  window.CounterSystem.updateCartCount(data.cartCount);
+                }
+
+                // Dispatch a cart update event
+                document.dispatchEvent(
+                  new CustomEvent("cart:updated", {
+                    detail: { count: data.cartCount },
+                  })
+                );
+              })
+              .catch((error) => {
+                console.error("Error adding to cart:", error);
+                if (typeof showToast === "function") {
+                  showToast(
+                    "Error",
+                    "Failed to add product to cart. Please try again.",
+                    "error"
+                  );
+                }
+              });
+          });
+        }
+
+        // Wishlist button functionality
+        const wishlistBtn = document.querySelector(".wishlist-btn-product");
+
+        if (wishlistBtn) {
+          wishlistBtn.addEventListener("click", function () {
+            const productId = this.getAttribute("data-product-id");
+            const isActive = this.classList.contains("active");
+            const endpoint = isActive ? "/wishlist/remove" : "/wishlist/add";
+
+            // Toggle wishlist using AJAX
+            fetch(endpoint, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                "X-CSRF-TOKEN": document
+                  .querySelector('meta[name="_csrf"]')
+                  ?.getAttribute("content"),
+              },
+              body: JSON.stringify({ productId: productId }),
+            })
+              .then((response) => {
+                if (!response.ok) {
+                  throw new Error("Network response was not ok");
+                }
+                return response.json();
+              })
+              .then((data) => {
+                if (data.redirect) {
+                  // Redirect if needed (e.g., to login page)
+                  window.location.href = data.redirect;
+                  return;
+                }
+
+                // Toggle UI state
+                this.classList.toggle("active");
+                if (this.classList.contains("active")) {
+                  this.innerHTML = '<ion-icon name="heart"></ion-icon>';
+                } else {
+                  this.innerHTML = '<ion-icon name="heart-outline"></ion-icon>';
+                }
+
+                // Show success message
+                if (typeof showToast === "function") {
+                  const message = isActive
+                    ? "Product removed from wishlist"
+                    : "Product added to wishlist";
+                  showToast("Success", message, "success");
+                }
+
+                // Update wishlist count using the unified counter system
+                if (data.wishlistCount !== undefined && window.CounterSystem) {
+                  window.CounterSystem.updateWishlistCount(data.wishlistCount);
+                }
+
+                // Dispatch a wishlist update event
+                document.dispatchEvent(
+                  new CustomEvent("wishlist:updated", {
+                    detail: { count: data.wishlistCount },
+                  })
+                );
+              })
+              .catch((error) => {
+                console.error("Error updating wishlist:", error);
+                if (typeof showToast === "function") {
+                  showToast(
+                    "Error",
+                    "Failed to update wishlist. Please try again.",
+                    "error"
+                  );
+                }
+              });
+          });
+        }
+
+        // Notify button for out-of-stock products
+        const notifyBtn = document.querySelector(".notify-btn");
+
+        if (notifyBtn) {
+          notifyBtn.addEventListener("click", function () {
+            // This would typically open a modal or form to collect user's email for stock notifications
+            if (typeof showToast === "function") {
+              showToast(
+                "Coming Soon",
+                "Stock notification feature will be available soon!",
+                "info"
+              );
+            } else {
+              alert("Stock notification feature will be available soon!");
+            }
+          });
+        }
+      }
+
+      // Toast notification function (if not already defined)
+      if (typeof showToast !== "function") {
+        window.showToast = function (title, message, type = "info") {
+          const toastContainer = document.querySelector(".toast-container");
+
+          if (!toastContainer) return;
+
+          const toast = document.createElement("div");
+          toast.className = `toast toast-${type}`;
+
+          toast.innerHTML = `
+            <div class="toast-header">
+              <ion-icon name="${getIconForToastType(type)}"></ion-icon>
+              <strong>${title}</strong>
+              <button class="toast-close">&times;</button>
+            </div>
+            <div class="toast-body">${message}</div>
+          `;
+
+          toastContainer.appendChild(toast);
+
+          // Add visible class after a short delay for animation
+          setTimeout(() => {
+            toast.classList.add("visible");
+          }, 10);
+
+          // Remove toast after 5 seconds
+          const closeTimeout = setTimeout(() => {
+            removeToast(toast);
+          }, 5000);
+
+          // Close button functionality
+          const closeBtn = toast.querySelector(".toast-close");
+          closeBtn.addEventListener("click", () => {
+            clearTimeout(closeTimeout);
+            removeToast(toast);
+          });
+        };
+
+        function removeToast(toast) {
+          toast.classList.remove("visible");
+          toast.addEventListener("transitionend", () => {
+            toast.remove();
+          });
+        }
+
+        function getIconForToastType(type) {
+          switch (type) {
+            case "success":
+              return "checkmark-circle-outline";
+            case "error":
+              return "alert-circle-outline";
+            case "warning":
+              return "warning-outline";
+            default:
+              return "information-circle-outline";
+          }
+        }
+      }
+    </script>
+
+    <!-- Additional scripts from layout -->
+    <div th:replace="~{fragments/layout :: scripts}"></div>
+  </body>
+</html>

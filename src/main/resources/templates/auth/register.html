@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head th:replace="~{fragments/layout :: head('Register')}">
+    <title>Register</title>
+    <!-- Using global CSS since the head fragment doesn't support links parameter -->
+  </head>
+  <body>
+    <nav th:replace="~{fragments/layout :: navbar}"></nav>
+    <div th:replace="~{fragments/layout :: alerts}"></div>
+
+    <div
+      class="register-form"
+      style="border-color: var(--furnifind-light); background-color: white"
+    >
+      <h2
+        class="register-title book-title"
+        style="color: var(--furnifind-primary)"
+      >
+        Join the FurniFind Community
+      </h2>
+      <form
+        th:action="@{/register}"
+        th:object="${user}"
+        method="post"
+        class="auth-form"
+      >
+        <div class="form-row">
+          <div class="form-group">
+            <label for="firstName" class="form-label">First Name</label>
+            <input
+              type="text"
+              class="form-control"
+              id="firstName"
+              th:field="*{firstName}"
+              placeholder="Enter your first name"
+              required
+              style="border-color: var(--book-light); color: var(--book-text)"
+            />
+            <div class="form-icon">
+              <ion-icon
+                name="person-outline"
+                style="color: var(--book-accent)"
+              ></ion-icon>
+            </div>
+            <div
+              class="text-danger"
+              th:if="${#fields.hasErrors('firstName')}"
+              th:errors="*{firstName}"
+            ></div>
+          </div>
+          <div class="form-group">
+            <label for="lastName" class="form-label">Last Name</label>
+            <input
+              type="text"
+              class="form-control"
+              id="lastName"
+              th:field="*{lastName}"
+              placeholder="Enter your last name"
+              required
+              style="border-color: var(--book-light); color: var(--book-text)"
+            />
+            <div class="form-icon">
+              <ion-icon
+                name="person-outline"
+                style="color: var(--book-accent)"
+              ></ion-icon>
+            </div>
+            <div
+              class="text-danger"
+              th:if="${#fields.hasErrors('lastName')}"
+              th:errors="*{lastName}"
+            ></div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="username" class="form-label">Username</label>
+          <input
+            type="text"
+            class="form-control"
+            id="username"
+            th:field="*{username}"
+            placeholder="Choose a username"
+            required
+            style="
+              border-color: var(--furnifind-light);
+              color: var(--furnifind-dark);
+            "
+          />
+          <div class="form-icon">
+            <ion-icon
+              name="person-outline"
+              style="color: var(--book-accent)"
+            ></ion-icon>
+          </div>
+          <div
+            class="text-danger"
+            th:if="${#fields.hasErrors('username')}"
+            th:errors="*{username}"
+          ></div>
+        </div>
+
+        <div class="form-group">
+          <label for="email" class="form-label">Email</label>
+          <input
+            type="email"
+            class="form-control"
+            id="email"
+            th:field="*{email}"
+            placeholder="Enter your email address"
+            required
+            style="border-color: var(--book-light); color: var(--book-text)"
+          />
+          <div class="form-icon">
+            <ion-icon
+              name="mail-outline"
+              style="color: var(--book-accent)"
+            ></ion-icon>
+          </div>
+          <div
+            class="text-danger"
+            th:if="${#fields.hasErrors('email')}"
+            th:errors="*{email}"
+          ></div>
+        </div>
+
+        <div class="form-group">
+          <label for="password" class="form-label">Password</label>
+          <input
+            type="password"
+            class="form-control"
+            id="password"
+            th:field="*{password}"
+            placeholder="Create a password"
+            required
+          />
+          <div class="form-icon">
+            <ion-icon name="lock-closed-outline"></ion-icon>
+          </div>
+          <div
+            class="text-danger"
+            th:if="${#fields.hasErrors('password')}"
+            th:errors="*{password}"
+          ></div>
+        </div>
+
+        <div class="form-group">
+          <label for="phoneNumber" class="form-label">Phone Number</label>
+          <input
+            type="text"
+            class="form-control"
+            id="phoneNumber"
+            th:field="*{phoneNumber}"
+            placeholder="Enter your phone number"
+          />
+          <div class="form-icon">
+            <ion-icon name="call-outline"></ion-icon>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button
+            type="submit"
+            class="btn-primary"
+            style="
+              background-color: var(--furnifind-primary);
+              border-color: var(--furnifind-primary);
+            "
+          >
+            Create Account
+          </button>
+          <p class="login-link">
+            Already have an account?
+            <a th:href="@{/login}" style="color: var(--furnifind-secondary)"
+              >Login here</a
+            >
+          </p>
+        </div>
+      </form>
+
+      <div class="register-benefits">
+        <h3 class="book-subtitle">Benefits of joining FurniFind:</h3>
+        <ul class="benefits-list">
+          <li>
+            <ion-icon
+              name="checkmark-circle-outline"
+              style="color: var(--furnifind-secondary)"
+            ></ion-icon>
+            Access to exclusive furniture collections
+          </li>
+          <li>
+            <ion-icon
+              name="checkmark-circle-outline"
+              style="color: var(--furnifind-secondary)"
+            ></ion-icon>
+            Personalized furniture recommendations
+          </li>
+          <li>
+            <ion-icon
+              name="checkmark-circle-outline"
+              style="color: var(--furnifind-secondary)"
+            ></ion-icon>
+            Save your favorite furniture pieces
+          </li>
+          <li>
+            <ion-icon
+              name="checkmark-circle-outline"
+              style="color: var(--furnifind-secondary)"
+            ></ion-icon>
+            Track your purchase history
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div th:replace="~{fragments/layout :: footer}"></div>
+  </body>
+</html>

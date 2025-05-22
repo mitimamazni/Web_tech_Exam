@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head th:replace="~{fragments/layout :: head('Admin Dashboard')}">
+    <title>Admin Dashboard</title>
+  </head>
+
+  <body>
+    <div th:replace="~{fragments/layout :: navbar}"></div>
+    <div
+      th:replace="~{fragments/layout :: page-title('Admin Dashboard')}"
+    ></div>
+    <div th:replace="~{fragments/layout :: alerts}"></div>
+
+    <!-- Admin Header Section -->
+    <div class="admin-header">
+      <div class="container">
+        <div class="admin-navigation">
+          <a th:href="@{/admin}" class="admin-nav-link active">Dashboard</a>
+          <a th:href="@{/admin/products}" class="admin-nav-link">Products</a>
+          <a th:href="@{/admin/orders}" class="admin-nav-link">Orders</a>
+          <a th:href="@{/admin/users}" class="admin-nav-link">Users</a>
+          <a th:href="@{/admin/categories}" class="admin-nav-link"
+            >Categories</a
+          >
+          <a th:href="@{/admin/analytics}" class="admin-nav-link">Analytics</a>
+        </div>
+      </div>
+    </div>
+    <!-- Dashboard Overview Section -->
+    <section class="admin-content">
+      <div class="container">
+        <div class="row">
+          <!-- Stats Cards -->
+          <div class="col-md-3">
+            <div class="admin-card stats-card">
+              <div class="card-body text-center">
+                <h2 th:text="${productCount}">0</h2>
+                <h5>Products</h5>
+                <a
+                  th:href="@{/admin/products}"
+                  class="btn btn-sm btn-outline-primary"
+                  >Manage Products</a
+                >
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="admin-card stats-card">
+              <div class="card-body text-center">
+                <h2 th:text="${orderCount}">0</h2>
+                <h5>Orders</h5>
+                <a
+                  th:href="@{/admin/orders}"
+                  class="btn btn-sm btn-outline-primary"
+                  >Manage Orders</a
+                >
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="admin-card stats-card">
+              <div class="card-body text-center">
+                <h2 th:text="${userCount}">0</h2>
+                <h5>Users</h5>
+                <a
+                  th:href="@{/admin/users}"
+                  class="btn btn-sm btn-outline-primary"
+                  >Manage Users</a
+                >
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="admin-card stats-card">
+              <div class="card-body text-center">
+                <h2 th:text="${categoryCount}">0</h2>
+                <h5>Categories</h5>
+                <a
+                  th:href="@{/admin/categories}"
+                  class="btn btn-sm btn-outline-primary"
+                  >Manage Categories</a
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Orders -->
+        <div class="admin-card mt-4">
+          <div class="card-header">
+            <h3>Recent Orders</h3>
+            <a th:href="@{/admin/orders}" class="btn btn-primary"
+              >View All Orders</a
+            >
+          </div>
+          <div class="card-body">
+            <div th:if="${recentOrders.isEmpty()}" class="no-content">
+              No orders available
+            </div>
+            <div th:unless="${recentOrders.isEmpty()}">
+              <table class="table table-hover">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Customer</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                    <th>Total</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr th:each="order : ${recentOrders}">
+                    <td th:text="${order.id}">1</td>
+                    <td
+                      th:text="${order.user != null ? order.user.firstName + ' ' + order.user.lastName : 'Guest'}"
+                    >
+                      John Doe
+                    </td>
+                    <td
+                      th:text="${#temporals.format(order.createdAt, 'dd-MMM-yyyy')}"
+                    >
+                      01-Jan-2023
+                    </td>
+                    <td>
+                      <span
+                        class="badge"
+                        th:text="${order.status}"
+                        th:classappend="${'badge-' + order.status.name().toLowerCase()}"
+                      >
+                        PENDING
+                      </span>
+                    </td>
+                    <td th:text="${'$' + order.totalAmount}">$99.99</td>
+                    <td>
+                      <a
+                        th:href="@{'/admin/orders/' + ${order.id}}"
+                        class="btn btn-sm btn-info"
+                      >
+                        View
+                      </a>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Links -->
+        <div class="admin-card mt-4">
+          <div class="card-header">
+            <h3>Quick Actions</h3>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-4">
+                <div class="quick-action">
+                  <a
+                    th:href="@{/admin/products/new}"
+                    class="btn btn-lg btn-primary w-100"
+                  >
+                    <i class="fas fa-plus-circle"></i> Add New Product
+                  </a>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="quick-action">
+                  <a
+                    th:href="@{/admin/orders?status=PENDING}"
+                    class="btn btn-lg btn-warning w-100"
+                  >
+                    <i class="fas fa-clock"></i> View Pending Orders
+                  </a>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="quick-action">
+                  <a
+                    th:href="@{/admin/users}"
+                    class="btn btn-lg btn-info w-100"
+                  >
+                    <i class="fas fa-users"></i> Manage Users
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div th:replace="~{fragments/layout :: footer}"></div>
+    <div th:replace="~{fragments/layout :: scripts}"></div>
+
+    <script>
+      $(document).ready(function () {
+        // Dashboard-specific JavaScript can go here
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,2206 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="_csrf" th:content="${_csrf != null ? _csrf.token : ''}" />
+    <meta
+      name="_csrf_header"
+      th:content="${_csrf != null ? _csrf.headerName : ''}"
+    />
+    <title>FurniFind | Modern Furniture for Your Home</title>
+    <link rel="stylesheet" th:href="@{/css/home.css}" />
+    <link rel="stylesheet" th:href="@{/css/modal.css}" />
+    <link rel="stylesheet" th:href="@{/css/cart-animation.css}" />
+    <link rel="stylesheet" th:href="@{/css/cart-counter.css}" />
+    <link rel="stylesheet" th:href="@{/css/navigation.css}" />
+    <link rel="stylesheet" th:href="@{/css/theme-migration.css}" />
+    <link rel="stylesheet" th:href="@{/css/furniture-cart.css}" />
+    <link rel="stylesheet" th:href="@{/css/toast-notifications.css}" />
+
+    <link rel="stylesheet" th:href="@{/css/furnifind-theme.css}" />
+    <link rel="stylesheet" th:href="@{/css/furnifind-redesign.css}" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Open+Sans:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <script th:src="@{/js/config/app-config.js}"></script>
+    <script th:src="@{/js/counter-unified.js}"></script>
+    <script th:src="@{/js/furnifind-migration.js}"></script>
+    <script th:src="@{/js/sidebar-toggle-1.js}"></script>
+    <link
+      rel="shortcut icon"
+      href="https://cdn-icons-png.flaticon.com/512/3249/3249937.png"
+      type="image/png"
+    />
+  </head>
+  <body>
+    <div class="overlay" data-overlay></div>
+
+    <!-- Mobile Sidebar Toggle Button -->
+    <button class="sidebar-toggle" id="sidebar-toggle">
+      <ion-icon name="menu-outline"></ion-icon>
+    </button>
+
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="sidebar-logo">
+        <h1>
+          <ion-icon name="cube-outline"></ion-icon>
+          <span>Furni<span class="accent">Find</span></span>
+        </h1>
+      </div>
+      <nav class="sidebar-nav">
+        <ul class="sidebar-nav-list">
+          <li class="sidebar-nav-item">
+            <a href="/" class="sidebar-nav-link active">
+              <ion-icon name="home-outline"></ion-icon>
+              <span>Home</span>
+            </a>
+          </li>
+          <li class="sidebar-nav-item">
+            <a href="/wishlist" class="sidebar-nav-link">
+              <ion-icon name="heart-outline"></ion-icon>
+              <span>Your Wishlist</span>
+            </a>
+          </li>
+          <li class="sidebar-nav-item">
+            <a href="/cart" class="sidebar-nav-link">
+              <ion-icon name="bag-handle-outline"></ion-icon>
+              <span>Cart</span>
+            </a>
+          </li>
+          <li class="sidebar-nav-item">
+            <a href="/products" class="sidebar-nav-link">
+              <ion-icon name="cart-outline"></ion-icon>
+              <span>Products</span>
+            </a>
+          </li>
+          <li class="sidebar-nav-item">
+            <a class="sidebar-nav-link mobile-menu-dropdown-btn">
+              <ion-icon name="cog-outline"></ion-icon>
+              <span>Option</span>
+            </a>
+            <div class="mobile-menu-dropdown">
+              <div class="mobile-dropdown-content">
+                <a th:href="@{/profile}" sec:authorize="isAuthenticated()">
+                  <ion-icon name="person-outline"></ion-icon> Profile
+                </a>
+                <a th:href="@{/about}">
+                  <ion-icon name="information-circle-outline"></ion-icon> About
+                  Us
+                </a>
+                <form
+                  th:action="@{/logout}"
+                  method="post"
+                  sec:authorize="isAuthenticated()"
+                >
+                  <button type="submit" class="dropdown-menu-button">
+                    <ion-icon name="log-out-outline"></ion-icon> Logout
+                  </button>
+                </form>
+                <a th:href="@{/login}" sec:authorize="!isAuthenticated()">
+                  <ion-icon name="log-in-outline"></ion-icon> Login
+                </a>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </nav>
+    </aside>
+
+    <!-- Utility Bar with Cart and Wishlist -->
+    <div class="utility-bar">
+      <div class="header-alert-news">
+        <p>
+          <b>Eve's Sale:</b> 15% off selected furniture!
+          <b>Plus Free Shipping</b> on orders over $150
+        </p>
+      </div>
+
+      <div class="header-user-actions">
+        <button class="action-btn">
+          <ion-icon name="person-outline"></ion-icon>
+        </button>
+        <a href="/wishlist" class="action-btn wishlist-btn">
+          <ion-icon name="heart-outline"></ion-icon>
+          <span
+            class="count"
+            th:text="${wishlistItemCount != null ? wishlistItemCount : '0'}"
+            >0</span
+          >
+          <div class="wishlist-tooltip">View Wishlist</div>
+          <!-- Mini Wishlist Preview -->
+          <div class="mini-wishlist-preview">
+            <div class="mini-wishlist-header">
+              <h4>Your Wishlist</h4>
+            </div>
+            <div class="mini-wishlist-items">
+              <!-- Items will be loaded dynamically -->
+              <div class="mini-wishlist-empty">Your wishlist is empty</div>
+            </div>
+            <div class="mini-wishlist-footer">
+              <a href="/wishlist" class="mini-wishlist-button">View Wishlist</a>
+            </div>
+          </div>
+        </a>
+        <a href="/cart" class="action-btn cart-btn">
+          <ion-icon name="bag-handle-outline"></ion-icon>
+          <span
+            class="count cart-counter"
+            th:text="${cartItemCount != null ? cartItemCount : '0'}"
+            >0</span
+          >
+          <div class="cart-tooltip">View Cart</div>
+          <!-- Mini Cart Preview -->
+          <div class="mini-cart-preview">
+            <div class="mini-cart-header">
+              <h4>Your Cart</h4>
+            </div>
+            <div class="mini-cart-items">
+              <!-- Items will be loaded dynamically -->
+              <div class="mini-cart-empty">Your cart is empty</div>
+            </div>
+            <div class="mini-cart-footer">
+              <a href="/cart" class="mini-cart-button">View Cart</a>
+              <a href="/checkout" class="mini-cart-button checkout">Checkout</a>
+            </div>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <main>
+      <div class="banner">
+        <div class="container">
+          <div class="slider-container has-scrollbar">
+            <div class="slider-item">
+              <img
+                src="https://images.unsplash.com/photo-1611269154421-4e27233ac5c7?q=80&w=1470&auto=format&fit=crop"
+                alt="modern platform beds"
+                class="banner-img"
+              />
+              <div class="banner-content">
+                <p class="banner-subtitle">New Arrivals</p>
+                <h2 class="banner-title">Modern Platform Beds</h2>
+                <p class="banner-text">
+                  Elevate your bedroom style &dollar; <b>299</b>.99+
+                </p>
+                <a href="#" class="banner-btn">Shop Collection</a>
+              </div>
+            </div>
+
+            <div class="slider-item">
+              <img
+                src="https://images.unsplash.com/photo-1581539250439-c96689b516dd?q=80&w=1470&auto=format&fit=crop"
+                alt="premium sofas"
+                class="banner-img"
+              />
+              <div class="banner-content">
+                <p class="banner-subtitle">Premium Collection</p>
+                <h2 class="banner-title">Luxury Sofa Selection</h2>
+                <p class="banner-text">
+                  Comfort meets elegance &dollar; <b>499</b>.99+
+                </p>
+                <a href="#" class="banner-btn">View All Sofas</a>
+              </div>
+            </div>
+
+            <div class="slider-item">
+              <img
+                src="https://images.unsplash.com/photo-1592078615290-033ee584e267?q=80&w=1364&auto=format&fit=crop"
+                alt="home office furniture"
+                class="banner-img"
+              />
+              <div class="banner-content">
+                <p class="banner-subtitle">Work From Home</p>
+                <h2 class="banner-title">Home Office Solutions</h2>
+                <p class="banner-text">
+                  Ergonomic designs from &dollar; <b>199</b>.99
+                </p>
+                <a href="#" class="banner-btn">Shop Office</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="category">
+        <div class="container">
+          <div class="category-item-container has-scrollbar">
+            <div class="category-item">
+              <div class="category-img-box">
+                <ion-icon
+                  name="bed-outline"
+                  style="color: var(--furnifind-primary)"
+                ></ion-icon>
+              </div>
+              <div class="category-content-box">
+                <div class="category-content-flex">
+                  <h3 class="category-item-title">Bedroom</h3>
+                  <p class="category-item-amount">(42)</p>
+                </div>
+                <a
+                  href="javascript:void(0);"
+                  class="category-btn"
+                  onclick="openCategoryModal('bedroom-furniture'); return false;"
+                  data-category="bedroom-furniture"
+                  >Show All</a
+                >
+              </div>
+            </div>
+
+            <div class="category-item">
+              <div class="category-img-box">
+                <ion-icon
+                  name="desktop-outline"
+                  style="color: var(--furnifind-secondary)"
+                ></ion-icon>
+              </div>
+              <div class="category-content-box">
+                <div class="category-content-flex">
+                  <h3 class="category-item-title">Home Office</h3>
+                  <p class="category-item-amount">(37)</p>
+                </div>
+                <a
+                  href="javascript:void(0);"
+                  class="category-btn"
+                  onclick="openCategoryModal('home-office'); return false;"
+                  data-category="home-office"
+                  >Show All</a
+                >
+              </div>
+            </div>
+
+            <div class="category-item">
+              <div class="category-img-box">
+                <ion-icon
+                  name="cafe-outline"
+                  style="color: var(--furnifind-accent)"
+                ></ion-icon>
+              </div>
+              <div class="category-content-box">
+                <div class="category-content-flex">
+                  <h3 class="category-item-title">Living Room</h3>
+                  <p class="category-item-amount">(45)</p>
+                </div>
+                <a
+                  href="javascript:void(0);"
+                  class="category-btn"
+                  onclick="openCategoryModal('living-room'); return false;"
+                  data-category="living-room"
+                  >Show All</a
+                >
+              </div>
+            </div>
+
+            <div class="category-item">
+              <div class="category-img-box">
+                <ion-icon
+                  name="restaurant-outline"
+                  style="color: var(--furnifind-dark)"
+                ></ion-icon>
+              </div>
+              <div class="category-content-box">
+                <div class="category-content-flex">
+                  <h3 class="category-item-title">Dining Room</h3>
+                  <p class="category-item-amount">(31)</p>
+                </div>
+                <a
+                  href="javascript:void(0);"
+                  class="category-btn"
+                  onclick="openCategoryModal('dining-room'); return false;"
+                  >Show All</a
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="product-container">
+        <div class="container">
+          <div class="product-box">
+            <div class="product-minimal">
+              <div class="product-showcase">
+                <h2 class="title">New Arrivals</h2>
+                <div class="showcase-wrapper has-scrollbar">
+                  <div class="showcase-container">
+                    <div class="showcase" th:id="'product-' + 101">
+                      <a th:href="@{/products/101}" class="showcase-img-box">
+                        <img
+                          th:src="@{https://images.unsplash.com/photo-1538688423619-a81d3f23454b?q=80&w=1374&auto=format&fit=crop}"
+                          alt="Scandinavian Armchair"
+                          class="showcase-img"
+                          width="70"
+                        />
+                      </a>
+                      <div class="showcase-content">
+                        <a th:href="@{/products/101}"
+                          ><h4 class="showcase-title">
+                            Scandinavian Armchair - Gray
+                          </h4></a
+                        >
+                        <span class="showcase-category">Living Room</span>
+                        <div class="price-box">
+                          <p class="price">$249.99</p>
+                          <del>$299.99</del>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="showcase" th:id="'product-' + 102">
+                      <a th:href="@{/products/102}" class="showcase-img-box">
+                        <img
+                          th:src="@{https://images.unsplash.com/photo-1593194062010-c8276c508435?q=80&w=1374&auto=format&fit=crop}"
+                          alt="Wooden Dining Table Set"
+                          class="showcase-img"
+                          width="70"
+                        />
+                      </a>
+                      <div class="showcase-content">
+                        <a th:href="@{/products/102}"
+                          ><h4 class="showcase-title">
+                            Rustic Wooden Dining Table Set
+                          </h4></a
+                        >
+                        <span class="showcase-category">Dining Room</span>
+                        <div class="price-box">
+                          <p class="price">$399.99</p>
+                          <del>$499.99</del>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="showcase" th:id="'product-' + 103">
+                      <a th:href="@{/products/103}" class="showcase-img-box">
+                        <img
+                          th:src="@{https://images.unsplash.com/photo-1567016376408-0226e4d0c1ea?q=80&w=1374&auto=format&fit=crop}"
+                          alt="Wall-Mounted Floating Shelves"
+                          class="showcase-img"
+                          width="70"
+                        />
+                      </a>
+                      <div class="showcase-content">
+                        <a th:href="@{/products/103}"
+                          ><h4 class="showcase-title">
+                            Wall-Mounted Floating Shelves (Set of 3)
+                          </h4></a
+                        >
+                        <span class="showcase-category">Storage Solutions</span>
+                        <div class="price-box">
+                          <p class="price">$59.99</p>
+                          <del>$79.99</del>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="showcase" th:id="'product-' + 104">
+                      <a th:href="@{/products/104}" class="showcase-img-box">
+                        <img
+                          th:src="@{https://images.unsplash.com/photo-1595500381751-d837f87d3f14?q=80&w=1374&auto=format&fit=crop}"
+                          alt="Adjustable Standing Desk"
+                          class="showcase-img"
+                          width="70"
+                        />
+                      </a>
+                      <div class="showcase-content">
+                        <a th:href="@{/products/104}"
+                          ><h4 class="showcase-title">
+                            Electric Height Adjustable Standing Desk
+                          </h4></a
+                        >
+                        <span class="showcase-category">Home Office</span>
+                        <div class="price-box">
+                          <p class="price">$379.99</p>
+                          <del>$449.99</del>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="product-main">
+              <h2 class="title">Featured Products</h2>
+              <div class="product-grid">
+                <div class="showcase" th:id="'product-' + 201">
+                  <div class="showcase-banner">
+                    <img
+                      th:src="@{https://images.unsplash.com/photo-1555041469-a586c61ea9bc?q=80&w=1470&auto=format&fit=crop}"
+                      alt="Modern Ergonomic Desk Chair"
+                      class="product-img default"
+                      width="300"
+                    />
+                    <img
+                      th:src="@{https://images.unsplash.com/photo-1580480055273-228ff5388ef8?q=80&w=1374&auto=format&fit=crop}"
+                      alt="Modern Ergonomic Desk Chair"
+                      class="product-img hover"
+                      width="300"
+                    />
+                    <p class="showcase-badge">15%</p>
+                    <div class="showcase-actions">
+                      <button
+                        class="btn-action"
+                        th:onclick="'addToWishlist(' + 201 + ')'"
+                      >
+                        <ion-icon name="heart-outline"></ion-icon>
+                      </button>
+                      <button
+                        class="btn-action"
+                        th:onclick="'quickView(' + 201 + ')'"
+                      >
+                        <ion-icon name="eye-outline"></ion-icon>
+                      </button>
+                      <button
+                        class="btn-action"
+                        th:onclick="'addToCart(' + 201 + ')'"
+                      >
+                        <ion-icon name="bag-add-outline"></ion-icon>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="showcase-content">
+                    <span class="showcase-category">Office Furniture</span>
+                    <a th:href="@{/products/201}"
+                      ><h3 class="showcase-title">
+                        Modern Ergonomic Desk Chair
+                      </h3></a
+                    >
+                    <div class="showcase-rating">
+                      <ion-icon name="star"></ion-icon>
+                      <ion-icon name="star"></ion-icon>
+                      <ion-icon name="star"></ion-icon>
+                      <ion-icon name="star"></ion-icon>
+                      <ion-icon name="star-outline"></ion-icon>
+                    </div>
+                    <div class="price-box">
+                      <p class="price">$199.99</p>
+                      <del>$249.99</del>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="showcase" th:id="'product-' + 202">
+                  <div class="showcase-banner">
+                    <img
+                      th:src="@{https://images.unsplash.com/photo-1540574163026-643ea20ade25?q=80&w=1470&auto=format&fit=crop}"
+                      alt="Scandinavian Coffee Table"
+                      class="product-img default"
+                      width="300"
+                    />
+                    <img
+                      th:src="@{https://images.unsplash.com/photo-1532323544230-7191fd51bc1b?q=80&w=1374&auto=format&fit=crop}"
+                      alt="Scandinavian Coffee Table"
+                      class="product-img hover"
+                      width="300"
+                    />
+                    <p class="showcase-badge angle black">Sale</p>
+                    <div class="showcase-actions">
+                      <button
+                        class="btn-action"
+                        th:onclick="'addToWishlist(' + 202 + ')'"
+                      >
+                        <ion-icon name="heart-outline"></ion-icon>
+                      </button>
+                      <button
+                        class="btn-action"
+                        th:onclick="'quickView(' + 202 + ')'"
+                      >
+                        <ion-icon name="eye-outline"></ion-icon>
+                      </button>
+                      <button
+                        class="btn-action"
+                        th:onclick="'addToCart(' + 202 + ')'"
+                      >
+                        <ion-icon name="bag-add-outline"></ion-icon>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="showcase-content">
+                    <span class="showcase-category">Living Room</span>
+                    <a th:href="@{/products/202}"
+                      ><h3 class="showcase-title">
+                        Scandinavian Coffee Table
+                      </h3></a
+                    >
+                    <div class="showcase-rating">
+                      <ion-icon name="star"></ion-icon>
+                      <ion-icon name="star"></ion-icon>
+                      <ion-icon name="star"></ion-icon>
+                      <ion-icon name="star"></ion-icon>
+                      <ion-icon name="star-outline"></ion-icon>
+                    </div>
+                    <div class="price-box">
+                      <p class="price">$159.99</p>
+                      <del>$199.99</del>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="showcase" th:id="'product-' + 203">
+                  <div class="showcase-banner">
+                    <img
+                      th:src="@{https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?q=80&w=1470&auto=format&fit=crop}"
+                      alt="Minimalist Bookshelf"
+                      class="product-img default"
+                      width="300"
+                    />
+                    <img
+                      th:src="@{https://images.unsplash.com/photo-1594026112284-02bb6f3352fe?q=80&w=1470&auto=format&fit=crop}"
+                      alt="Minimalist Bookshelf"
+                      class="product-img hover"
+                      width="300"
+                    />
+                    <p class="showcase-badge angle pink">NEW</p>
+                    <div class="showcase-actions">
+                      <button
+                        class="btn-action"
+                        th:onclick="'addToWishlist(' + 203 + ')'"
+                      >
+                        <ion-icon name="heart-outline"></ion-icon>
+                      </button>
+                      <button
+                        class="btn-action"
+                        th:onclick="'quickView(' + 203 + ')'"
+                      >
+                        <ion-icon name="eye-outline"></ion-icon>
+                      </button>
+                      <button
+                        class="btn-action"
+                        th:onclick="'addToCart(' + 203 + ')'"
+                      >
+                        <ion-icon name="bag-add-outline"></ion-icon>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="showcase-content">
+                    <span class="showcase-category">Storage</span>
+                    <a th:href="@{/products/203}"
+                      ><h3 class="showcase-title">
+                        Minimalist Floating Bookshelf
+                      </h3></a
+                    >
+                    <div class="showcase-rating">
+                      <ion-icon name="star"></ion-icon>
+                      <ion-icon name="star"></ion-icon>
+                      <ion-icon name="star"></ion-icon>
+                      <ion-icon name="star"></ion-icon>
+                      <ion-icon name="star-half-outline"></ion-icon>
+                    </div>
+                    <div class="price-box">
+                      <p class="price">$89.99</p>
+                      <del>$119.99</del>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="showcase" th:id="'product-' + 204">
+                  <div class="showcase-banner">
+                    <img
+                      th:src="@{https://images.unsplash.com/photo-1616627561950-9f746e330187?q=80&w=1374&auto=format&fit=crop}"
+                      alt="Modern Platform Bed"
+                      class="product-img default"
+                      width="300"
+                    />
+                    <img
+                      th:src="@{https://images.unsplash.com/photo-1617325247661-675ab4b64ae2?q=80&w=1470&auto=format&fit=crop}"
+                      alt="Modern Platform Bed"
+                      class="product-img hover"
+                      width="300"
+                    />
+                    <div class="showcase-actions">
+                      <button
+                        class="btn-action"
+                        th:onclick="'addToWishlist(' + 204 + ')'"
+                      >
+                        <ion-icon name="heart-outline"></ion-icon>
+                      </button>
+                      <button
+                        class="btn-action"
+                        th:onclick="'quickView(' + 204 + ')'"
+                      >
+                        <ion-icon name="eye-outline"></ion-icon>
+                      </button>
+                      <button
+                        class="btn-action"
+                        th:onclick="'addToCart(' + 204 + ')'"
+                      >
+                        <ion-icon name="bag-add-outline"></ion-icon>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="showcase-content">
+                    <span class="showcase-category">Bedroom</span>
+                    <a th:href="@{/products/204}"
+                      ><h3 class="showcase-title">
+                        Modern Queen Platform Bed Frame
+                      </h3></a
+                    >
+                    <div class="showcase-rating">
+                      <ion-icon name="star"></ion-icon>
+                      <ion-icon name="star"></ion-icon>
+                      <ion-icon name="star"></ion-icon>
+                      <ion-icon name="star"></ion-icon>
+                      <ion-icon name="star"></ion-icon>
+                    </div>
+                    <div class="price-box">
+                      <p class="price">$299.99</p>
+                      <del>$349.99</del>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="showcase" th:id="'product-' + 205">
+                  <div class="showcase-banner">
+                    <img
+                      th:src="@{https://images.unsplash.com/photo-1519947486511-46149fa0a254?q=80&w=1374&auto=format&fit=crop}"
+                      alt="Compact Foldable Desk"
+                      class="product-img default"
+                      width="300"
+                    />
+                    <img
+                      th:src="@{https://images.unsplash.com/photo-1587212195700-b39bac3ba9f5?q=80&w=1376&auto=format&fit=crop}"
+                      alt="Compact Foldable Desk"
+                      class="product-img hover"
+                      width="300"
+                    />
+                    <p class="showcase-badge">20%</p>
+                    <div class="showcase-actions">
+                      <button
+                        class="btn-action"
+                        th:onclick="'addToWishlist(' + 205 + ')'"
+                      >
+                        <ion-icon name="heart-outline"></ion-icon>
+                      </button>
+                      <button
+                        class="btn-action"
+                        th:onclick="'quickView(' + 205 + ')'"
+                      >
+                        <ion-icon name="eye-outline"></ion-icon>
+                      </button>
+                      <button
+                        class="btn-action"
+                        th:onclick="'addToCart(' + 205 + ')'"
+                      >
+                        <ion-icon name="bag-add-outline"></ion-icon>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="showcase-content">
+                    <span class="showcase-category">Home Office</span>
+                    <a th:href="@{/products/205}"
+                      ><h3 class="showcase-title">
+                        Compact Foldable Desk for Small Spaces
+                      </h3></a
+                    >
+                    <div class="showcase-rating">
+                      <ion-icon name="star"></ion-icon>
+                      <ion-icon name="star"></ion-icon>
+                      <ion-icon name="star"></ion-icon>
+                      <ion-icon name="star"></ion-icon>
+                      <ion-icon name="star-half-outline"></ion-icon>
+                    </div>
+                    <div class="price-box">
+                      <p class="price">$119.99</p>
+                      <del>$149.99</del>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="showcase" th:id="'product-' + 206">
+                  <div class="showcase-banner">
+                    <img
+                      th:src="@{https://images.unsplash.com/photo-1551298370-9d3d53740c72?q=80&w=1374&auto=format&fit=crop}"
+                      alt="Modern TV Stand"
+                      class="product-img default"
+                      width="300"
+                    />
+                    <img
+                      th:src="@{https://images.unsplash.com/photo-1581541234264-671cc782a76e?q=80&w=1374&auto=format&fit=crop}"
+                      alt="Modern TV Stand"
+                      class="product-img hover"
+                      width="300"
+                    />
+                    <div class="showcase-actions">
+                      <button
+                        class="btn-action"
+                        th:onclick="'addToWishlist(' + 206 + ')'"
+                      >
+                        <ion-icon name="heart-outline"></ion-icon>
+                      </button>
+                      <button
+                        class="btn-action"
+                        th:onclick="'quickView(' + 206 + ')'"
+                      >
+                        <ion-icon name="eye-outline"></ion-icon>
+                      </button>
+                      <button
+                        class="btn-action"
+                        th:onclick="'addToCart(' + 206 + ')'"
+                      >
+                        <ion-icon name="bag-add-outline"></ion-icon>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="showcase-content">
+                    <span class="showcase-category">Entertainment</span>
+                    <a th:href="@{/products/206}"
+                      ><h3 class="showcase-title">
+                        Modern Entertainment Center & TV Stand
+                      </h3></a
+                    >
+                    <div class="showcase-rating">
+                      <ion-icon name="star"></ion-icon>
+                      <ion-icon name="star"></ion-icon>
+                      <ion-icon name="star"></ion-icon>
+                      <ion-icon name="star"></ion-icon>
+                      <ion-icon name="star-outline"></ion-icon>
+                    </div>
+                    <div class="price-box">
+                      <p class="price">$199.99</p>
+                      <del>$249.99</del>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="container">
+          <div class="testimonials-box">
+            <div class="testimonial">
+              <h2 class="title">Customer Reviews</h2>
+              <div class="testimonial-card">
+                <img
+                  src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=1374&auto=format&fit=crop"
+                  alt="Emily Parker"
+                  class="testimonial-banner"
+                  width="80"
+                  height="80"
+                />
+                <h3 class="testimonial-name">Emily Parker</h3>
+                <p class="testimonial-title">Interior Designer</p>
+                <img
+                  src="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/icons/quote.svg"
+                  alt="quotation"
+                  class="quotation-img"
+                  width="30"
+                />
+                <p class="testimonial-desc">
+                  "FurniFind has completely transformed my design process. Their
+                  curated collections feature high-quality pieces that are both
+                  stylish and durable. The platform beds are particularly
+                  impressive!"
+                </p>
+              </div>
+
+              <div class="testimonial-card" style="margin-top: 20px">
+                <img
+                  src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=1374&auto=format&fit=crop"
+                  alt="Michael Thompson"
+                  class="testimonial-banner"
+                  width="80"
+                  height="80"
+                />
+                <h3 class="testimonial-name">Michael Thompson</h3>
+                <p class="testimonial-title">Home Office Specialist</p>
+                <img
+                  src="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/icons/quote.svg"
+                  alt="quotation"
+                  class="quotation-img"
+                  width="30"
+                />
+                <p class="testimonial-desc">
+                  "As someone who helps design productive workspaces, I
+                  exclusively recommend FurniFind to my clients. Their ergonomic
+                  chairs and adjustable desks are exceptional quality and arrive
+                  quickly!"
+                </p>
+              </div>
+            </div>
+
+            <div class="service">
+              <h2 class="title">FurniFind Benefits</h2>
+              <div class="service-container">
+                <div class="service-item">
+                  <div class="service-icon">
+                    <ion-icon name="cube-outline"></ion-icon>
+                  </div>
+                  <div class="service-content">
+                    <h3 class="service-title">Quality Selection</h3>
+                    <p class="service-desc">
+                      Curated furniture from trusted manufacturers.
+                    </p>
+                  </div>
+                </div>
+
+                <div class="service-item">
+                  <div class="service-icon">
+                    <ion-icon name="bicycle-outline"></ion-icon>
+                  </div>
+                  <div class="service-content">
+                    <h3 class="service-title">Fast Delivery</h3>
+                    <p class="service-desc">
+                      White glove service in select metro areas.
+                    </p>
+                  </div>
+                </div>
+
+                <div class="service-item">
+                  <div class="service-icon">
+                    <ion-icon name="ribbon-outline"></ion-icon>
+                  </div>
+                  <div class="service-content">
+                    <h3 class="service-title">Loyalty Program</h3>
+                    <p class="service-desc">
+                      Earn points with every purchase for discounts.
+                    </p>
+                  </div>
+                </div>
+
+                <div class="service-item">
+                  <div class="service-icon">
+                    <ion-icon name="hammer-outline"></ion-icon>
+                  </div>
+                  <div class="service-content">
+                    <h3 class="service-title">Assembly Service</h3>
+                    <p class="service-desc">
+                      Professional assembly available with delivery.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="quote-section">
+          <div class="container">
+            <div class="literary-quote">
+              "The details are not the details. They make the design."
+              <div class="quote-author">― Charles Eames</div>
+            </div>
+          </div>
+        </div>
+        <footer>
+          <div class="footer-bottom">
+            <div class="container">
+              <img
+                src="https://i.postimg.cc/43GKnVFF/payment.png"
+                alt="payment method"
+                class="payment-img"
+              />
+              <p class="copyright">
+                Copyright &copy; <a href="#">FurniFind</a> all rights reserved
+              </p>
+            </div>
+          </div>
+        </footer>
+      </div>
+    </main>
+    <!-- Category Modals -->
+    <div id="bedroom-furniture-modal" class="modal">
+      <div class="modal-content">
+        <span class="close-modal">&times;</span>
+        <div class="modal-header">
+          <h2>Bedroom Furniture</h2>
+        </div>
+        <div class="modal-products">
+          <!-- Bedroom Product 1 -->
+          <div class="showcase" th:id="'product-' + 301">
+            <div class="showcase-banner">
+              <img
+                th:src="@{https://images.unsplash.com/photo-1505693314120-0d443867891c?q=80&w=1470&auto=format&fit=crop}"
+                alt="King Size Upholstered Bed"
+                class="product-img default"
+                width="300"
+              />
+              <img
+                th:src="@{https://images.unsplash.com/photo-1513694203232-719a280e022f?q=80&w=1469&auto=format&fit=crop}"
+                alt="King Size Upholstered Bed"
+                class="product-img hover"
+                width="300"
+              />
+              <p class="showcase-badge">New</p>
+              <div class="showcase-actions">
+                <button
+                  class="btn-action"
+                  th:onclick="'addToWishlist(' + 301 + ')'"
+                >
+                  <ion-icon name="heart-outline"></ion-icon>
+                </button>
+                <button
+                  class="btn-action"
+                  th:onclick="'quickView(' + 301 + ')'"
+                >
+                  <ion-icon name="eye-outline"></ion-icon>
+                </button>
+                <button
+                  class="btn-action"
+                  th:onclick="'addToCart(' + 301 + ')'"
+                >
+                  <ion-icon name="bag-add-outline"></ion-icon>
+                </button>
+              </div>
+            </div>
+            <div class="showcase-content">
+              <span class="showcase-category">Bedroom</span>
+              <a th:href="@{/products/301}">
+                <h3 class="showcase-title">
+                  King Size Upholstered Bed with Storage
+                </h3>
+              </a>
+              <div class="showcase-rating">
+                <ion-icon name="star"></ion-icon>
+                <ion-icon name="star"></ion-icon>
+                <ion-icon name="star"></ion-icon>
+                <ion-icon name="star"></ion-icon>
+                <ion-icon name="star-half-outline"></ion-icon>
+              </div>
+              <div class="price-box">
+                <p class="price">$599.99</p>
+                <del>$699.99</del>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bedroom Product 2 -->
+          <div class="showcase" th:id="'product-' + 302">
+            <div class="showcase-banner">
+              <img
+                th:src="@{https://images.unsplash.com/photo-1618220179428-22790b461013?q=80&w=1527&auto=format&fit=crop}"
+                alt="Bedside Table with Drawers"
+                class="product-img default"
+                width="300"
+              />
+              <img
+                th:src="@{https://images.unsplash.com/photo-1556228578-0d85b1a4d571?q=80&w=1470&auto=format&fit=crop}"
+                alt="Bedside Table with Drawers"
+                class="product-img hover"
+                width="300"
+              />
+              <p class="showcase-badge angle black">Sale</p>
+              <div class="showcase-actions">
+                <button
+                  class="btn-action"
+                  th:onclick="'addToWishlist(' + 302 + ')'"
+                >
+                  <ion-icon name="heart-outline"></ion-icon>
+                </button>
+                <button
+                  class="btn-action"
+                  th:onclick="'quickView(' + 302 + ')'"
+                >
+                  <ion-icon name="eye-outline"></ion-icon>
+                </button>
+                <button
+                  class="btn-action"
+                  th:onclick="'addToCart(' + 302 + ')'"
+                >
+                  <ion-icon name="bag-add-outline"></ion-icon>
+                </button>
+              </div>
+            </div>
+            <div class="showcase-content">
+              <span class="showcase-category">Bedroom</span>
+              <a th:href="@{/products/302}">
+                <h3 class="showcase-title">
+                  Modern Bedside Table with Drawers
+                </h3>
+              </a>
+              <div class="showcase-rating">
+                <ion-icon name="star"></ion-icon>
+                <ion-icon name="star"></ion-icon>
+                <ion-icon name="star"></ion-icon>
+                <ion-icon name="star"></ion-icon>
+                <ion-icon name="star-outline"></ion-icon>
+              </div>
+              <div class="price-box">
+                <p class="price">$129.99</p>
+                <del>$159.99</del>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-pagination"></div>
+      </div>
+    </div>
+
+    <div id="home-office-modal" class="modal">
+      <div class="modal-content">
+        <span class="close-modal">&times;</span>
+        <div class="modal-header">
+          <h2>Home Office Furniture</h2>
+        </div>
+        <div class="modal-products">
+          <!-- Home Office Product 1 -->
+          <div class="showcase" th:id="'product-' + 401">
+            <div class="showcase-banner">
+              <img
+                th:src="@{https://images.unsplash.com/photo-1518455027359-f3f8164ba6bd?q=80&w=1469&auto=format&fit=crop}"
+                alt="L-Shaped Computer Desk"
+                class="product-img default"
+                width="300"
+              />
+              <img
+                th:src="@{https://images.unsplash.com/photo-1593062096033-9a26b09da705?q=80&w=1470&auto=format&fit=crop}"
+                alt="L-Shaped Computer Desk"
+                class="product-img hover"
+                width="300"
+              />
+              <p class="showcase-badge">25%</p>
+              <div class="showcase-actions">
+                <button
+                  class="btn-action"
+                  th:onclick="'addToWishlist(' + 401 + ')'"
+                >
+                  <ion-icon name="heart-outline"></ion-icon>
+                </button>
+                <button
+                  class="btn-action"
+                  th:onclick="'quickView(' + 401 + ')'"
+                >
+                  <ion-icon name="eye-outline"></ion-icon>
+                </button>
+                <button
+                  class="btn-action"
+                  th:onclick="'addToCart(' + 401 + ')'"
+                >
+                  <ion-icon name="bag-add-outline"></ion-icon>
+                </button>
+              </div>
+            </div>
+            <div class="showcase-content">
+              <span class="showcase-category">Home Office</span>
+              <a th:href="@{/products/401}">
+                <h3 class="showcase-title">
+                  L-Shaped Computer Desk with Storage
+                </h3>
+              </a>
+              <div class="showcase-rating">
+                <ion-icon name="star"></ion-icon>
+                <ion-icon name="star"></ion-icon>
+                <ion-icon name="star"></ion-icon>
+                <ion-icon name="star"></ion-icon>
+                <ion-icon name="star"></ion-icon>
+              </div>
+              <div class="price-box">
+                <p class="price">$199.99</p>
+                <del>$259.99</del>
+              </div>
+            </div>
+          </div>
+
+          <!-- Home Office Product 2 -->
+          <div class="showcase" th:id="'product-' + 402">
+            <div class="showcase-banner">
+              <img
+                th:src="@{https://images.unsplash.com/photo-1596162954151-cdcb4c0f70fb?q=80&w=1374&auto=format&fit=crop}"
+                alt="Ergonomic Office Chair"
+                class="product-img default"
+                width="300"
+              />
+              <img
+                th:src="@{https://images.unsplash.com/photo-1580480055273-228ff5388ef8?q=80&w=1374&auto=format&fit=crop}"
+                alt="Ergonomic Office Chair"
+                class="product-img hover"
+                width="300"
+              />
+              <p class="showcase-badge angle black">Best Seller</p>
+              <div class="showcase-actions">
+                <button
+                  class="btn-action"
+                  th:onclick="'addToWishlist(' + 402 + ')'"
+                >
+                  <ion-icon name="heart-outline"></ion-icon>
+                </button>
+                <button
+                  class="btn-action"
+                  th:onclick="'quickView(' + 402 + ')'"
+                >
+                  <ion-icon name="eye-outline"></ion-icon>
+                </button>
+                <button
+                  class="btn-action"
+                  th:onclick="'addToCart(' + 402 + ')'"
+                >
+                  <ion-icon name="bag-add-outline"></ion-icon>
+                </button>
+              </div>
+            </div>
+            <div class="showcase-content">
+              <span class="showcase-category">Home Office</span>
+              <a th:href="@{/products/402}">
+                <h3 class="showcase-title">Premium Ergonomic Office Chair</h3>
+              </a>
+              <div class="showcase-rating">
+                <ion-icon name="star"></ion-icon>
+                <ion-icon name="star"></ion-icon>
+                <ion-icon name="star"></ion-icon>
+                <ion-icon name="star"></ion-icon>
+                <ion-icon name="star-half-outline"></ion-icon>
+              </div>
+              <div class="price-box">
+                <p class="price">$249.99</p>
+                <del>$299.99</del>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-pagination"></div>
+      </div>
+    </div>
+
+    <div id="living-room-modal" class="modal">
+      <div class="modal-content">
+        <span class="close-modal">&times;</span>
+        <div class="modal-header">
+          <h2>Living Room Furniture</h2>
+        </div>
+        <div class="modal-products">
+          <!-- Living Room Product 1 -->
+          <div class="showcase" th:id="'product-' + 501">
+            <div class="showcase-banner">
+              <img
+                th:src="@{https://images.unsplash.com/photo-1550581190-9c1c48d21d6c?q=80&w=1469&auto=format&fit=crop}"
+                alt="Modern Sectional Sofa"
+                class="product-img default"
+                width="300"
+              />
+              <img
+                th:src="@{https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?q=80&w=1470&auto=format&fit=crop}"
+                alt="Modern Sectional Sofa"
+                class="product-img hover"
+                width="300"
+              />
+              <p class="showcase-badge">Trending</p>
+              <div class="showcase-actions">
+                <button
+                  class="btn-action"
+                  th:onclick="'addToWishlist(' + 501 + ')'"
+                >
+                  <ion-icon name="heart-outline"></ion-icon>
+                </button>
+                <button
+                  class="btn-action"
+                  th:onclick="'quickView(' + 501 + ')'"
+                >
+                  <ion-icon name="eye-outline"></ion-icon>
+                </button>
+                <button
+                  class="btn-action"
+                  th:onclick="'addToCart(' + 501 + ')'"
+                >
+                  <ion-icon name="bag-add-outline"></ion-icon>
+                </button>
+              </div>
+            </div>
+            <div class="showcase-content">
+              <span class="showcase-category">Living Room</span>
+              <a th:href="@{/products/501}">
+                <h3 class="showcase-title">Modern L-Shaped Sectional Sofa</h3>
+              </a>
+              <div class="showcase-rating">
+                <ion-icon name="star"></ion-icon>
+                <ion-icon name="star"></ion-icon>
+                <ion-icon name="star"></ion-icon>
+                <ion-icon name="star"></ion-icon>
+                <ion-icon name="star-outline"></ion-icon>
+              </div>
+              <div class="price-box">
+                <p class="price">$799.99</p>
+                <del>$999.99</del>
+              </div>
+            </div>
+          </div>
+
+          <!-- Living Room Product 2 -->
+          <div class="showcase" th:id="'product-' + 502">
+            <div class="showcase-banner">
+              <img
+                th:src="@{https://images.unsplash.com/photo-1585412727339-54e4bae3bbf9?q=80&w=1470&auto=format&fit=crop}"
+                alt="Entertainment Center"
+                class="product-img default"
+                width="300"
+              />
+              <img
+                th:src="@{https://images.unsplash.com/photo-1616046386594-c152babc9e15?q=80&w=1480&auto=format&fit=crop}"
+                alt="Entertainment Center"
+                class="product-img hover"
+                width="300"
+              />
+              <p class="showcase-badge angle black">Hot Deal</p>
+              <div class="showcase-actions">
+                <button
+                  class="btn-action"
+                  th:onclick="'addToWishlist(' + 502 + ')'"
+                >
+                  <ion-icon name="heart-outline"></ion-icon>
+                </button>
+                <button
+                  class="btn-action"
+                  th:onclick="'quickView(' + 502 + ')'"
+                >
+                  <ion-icon name="eye-outline"></ion-icon>
+                </button>
+                <button
+                  class="btn-action"
+                  th:onclick="'addToCart(' + 502 + ')'"
+                >
+                  <ion-icon name="bag-add-outline"></ion-icon>
+                </button>
+              </div>
+            </div>
+            <div class="showcase-content">
+              <span class="showcase-category">Living Room</span>
+              <a th:href="@{/products/502}">
+                <h3 class="showcase-title">
+                  Wall-Mounted Entertainment Center
+                </h3>
+              </a>
+              <div class="showcase-rating">
+                <ion-icon name="star"></ion-icon>
+                <ion-icon name="star"></ion-icon>
+                <ion-icon name="star"></ion-icon>
+                <ion-icon name="star"></ion-icon>
+                <ion-icon name="star"></ion-icon>
+              </div>
+              <div class="price-box">
+                <p class="price">$349.99</p>
+                <del>$449.99</del>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-pagination"></div>
+      </div>
+    </div>
+
+    <div id="dining-room-modal" class="modal">
+      <div class="modal-content">
+        <span class="close-modal">&times;</span>
+        <div class="modal-header">
+          <h2>Dining Room Furniture</h2>
+        </div>
+        <div class="modal-products">
+          <!-- Dining Room Product 1 -->
+          <div class="showcase" th:id="'product-' + 601">
+            <div class="showcase-banner">
+              <img
+                th:src="@{https://images.unsplash.com/photo-1604578762246-41134e37f9cc?q=80&w=1470&auto=format&fit=crop}"
+                alt="Extendable Dining Table"
+                class="product-img default"
+                width="300"
+              />
+              <img
+                th:src="@{https://images.unsplash.com/photo-1615876234886-9b2c0c2b0b1e?q=80&w=1374&auto=format&fit=crop}"
+                alt="Extendable Dining Table"
+                class="product-img hover"
+                width="300"
+              />
+              <p class="showcase-badge">New Arrival</p>
+              <div class="showcase-actions">
+                <button
+                  class="btn-action"
+                  th:onclick="'addToWishlist(' + 601 + ')'"
+                >
+                  <ion-icon name="heart-outline"></ion-icon>
+                </button>
+                <button
+                  class="btn-action"
+                  th:onclick="'quickView(' + 601 + ')'"
+                >
+                  <ion-icon name="eye-outline"></ion-icon>
+                </button>
+                <button
+                  class="btn-action"
+                  th:onclick="'addToCart(' + 601 + ')'"
+                >
+                  <ion-icon name="bag-add-outline"></ion-icon>
+                </button>
+              </div>
+            </div>
+            <div class="showcase-content">
+              <span class="showcase-category">Dining Room</span>
+              <a th:href="@{/products/601}">
+                <h3 class="showcase-title">
+                  Extendable Dining Table with Leaf
+                </h3>
+              </a>
+              <div class="showcase-rating">
+                <ion-icon name="star"></ion-icon>
+                <ion-icon name="star"></ion-icon>
+                <ion-icon name="star"></ion-icon>
+                <ion-icon name="star"></ion-icon>
+                <ion-icon name="star-half-outline"></ion-icon>
+              </div>
+              <div class="price-box">
+                <p class="price">$449.99</p>
+                <del>$599.99</del>
+              </div>
+            </div>
+          </div>
+
+          <!-- Dining Room Product 2 -->
+          <div class="showcase" th:id="'product-' + 602">
+            <div class="showcase-banner">
+              <img
+                th:src="@{https://images.unsplash.com/photo-1601628828688-632f38a5a7d0?q=80&w=1374&auto=format&fit=crop}"
+                alt="Upholstered Dining Chairs"
+                class="product-img default"
+                width="300"
+              />
+              <img
+                th:src="@{https://images.unsplash.com/photo-1611486212557-88be5ff6f941?q=80&w=1470&auto=format&fit=crop}"
+                alt="Upholstered Dining Chairs"
+                class="product-img hover"
+                width="300"
+              />
+              <p class="showcase-badge angle black">Best Seller</p>
+              <div class="showcase-actions">
+                <button
+                  class="btn-action"
+                  th:onclick="'addToWishlist(' + 602 + ')'"
+                >
+                  <ion-icon name="heart-outline"></ion-icon>
+                </button>
+                <button
+                  class="btn-action"
+                  th:onclick="'quickView(' + 602 + ')'"
+                >
+                  <ion-icon name="eye-outline"></ion-icon>
+                </button>
+                <button
+                  class="btn-action"
+                  th:onclick="'addToCart(' + 602 + ')'"
+                >
+                  <ion-icon name="bag-add-outline"></ion-icon>
+                </button>
+              </div>
+            </div>
+            <div class="showcase-content">
+              <span class="showcase-category">Dining Room</span>
+              <a th:href="@{/products/602}">
+                <h3 class="showcase-title">
+                  Set of 4 Upholstered Dining Chairs
+                </h3>
+              </a>
+              <div class="showcase-rating">
+                <ion-icon name="star"></ion-icon>
+                <ion-icon name="star"></ion-icon>
+                <ion-icon name="star"></ion-icon>
+                <ion-icon name="star"></ion-icon>
+                <ion-icon name="star-outline"></ion-icon>
+              </div>
+              <div class="price-box">
+                <p class="price">$329.99</p>
+                <del>$399.99</del>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-pagination"></div>
+      </div>
+    </div>
+    <!-- Toast notification container -->
+    <div class="toast-container"></div>
+
+    <script
+      type="module"
+      src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"
+    ></script>
+    <script
+      nomodule
+      src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"
+    ></script>
+
+    <!-- Mobile Menu Dropdown Script -->
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // Mobile Menu Dropdown Toggle
+        const mobileMenuDropdownBtn = document.querySelector(
+          ".mobile-menu-dropdown-btn"
+        );
+        const mobileMenuDropdown = document.querySelector(
+          ".mobile-menu-dropdown"
+        );
+
+        if (mobileMenuDropdownBtn && mobileMenuDropdown) {
+          mobileMenuDropdownBtn.addEventListener("click", function (event) {
+            event.stopPropagation(); // Prevent event bubbling
+            mobileMenuDropdown.classList.toggle("active");
+          });
+
+          // Close dropdown when clicking outside
+          document.addEventListener("click", function (event) {
+            if (!event.target.closest(".mobile-menu-dropdown")) {
+              mobileMenuDropdown.classList.remove("active");
+            }
+          });
+        }
+
+        // Sidebar Toggle Functionality
+        const sidebarToggle = document.getElementById("sidebar-toggle");
+        const sidebar = document.querySelector(".sidebar");
+        const main = document.querySelector("main");
+
+        if (sidebarToggle && sidebar && main) {
+          sidebarToggle.addEventListener("click", function () {
+            sidebar.classList.toggle("sidebar-hidden");
+            main.classList.toggle("main-expanded");
+
+            // Update aria attributes for accessibility
+            const isHidden = sidebar.classList.contains("sidebar-hidden");
+            sidebarToggle.setAttribute("aria-expanded", !isHidden);
+            sidebar.setAttribute("aria-hidden", isHidden);
+          });
+
+          // Hide sidebar on small screens by default
+          const handleResize = () => {
+            if (window.innerWidth < 768) {
+              sidebar.classList.add("sidebar-hidden");
+              main.classList.add("main-expanded");
+            } else {
+              sidebar.classList.remove("sidebar-hidden");
+              main.classList.remove("main-expanded");
+            }
+          };
+
+          // Run on page load and on resize
+          handleResize();
+          window.addEventListener("resize", handleResize);
+        }
+      });
+    </script>
+
+    <!-- Modal Scripts -->
+    <script th:src="@{/js/modal-unified.js}"></script>
+
+    <!-- Custom JavaScript for cart functionality -->
+    <script th:inline="javascript">
+      // Load cart count on page load
+      document.addEventListener("DOMContentLoaded", function () {
+        // First try to get counts from localStorage for immediate display
+        const savedCartCount = localStorage.getItem("cartCount");
+        if (savedCartCount) {
+          updateCartCount(parseInt(savedCartCount));
+        }
+
+        const savedWishlistCount = localStorage.getItem("wishlistCount");
+        if (savedWishlistCount) {
+          updateWishlistCount(parseInt(savedWishlistCount));
+        }
+
+        // Then fetch the actual counts from the server
+        loadCartCount();
+        loadWishlistCount();
+
+        // Add cart hover functionality
+        const cartBtn = document.querySelector(".cart-btn");
+        if (cartBtn) {
+          cartBtn.addEventListener("mouseenter", loadMiniCartPreview);
+        }
+
+        // Add wishlist hover functionality
+        const wishlistBtn = document.querySelector(".wishlist-btn");
+        if (wishlistBtn) {
+          wishlistBtn.addEventListener("mouseenter", loadMiniWishlistPreview);
+        }
+      });
+
+      // Function to load mini cart preview content
+      function loadMiniCartPreview() {
+        const miniCartItems = document.querySelector(".mini-cart-items");
+        if (!miniCartItems) return;
+
+        // Check if we already loaded this recently (cache for 1 minute)
+        const lastLoad = localStorage.getItem("miniCartLastLoad");
+        const now = Date.now();
+        if (
+          lastLoad &&
+          now - parseInt(lastLoad) < 60000 &&
+          localStorage.getItem("miniCartHtml")
+        ) {
+          miniCartItems.innerHTML = localStorage.getItem("miniCartHtml");
+          return;
+        }
+
+        // Show loading
+        miniCartItems.innerHTML =
+          '<div class="mini-cart-loading">Loading cart items...</div>';
+
+        // Fetch cart items
+        fetch("/cart/mini")
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error("Failed to load cart");
+            }
+            return response.json();
+          })
+          .then((data) => {
+            if (data.items && data.items.length > 0) {
+              // Cart has items
+              let html = "";
+              data.items.forEach((item) => {
+                const productName =
+                  item.name && item.name !== "null"
+                    ? item.name
+                    : "Loading product name...";
+                html += `
+                  <div class="mini-cart-item">
+                    <img src="${item.image}" alt="${productName}" class="mini-cart-item-img">
+                    <div class="mini-cart-item-details">
+                      <h5 class="mini-cart-item-title" data-product-id="${item.id}">${productName}</h5>
+                      <p class="mini-cart-item-price">${item.price}</p>
+                      <span class="mini-cart-item-qty">Qty: ${item.quantity}</span>
+                    </div>
+                    <button class="mini-cart-item-remove" onclick="removeFromCart(${item.id})">×</button>
+                  </div>
+                `;
+              });
+
+              // Add subtotal
+              html += `
+                <div class="mini-cart-subtotal">
+                  <span>Subtotal:</span>
+                  <strong>${data.subtotal}</strong>
+                </div>
+              `;
+
+              miniCartItems.innerHTML = html;
+
+              // Cache the result
+              localStorage.setItem("miniCartHtml", html);
+              localStorage.setItem("miniCartLastLoad", now.toString());
+
+              // Fetch missing product names
+              setTimeout(fetchMiniCartProductNames, 100);
+            } else {
+              // Cart is empty
+              miniCartItems.innerHTML =
+                '<div class="mini-cart-empty">Your cart is empty</div>';
+              localStorage.setItem("miniCartHtml", miniCartItems.innerHTML);
+              localStorage.setItem("miniCartLastLoad", now.toString());
+            }
+          })
+          .catch((error) => {
+            miniCartItems.innerHTML =
+              '<div class="mini-cart-error">Failed to load cart items</div>';
+          });
+      }
+
+      // Function to remove item from cart
+      function removeFromCart(productId) {
+        fetch("/cart/remove", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRF-TOKEN": document
+              .querySelector('meta[name="_csrf"]')
+              ?.getAttribute("content"),
+          },
+          body: JSON.stringify({ productId }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            updateCartCount(data.cartCount || 0);
+            showToast("Success", "Item removed from cart", "success");
+
+            // Clear cache and reload mini cart
+            localStorage.removeItem("miniCartHtml");
+            localStorage.removeItem("miniCartLastLoad");
+            loadMiniCartPreview();
+          })
+          .catch((error) => {
+            showToast("Error", "Failed to remove item from cart", "error");
+          });
+      }
+
+      // Function to load the cart count
+      function loadCartCount() {
+        fetch("/cart/count")
+          .then((response) => response.json())
+          .then((data) => {
+            updateCartCount(data.cartCount || 0);
+          })
+          .catch((error) => {
+            // Silently handle errors in production
+            const savedCount = localStorage.getItem("cartCount");
+            if (savedCount) {
+              updateCartCount(parseInt(savedCount));
+            }
+          });
+      }
+
+      // Function to load wishlist count from server
+      function loadWishlistCount() {
+        fetch("/wishlist/count")
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error("Network response was not ok");
+            }
+            return response.json();
+          })
+          .then((data) => {
+            updateWishlistCount(data.wishlistCount || 0);
+          })
+          .catch((error) => {
+            console.error("Error fetching wishlist count:", error);
+            // If fetch fails, at least try to use the localStorage value
+            const savedCount = localStorage.getItem("wishlistCount");
+            if (savedCount) {
+              updateWishlistCount(parseInt(savedCount));
+            }
+          });
+      }
+
+      // Cart functionality
+      function addToCart(productId) {
+        // Add product to cart using AJAX
+        fetch("/cart/add", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRF-TOKEN": document
+              .querySelector('meta[name="_csrf"]')
+              ?.getAttribute("content"),
+          },
+          body: JSON.stringify({ productId: productId, quantity: 1 }),
+        })
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error("Network response was not ok");
+            }
+            return response.json();
+          })
+          .then((data) => {
+            if (data.redirect) {
+              // Redirect if needed (e.g., to login page)
+              window.location.href = data.redirect;
+              return;
+            }
+
+            showToast("Success", "Product added to cart!", "success");
+            // Use the cartCount from the server response
+            if (data.cartCount !== undefined) {
+              updateCartCount(data.cartCount);
+            }
+          })
+          .catch((error) => {
+            showToast(
+              "Error",
+              "Failed to add product to cart. Please try again.",
+              "error"
+            );
+          });
+      }
+
+      // Wishlist functionality
+      function addToWishlist(productId) {
+        // Add product to wishlist using AJAX
+        fetch("/wishlist/add", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRF-TOKEN": document
+              .querySelector('meta[name="_csrf"]')
+              ?.getAttribute("content"),
+          },
+          body: JSON.stringify({ productId: productId }),
+        })
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error("Network response was not ok");
+            }
+            return response.json();
+          })
+          .then((data) => {
+            if (data.redirect) {
+              // Redirect if needed (e.g., to login page)
+              window.location.href = data.redirect;
+              return;
+            }
+
+            showToast("Success", "Product added to wishlist!", "success");
+            // Use the wishlistCount from the server response
+            if (data.wishlistCount !== undefined) {
+              updateWishlistCount(data.wishlistCount);
+            }
+
+            // Clear cache to ensure fresh wishlist data
+            localStorage.removeItem("miniWishlistHtml");
+            localStorage.removeItem("miniWishlistLastLoad");
+          })
+          .catch((error) => {
+            showToast(
+              "Error",
+              "Failed to add product to wishlist. Please try again.",
+              "error"
+            );
+            console.error("Error:", error);
+          });
+      }
+
+      // Quick view functionality
+      function quickView(productId) {
+        // Show product details page
+        // You can implement a modal popup to show product details
+        window.location.href = "/products/" + productId;
+      }
+
+      // Update cart count in UI
+      function updateCartCount(count) {
+        const countElements = document.querySelectorAll(".count");
+        const previousCount = parseInt(
+          localStorage.getItem("cartCount") || "0"
+        );
+        const isIncreasing = count > previousCount;
+
+        // Find all cart badges (both in header and mobile navigation)
+        countElements.forEach((element) => {
+          const parentButton = element.closest(".action-btn");
+          if (
+            parentButton &&
+            parentButton.querySelector('ion-icon[name="bag-handle-outline"]')
+          ) {
+            // Update the text
+            element.textContent = count;
+
+            // Apply animation
+            if (isIncreasing) {
+              element.style.animation = "none";
+              void element.offsetWidth; // Trigger reflow
+              element.style.animation = "cartBadgePulse 1s ease-out";
+
+              // Also animate the cart icon
+              const cartIcon = parentButton.querySelector(
+                'ion-icon[name="bag-handle-outline"]'
+              );
+              if (cartIcon) {
+                cartIcon.style.animation = "none";
+                void cartIcon.offsetWidth;
+                cartIcon.style.animation = "addToCartAnimation 0.5s ease-out";
+              }
+            }
+
+            // Always show the badge, even when count is 0
+            element.style.display = "flex";
+
+            // Adjust size based on count
+            if (count > 9) {
+              element.style.width = "24px";
+            } else {
+              element.style.width = "22px";
+            }
+          }
+        });
+
+        // Store the cart count in localStorage for persistence
+        localStorage.setItem("cartCount", count);
+
+        // Update the cart tooltip if count changes
+        updateCartTooltip(count);
+      }
+
+      // Update wishlist count in UI
+      function updateWishlistCount(count) {
+        const countElements = document.querySelectorAll(".count");
+        const previousCount = parseInt(
+          localStorage.getItem("wishlistCount") || "0"
+        );
+        const isIncreasing = count > previousCount;
+
+        // Find wishlist badges (both in header and mobile navigation)
+        countElements.forEach((element) => {
+          const parentButton = element.closest(".action-btn");
+          if (
+            parentButton &&
+            parentButton.querySelector('ion-icon[name="heart-outline"]')
+          ) {
+            // Update the text
+            element.textContent = count;
+
+            // Apply animation
+            if (isIncreasing) {
+              element.style.animation = "none";
+              void element.offsetWidth; // Trigger reflow
+              element.style.animation = "cartBadgePulse 1s ease-out";
+
+              // Also animate the wishlist icon
+              const wishlistIcon = parentButton.querySelector(
+                'ion-icon[name="heart-outline"]'
+              );
+              if (wishlistIcon) {
+                wishlistIcon.style.animation = "none";
+                void wishlistIcon.offsetWidth; // Trigger reflow
+                wishlistIcon.style.animation =
+                  "addToCartAnimation 0.5s ease-out";
+              }
+            }
+          }
+        });
+
+        // Store in local storage for persistence
+        localStorage.setItem("wishlistCount", count);
+
+        // Update the wishlist tooltip if count changes
+        updateWishlistTooltip(count);
+      }
+
+      // Update cart tooltip text based on item count
+      function updateCartTooltip(count) {
+        const tooltips = document.querySelectorAll(".cart-tooltip");
+        tooltips.forEach((tooltip) => {
+          if (count === 0) {
+            tooltip.textContent = "Cart Empty";
+          } else if (count === 1) {
+            tooltip.textContent = "View Cart (1 item)";
+          } else {
+            tooltip.textContent = `View Cart (${count} items)`;
+          }
+        });
+      }
+
+      // Update wishlist tooltip text based on item count
+      function updateWishlistTooltip(count) {
+        const tooltips = document.querySelectorAll(".wishlist-tooltip");
+        tooltips.forEach((tooltip) => {
+          if (count === 0) {
+            tooltip.textContent = "Wishlist Empty";
+          } else if (count === 1) {
+            tooltip.textContent = "View Wishlist (1 item)";
+          } else {
+            tooltip.textContent = `View Wishlist (${count} items)`;
+          }
+        });
+      }
+
+      // Show toast notification
+      function showToast(title, message, type = "success") {
+        const toastContainer = document.querySelector(".toast-container");
+        const toast = document.createElement("div");
+        toast.className = `toast ${type}`;
+
+        const toastContent = `
+          <div class="toast-icon">
+            <ion-icon name="${
+              type === "success" ? "checkmark-circle" : "alert-circle"
+            }"></ion-icon>
+          </div>
+          <div class="toast-content">
+            <div class="toast-title">${title}</div>
+            <div class="toast-message">${message}</div>
+          </div>
+          <button class="toast-close" onclick="this.parentElement.remove()">
+            <ion-icon name="close"></ion-icon>
+          </button>
+        `;
+
+        toast.innerHTML = toastContent;
+        toastContainer.appendChild(toast);
+
+        // Auto remove toast after 3 seconds
+        setTimeout(() => {
+          toast.style.opacity = "0";
+          setTimeout(() => {
+            toast.remove();
+          }, 300);
+        }, 3000);
+      }
+
+      // Function to fetch missing product names in mini cart
+      function fetchMiniCartProductNames() {
+        const productNameElements = document.querySelectorAll(
+          ".mini-cart-item-title"
+        );
+
+        productNameElements.forEach((element) => {
+          if (element.textContent.trim() === "Loading product name...") {
+            const productId = element.getAttribute("data-product-id");
+
+            if (productId) {
+              fetch(`/api/products/${productId}`)
+                .then((response) => response.json())
+                .then((data) => {
+                  if (data.success && data.data && data.data.name) {
+                    element.textContent = data.data.name;
+                    // Update the cached HTML in localStorage
+                    localStorage.setItem(
+                      "miniCartHtml",
+                      document.querySelector(".mini-cart-items").innerHTML
+                    );
+                  } else {
+                    // If API call fails or returns no name, show category-based name if possible
+                    const categoryName =
+                      data.data && data.data.category
+                        ? data.data.category.name
+                        : null;
+                    element.textContent = categoryName
+                      ? `${categoryName} Product`
+                      : "Product";
+                    // Update the cached HTML in localStorage
+                    localStorage.setItem(
+                      "miniCartHtml",
+                      document.querySelector(".mini-cart-items").innerHTML
+                    );
+                  }
+                })
+                .catch((error) => {
+                  console.error(
+                    `Error fetching product name for ID ${productId}:`,
+                    error
+                  );
+                  element.textContent = "Product";
+                  // Update the cached HTML in localStorage
+                  localStorage.setItem(
+                    "miniCartHtml",
+                    document.querySelector(".mini-cart-items").innerHTML
+                  );
+                });
+            }
+          }
+        });
+      }
+
+      // Function to load mini wishlist preview content
+      function loadMiniWishlistPreview() {
+        const miniWishlistItems = document.querySelector(
+          ".mini-wishlist-items"
+        );
+        if (!miniWishlistItems) return;
+
+        // Check if we already loaded this recently (cache for 5 minutes)
+        const lastLoad = localStorage.getItem("miniWishlistLastLoad");
+        const now = Date.now();
+        if (
+          lastLoad &&
+          now - parseInt(lastLoad) < 300000 && // 5 minutes cache
+          localStorage.getItem("miniWishlistHtml")
+        ) {
+          miniWishlistItems.innerHTML =
+            localStorage.getItem("miniWishlistHtml");
+          return;
+        }
+
+        // Show loading
+        miniWishlistItems.innerHTML =
+          '<div class="mini-wishlist-loading">Loading wishlist items...</div>';
+
+        // Fetch wishlist items
+        fetch("/wishlist/mini")
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error("Failed to load wishlist");
+            }
+            return response.json();
+          })
+          .then((data) => {
+            if (data.items && data.items.length > 0) {
+              // Wishlist has items
+              let html = "";
+              data.items.forEach((item) => {
+                html += `
+                  <div class="mini-wishlist-item">
+                    <img src="${item.image}" alt="${item.name}" class="mini-wishlist-item-img">
+                    <div class="mini-wishlist-item-details">
+                      <h5 class="mini-wishlist-item-title">${item.name}</h5>
+                      <p class="mini-wishlist-item-price">${item.price}</p>
+                    </div>
+                    <button class="mini-wishlist-item-remove" onclick="removeFromWishlist(${item.id})">×</button>
+                  </div>
+                `;
+              });
+
+              miniWishlistItems.innerHTML = html;
+
+              // Cache the result
+              localStorage.setItem("miniWishlistHtml", html);
+              localStorage.setItem("miniWishlistLastLoad", now.toString());
+            } else {
+              // Wishlist is empty
+              miniWishlistItems.innerHTML =
+                '<div class="mini-wishlist-empty">Your wishlist is empty</div>';
+              localStorage.setItem(
+                "miniWishlistHtml",
+                miniWishlistItems.innerHTML
+              );
+              localStorage.setItem("miniWishlistLastLoad", now.toString());
+            }
+          })
+          .catch((error) => {
+            miniWishlistItems.innerHTML =
+              '<div class="mini-wishlist-error">Failed to load wishlist items</div>';
+            console.error("Error loading wishlist:", error);
+          });
+      }
+
+      // Function to remove item from wishlist
+      function removeFromWishlist(productId) {
+        fetch("/wishlist/remove", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRF-TOKEN": document
+              .querySelector('meta[name="_csrf"]')
+              ?.getAttribute("content"),
+          },
+          body: JSON.stringify({ productId }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            updateWishlistCount(data.wishlistCount || 0);
+            showToast("Success", "Item removed from wishlist", "success");
+
+            // Clear cache and reload mini wishlist
+            localStorage.removeItem("miniWishlistHtml");
+            localStorage.removeItem("miniWishlistLastLoad");
+            loadMiniWishlistPreview();
+          })
+          .catch((error) => {
+            showToast("Error", "Failed to remove item from wishlist", "error");
+            console.error("Error removing from wishlist:", error);
+          });
+      }
+    </script>
+
+    <!-- Cart Counter Visibility Fix Script -->
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // Make sure cart counters are visible
+        const cartCounters = document.querySelectorAll(".cart-counter");
+        cartCounters.forEach((counter) => {
+          // Make sure cart counters have proper styling
+          counter.style.display = "flex";
+          counter.style.zIndex = "100";
+
+          // Add animation when count changes
+          const currentCount = counter.textContent.trim();
+          counter.setAttribute("data-last-count", currentCount);
+
+          // Store initial count for change detection
+          window.lastCartCount = currentCount;
+
+          // If count is zero, still show the counter but smaller
+          if (currentCount === "0") {
+            counter.style.width = "18px";
+            counter.style.height = "18px";
+            counter.style.fontSize = "10px";
+          } else {
+            counter.style.width = "22px";
+            counter.style.height = "22px";
+          }
+        });
+      });
+
+      // Function to update cart counters
+      function updateCartCounter(count) {
+        const cartCounters = document.querySelectorAll(".cart-counter");
+        cartCounters.forEach((counter) => {
+          // Always ensure counter is visible
+          counter.style.display = "flex";
+          counter.style.zIndex = "100";
+
+          counter.textContent = count;
+          counter.classList.add("cart-counter-update");
+
+          // Remove animation class after animation completes
+          setTimeout(() => {
+            counter.classList.remove("cart-counter-update");
+          }, 500);
+
+          // Adjust size based on count digits
+          if (count > 9) {
+            counter.style.width = "24px";
+          } else {
+            counter.style.width = count > 0 ? "22px" : "20px";
+            counter.style.fontSize = count > 0 ? "12px" : "10px";
+          }
+        });
+      }
+    </script>
+
+    <!-- Script loading order is important for modal functionality -->
+    <script th:src="@{/js/product-categories-updated.js}"></script>
+    <script th:src="@{/js/furniture-categories.js}"></script>
+    <script th:src="@{/js/modal-unified.js}"></script>
+    <script th:src="@{/js/home-product-meta.js}"></script>
+    <script th:src="@{/js/home-product-fetch.js}"></script>
+    <script th:src="@{/js/toast-notifications.js}"></script>
+    <script>
+      // Attach cart/wishlist event listeners after dynamic products are rendered
+      document.addEventListener("DOMContentLoaded", function () {
+        function delegateEvent(parent, selector, event, handler) {
+          parent.addEventListener(event, function (e) {
+            const target = e.target.closest(selector);
+            if (target) handler(target, e);
+          });
+        }
+        // Wait for products to be rendered
+        function setupProductActions() {
+          const featuredGrid = document.querySelector(
+            ".product-main .product-grid"
+          );
+          const newArrivals = document.querySelector(
+            ".product-minimal .showcase-wrapper .showcase-container"
+          );
+          // Add additional containers where product buttons might appear (modals, etc.)
+          const allContainers = [
+            featuredGrid,
+            newArrivals,
+            document.querySelector(".modal-products"), // For modal product displays
+            document.querySelector(".wishlist-items-container"), // For wishlist
+          ];
+
+          allContainers.forEach((container) => {
+            if (!container) return;
+            // Add to Cart - using data attributes instead of onclick
+            delegateEvent(
+              container,
+              '[data-cart-action="add"]',
+              "click",
+              (btn, e) => {
+                e.preventDefault();
+                const id = parseInt(btn.getAttribute("data-product-id"));
+                addToCart(id);
+              }
+            );
+            // Add to Wishlist
+            delegateEvent(
+              container,
+              '.btn-action[onclick^="addToWishlist"]',
+              "click",
+              (btn, e) => {
+                e.preventDefault();
+                const id = parseInt(
+                  btn.getAttribute("onclick").match(/\d+/)[0]
+                );
+                addToWishlist(id);
+              }
+            );
+            // Quick View
+            delegateEvent(
+              container,
+              '.btn-action[onclick^="quickView"]',
+              "click",
+              (btn, e) => {
+                e.preventDefault();
+                const id = parseInt(
+                  btn.getAttribute("onclick").match(/\d+/)[0]
+                );
+                quickView(id);
+              }
+            );
+          });
+        }
+        // Wait for dynamic rendering
+        setTimeout(setupProductActions, 500);
+      });
+    </script>
+  </body>
+</html>

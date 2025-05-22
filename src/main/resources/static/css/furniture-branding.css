@@ -1,0 +1,170 @@
+/* 
+ * FurniFind Branding - Furniture-specific styling
+ * This file contains furniture-themed elements for the FurniFind platform
+ */
+
+/* Import colors if not already imported */
+@import url("furnifind-colors.css");
+
+/* Product cards with furniture styling */
+.product-card {
+  border-radius: 8px;
+  transition: transform 0.3s, box-shadow 0.3s;
+  overflow: hidden;
+}
+
+.product-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Furniture category badges */
+.category-badge {
+  background-color: var(--furnifind-secondary);
+  color: white;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+/* Furniture material badges */
+.material-badge {
+  background-color: var(--furnifind-gray);
+  color: white;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Room type indicators */
+.room-type {
+  color: var(--furnifind-primary);
+  font-weight: 500;
+  font-size: 14px;
+  margin-bottom: 5px;
+}
+
+/* Furniture dimensions display */
+.furniture-dimensions {
+  color: var(--furnifind-gray);
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  margin-top: 8px;
+}
+
+.furniture-dimensions ion-icon {
+  margin-right: 5px;
+  font-size: 16px;
+}
+
+/* Product image container with furniture-specific styling */
+.product-img-container {
+  background-color: #f5f5f5;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Furniture detail sections */
+.furniture-details-section {
+  padding: 20px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.furniture-details-section h3 {
+  color: var(--furnifind-primary);
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 15px;
+}
+
+/* Furniture collection labels */
+.collection-label {
+  background-color: var(--furnifind-accent);
+  color: white;
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 4px;
+  font-weight: 500;
+  font-size: 12px;
+  margin-bottom: 10px;
+}
+
+/* Styling for furniture availability */
+.in-stock {
+  color: var(--furnifind-success);
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+}
+
+.out-of-stock {
+  color: var(--furnifind-danger);
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+}
+
+.in-stock ion-icon,
+.out-of-stock ion-icon {
+  margin-right: 5px;
+}
+
+/* Furniture care instructions */
+.care-instructions {
+  background-color: rgba(92, 106, 118, 0.1);
+  border-left: 3px solid var(--furnifind-primary);
+  padding: 15px;
+  margin: 20px 0;
+  border-radius: 0 4px 4px 0;
+}
+
+.care-instructions h4 {
+  color: var(--furnifind-primary);
+  margin-bottom: 10px;
+  font-size: 16px;
+}
+
+/* Sidebar and navigation furniture icons */
+.furniture-icon {
+  color: var(--furnifind-accent);
+}
+
+/* Custom styling for furniture categories in menu */
+.furniture-category-menu {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 15px;
+  padding: 15px;
+}
+
+.furniture-category-item {
+  text-align: center;
+  padding: 15px;
+  background-color: white;
+  border-radius: 8px;
+  transition: all 0.3s;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.furniture-category-item:hover {
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  transform: translateY(-3px);
+}
+
+.furniture-category-icon {
+  font-size: 36px;
+  color: var(--furnifind-primary);
+  margin-bottom: 10px;
+  display: block;
+}
+
+.furniture-category-name {
+  font-weight: 500;
+  color: var(--furnifind-dark);
+}

@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head th:replace="~{fragments/layout :: head('Admin - Analytics')}">
+    <title>Admin - Analytics</title>
+  </head>
+
+  <body>
+    <div th:replace="~{fragments/layout :: navbar}"></div>
+    <div
+      th:replace="~{fragments/layout :: page-title('Analytics & Reports')}"
+    ></div>
+    <div th:replace="~{fragments/layout :: alerts}"></div>
+
+    <!-- Admin Header Section -->
+    <div class="admin-header">
+      <div class="container">
+        <div class="admin-navigation">
+          <a th:href="@{/admin}" class="admin-nav-link">Dashboard</a>
+          <a th:href="@{/admin/products}" class="admin-nav-link">Products</a>
+          <a th:href="@{/admin/orders}" class="admin-nav-link">Orders</a>
+          <a th:href="@{/admin/users}" class="admin-nav-link">Users</a>
+          <a th:href="@{/admin/categories}" class="admin-nav-link"
+            >Categories</a
+          >
+          <a th:href="@{/admin/analytics}" class="admin-nav-link active"
+            >Analytics</a
+          >
+        </div>
+      </div>
+    </div>
+
+    <!-- Analytics Content -->
+    <section class="admin-content">
+      <div class="container">
+        <!-- Sales Summary Card -->
+        <div class="admin-card mb-4">
+          <div class="card-header">
+            <h3>Sales Summary</h3>
+            <div class="date-filter">
+              <select id="timeRangeSelector" class="form-control">
+                <option value="7">Last 7 days</option>
+                <option value="30" selected>Last 30 days</option>
+                <option value="90">Last 90 days</option>
+                <option value="365">Last year</option>
+              </select>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-3">
+                <div class="stat-card">
+                  <div class="stat-card-body">
+                    <h2 th:text="${'$' + totalRevenue}">$8,245.50</h2>
+                    <p>Total Revenue</p>
+                  </div>
+                  <div class="stat-card-footer">
+                    <span
+                      th:class="${revenueChange >= 0 ? 'text-success' : 'text-danger'}"
+                    >
+                      <i
+                        th:class="${revenueChange >= 0 ? 'fas fa-arrow-up' : 'fas fa-arrow-down'}"
+                      ></i>
+                      <span
+                        th:with="absValue=${revenueChange != null ? (revenueChange >= 0 ? revenueChange : -revenueChange) : 0.0}"
+                        th:text="${#numbers.formatDecimal(absValue, 1, 1) + '%'}"
+                        >12.5%</span
+                      >
+                    </span>
+                    vs previous period
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="stat-card">
+                  <div class="stat-card-body">
+                    <h2 th:text="${orderCount}">156</h2>
+                    <p>Orders</p>
+                  </div>
+                  <div class="stat-card-footer">
+                    <span
+                      th:class="${orderChange >= 0 ? 'text-success' : 'text-danger'}"
+                    >
+                      <i
+                        th:class="${orderChange >= 0 ? 'fas fa-arrow-up' : 'fas fa-arrow-down'}"
+                      ></i>
+                      <span
+                        th:with="absValue=${orderChange != null ? (orderChange >= 0 ? orderChange : -orderChange) : 0.0}"
+                        th:text="${#numbers.formatDecimal(absValue, 1, 1) + '%'}"
+                        >8.2%</span
+                      >
+                    </span>
+                    vs previous period
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="stat-card">
+                  <div class="stat-card-body">
+                    <h2 th:text="${averageOrderValue}">$52.85</h2>
+                    <p>Avg. Order Value</p>
+                  </div>
+                  <div class="stat-card-footer">
+                    <span
+                      th:class="${aovChange >= 0 ? 'text-success' : 'text-danger'}"
+                    >
+                      <i
+                        th:class="${aovChange >= 0 ? 'fas fa-arrow-up' : 'fas fa-arrow-down'}"
+                      ></i>
+                      <span
+                        th:with="absValue=${aovChange != null ? (aovChange >= 0 ? aovChange : -aovChange) : 0.0}"
+                        th:text="${#numbers.formatDecimal(absValue, 1, 1) + '%'}"
+                        >4.3%</span
+                      >
+                    </span>
+                    vs previous period
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="stat-card">
+                  <div class="stat-card-body">
+                    <h2 th:text="${conversionRate + '%'}">3.2%</h2>
+                    <p>Conversion Rate</p>
+                  </div>
+                  <div class="stat-card-footer">
+                    <span
+                      th:class="${conversionChange >= 0 ? 'text-success' : 'text-danger'}"
+                    >
+                      <i
+                        th:class="${conversionChange >= 0 ? 'fas fa-arrow-up' : 'fas fa-arrow-down'}"
+                      ></i>
+                      <span
+                        th:with="absValue=${conversionChange != null ? (conversionChange >= 0 ? conversionChange : -conversionChange) : 0.0}"
+                        th:text="${#numbers.formatDecimal(absValue, 1, 1) + '%'}"
+                        >0.5%</span
+                      >
+                    </span>
+                    vs previous period
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Sales Chart -->
+            <div class="chart-container mt-4">
+              <canvas id="salesChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <!-- Top Products -->
+          <div class="col-md-6">
+            <div class="admin-card">
+              <div class="card-header">
+                <h3>Top Products</h3>
+              </div>
+              <div class="card-body">
+                <table class="table table-hover">
+                  <thead>
+                    <tr>
+                      <th>Product</th>
+                      <th>Units Sold</th>
+                      <th>Revenue</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr th:each="product : ${topProducts}">
+                      <td>
+                        <a
+                          th:href="@{'/admin/products/' + ${product.id}}"
+                          th:text="${product.name}"
+                          >Product Name</a
+                        >
+                      </td>
+                      <td th:text="${product.unitsSold}">125</td>
+                      <td th:text="${'$' + product.revenue}">$1,245.00</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- Orders by Status -->
+          <div class="col-md-6">
+            <div class="admin-card">
+              <div class="card-header">
+                <h3>Products by Category</h3>
+              </div>
+              <div class="card-body">
+                <div class="chart-container">
+                  <canvas id="orderStatusChart"></canvas>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Report Generation Section -->
+        <div class="admin-card mt-4">
+          <div class="card-header">
+            <h3>Download Reports</h3>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-3">
+                <div class="report-option">
+                  <h4>Sales Report</h4>
+                  <p>
+                    Detailed sales data including order items, prices, and
+                    totals.
+                  </p>
+                  <form
+                    th:action="@{/admin/analytics/reports/sales}"
+                    method="post"
+                  >
+                    <div class="form-group">
+                      <label>Date Range</label>
+                      <select name="dateRange" class="form-control">
+                        <option value="7">Last 7 days</option>
+                        <option value="30" selected>Last 30 days</option>
+                        <option value="90">Last 3 months</option>
+                        <option value="365">Last year</option>
+                      </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">
+                      Download CSV
+                    </button>
+                  </form>
+                </div>
+              </div>
+
+              <div class="col-md-3">
+                <div class="report-option">
+                  <h4>Products Report</h4>
+                  <p>
+                    Complete product catalog with pricing, inventory levels, and
+                    status.
+                  </p>
+                  <form
+                    th:action="@{/admin/analytics/reports/products}"
+                    method="post"
+                  >
+                    <div class="form-group">
+                      <div class="checkbox">
+                        <label>
+                          <input type="checkbox" name="includeInactive" />
+                          Include inactive products
+                        </label>
+                      </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">
+                      Download CSV
+                    </button>
+                  </form>
+                </div>
+              </div>
+
+              <div class="col-md-3">
+                <div class="report-option">
+                  <h4>Orders Report</h4>
+                  <p>
+                    Order summary with customer details, status, and total
+                    amounts.
+                  </p>
+                  <form
+                    th:action="@{/admin/analytics/reports/orders}"
+                    method="post"
+                  >
+                    <div class="form-group">
+                      <label>Date Range</label>
+                      <select name="dateRange" class="form-control">
+                        <option value="7">Last 7 days</option>
+                        <option value="30" selected>Last 30 days</option>
+                        <option value="90">Last 3 months</option>
+                        <option value="365">Last year</option>
+                      </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">
+                      Download CSV
+                    </button>
+                  </form>
+                </div>
+              </div>
+
+              <div class="col-md-3">
+                <div class="report-option">
+                  <h4>Users Report</h4>
+                  <p>
+                    User account details with purchase history and total
+                    spending.
+                  </p>
+                  <form
+                    th:action="@{/admin/analytics/reports/users}"
+                    method="post"
+                  >
+                    <div class="form-group">
+                      <label>Include</label>
+                      <div class="checkbox">
+                        <label>
+                          <input type="checkbox" name="includeInactive" />
+                          Include inactive users
+                        </label>
+                      </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">
+                      Download CSV
+                    </button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div th:replace="~{fragments/layout :: footer}"></div>
+    <div th:replace="~{fragments/layout :: scripts}"></div>
+
+    <!-- Chart.js Library -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script th:inline="javascript">
+      document.addEventListener("DOMContentLoaded", function () {
+        console.log("Analytics page loaded, initializing charts");
+        // Sales chart
+        const salesCtx = document.getElementById("salesChart").getContext("2d");
+        const salesLabels = /*[[${salesLabels}]]*/ [
+          "Jan",
+          "Feb",
+          "Mar",
+          "Apr",
+          "May",
+          "Jun",
+        ];
+        const salesDataValues = /*[[${salesData}]]*/ [
+          1200, 1900, 1500, 2000, 2500, 2800,
+        ];
+
+        const salesData = {
+          labels: salesLabels,
+          datasets: [
+            {
+              label: "Revenue",
+              data: salesDataValues,
+              backgroundColor: "rgba(75, 192, 192, 0.2)",
+              borderColor: "rgba(75, 192, 192, 1)",
+              borderWidth: 2,
+              tension: 0.4,
+            },
+          ],
+        };
+
+        const salesChart = new Chart(salesCtx, {
+          type: "line",
+          data: salesData,
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              y: {
+                beginAtZero: true,
+                ticks: {
+                  callback: function (value) {
+                    return "$" + value;
+                  },
+                },
+              },
+            },
+            plugins: {
+              legend: {
+                display: false,
+              },
+              tooltip: {
+                callbacks: {
+                  label: function (context) {
+                    return "$" + context.parsed.y;
+                  },
+                },
+              },
+            },
+          },
+        });
+
+        // Category distribution chart
+        const statusCtx = document
+          .getElementById("orderStatusChart")
+          .getContext("2d");
+
+        // Get dynamic data from Thymeleaf
+        const categoryLabels = /*[[${categoryLabels}]]*/ [
+          "Coffee",
+          "Tea",
+          "Equipment",
+          "Accessories",
+          "Gifts",
+        ];
+        const categoryDataValues = /*[[${categoryData}]]*/ [15, 25, 20, 10, 5];
+
+        // Generate background and border colors based on the number of categories
+        const backgroundColors = [];
+        const borderColors = [];
+        const colorPalette = [
+          [255, 206, 86], // Yellow
+          [54, 162, 235], // Blue
+          [153, 102, 255], // Purple
+          [75, 192, 192], // Teal
+          [255, 99, 132], // Red
+          [255, 159, 64], // Orange
+          [45, 192, 77], // Green
+          [238, 130, 238], // Violet
+        ];
+
+        // Generate colors for each category
+        for (let i = 0; i < categoryLabels.length; i++) {
+          const colorIndex = i % colorPalette.length;
+          const [r, g, b] = colorPalette[colorIndex];
+          backgroundColors.push(`rgba(${r}, ${g}, ${b}, 0.7)`);
+          borderColors.push(`rgba(${r}, ${g}, ${b}, 1)`);
+        }
+
+        const statusData = {
+          labels: categoryLabels,
+          datasets: [
+            {
+              data: categoryDataValues,
+              backgroundColor: backgroundColors,
+              borderColor: borderColors,
+              borderWidth: 1,
+            },
+          ],
+        };
+
+        new Chart(statusCtx, {
+          type: "doughnut",
+          data: statusData,
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                position: "right",
+              },
+            },
+          },
+        });
+
+        // Handle time range changes for sales chart
+        document
+          .getElementById("timeRangeSelector")
+          .addEventListener("change", function (e) {
+            // This would normally fetch new data based on the selected time range
+            // For demonstration purposes, we'll just simulate different data
+            const dataMap = {
+              7: [42, 38, 59, 65, 48, 52, 60],
+              30: [65, 59, 80, 81, 56, 55, 72],
+              90: [85, 72, 78, 95, 68, 75, 82],
+              365: [105, 98, 120, 115, 90, 95, 110],
+            };
+
+            // Update chart data
+            const newData = dataMap[e.target.value] || dataMap["30"];
+            salesChart.data.datasets[0].data = newData;
+            salesChart.update();
+          });
+      });
+    </script>
+  </body>
+</html>

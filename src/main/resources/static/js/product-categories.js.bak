@@ -1,0 +1,1614 @@
+/**
+ * BookByte Product Categories
+ * This file contains structured data for product categories and items that can be used
+ * to populate category modals dynamically.
+ */
+
+const bookbyteCategories = {
+  // New Arrivals
+  "new-arrivals": {
+    title: "New Arrivals",
+    items: [
+      {
+        id: 101,
+        title: "Scandinavian Armchair - Gray",
+        price: 249.99,
+        originalPrice: 299.99,
+        coverImage:
+          "https://images.unsplash.com/photo-1538688423619-a81d3f23454b?q=80&w=1374&auto=format&fit=crop",
+        category: "Living Room",
+        rating: 4.3,
+        inStock: true,
+        isNew: true,
+        badge: "New",
+        description:
+          "Elegant and comfortable Scandinavian-inspired armchair with high-quality upholstery and solid wood legs.",
+      },
+      {
+        id: 102,
+        title: "Rustic Wooden Dining Table Set",
+        price: 399.99,
+        originalPrice: 499.99,
+        coverImage:
+          "https://images.unsplash.com/photo-1593194062010-c8276c508435?q=80&w=1374&auto=format&fit=crop",
+        category: "Dining Room",
+        rating: 4.6,
+        inStock: true,
+        isNew: true,
+        badge: "New",
+        description:
+          "Handcrafted rustic wooden dining table with matching benches, perfect for family gatherings and entertainment.",
+      },
+      {
+        id: 103,
+        title: "Wall-Mounted Floating Shelves (Set of 3)",
+        price: 59.99,
+        originalPrice: 79.99,
+        coverImage:
+          "https://images.unsplash.com/photo-1567016376408-0226e4d0c1ea?q=80&w=1374&auto=format&fit=crop",
+        category: "Storage Solutions",
+        rating: 4.8,
+        inStock: true,
+        isNew: true,
+        badge: "New",
+        description:
+          "Modern floating shelves with invisible mounting hardware, perfect for displaying books, plants, and decorative items.",
+      },
+      {
+        id: 104,
+        title: "Electric Height Adjustable Standing Desk",
+        price: 379.99,
+        originalPrice: 449.99,
+        coverImage:
+          "https://images.unsplash.com/photo-1595500381751-d837f87d3f14?q=80&w=1374&auto=format&fit=crop",
+        category: "Home Office",
+        rating: 4.9,
+        inStock: true,
+        isNew: true,
+        badge: "New",
+        description:
+          "Electric height adjustable desk with memory settings, perfect for creating an ergonomic workspace at home.",
+      },
+    ],
+  },
+
+  // Featured Products
+  "featured-products": {
+    title: "Featured Products",
+    items: [
+      {
+        id: 201,
+        title: "Modern Ergonomic Desk Chair",
+        price: 199.99,
+        originalPrice: 249.99,
+        coverImage:
+          "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?q=80&w=1470&auto=format&fit=crop",
+        hoverImage:
+          "https://images.unsplash.com/photo-1580480055273-228ff5388ef8?q=80&w=1374&auto=format&fit=crop",
+        category: "Office Furniture",
+        rating: 4.0,
+        inStock: true,
+        badge: "15%",
+        description:
+          "Ergonomic office chair with adjustable lumbar support, height, and armrests for maximum comfort during long working hours.",
+      },
+      {
+        id: 202,
+        title: "Scandinavian Coffee Table",
+        price: 159.99,
+        originalPrice: 199.99,
+        coverImage:
+          "https://images.unsplash.com/photo-1540574163026-643ea20ade25?q=80&w=1470&auto=format&fit=crop",
+        hoverImage:
+          "https://images.unsplash.com/photo-1532323544230-7191fd51bc1b?q=80&w=1374&auto=format&fit=crop",
+        category: "Living Room",
+        rating: 4.0,
+        inStock: true,
+        badge: "Sale",
+        description:
+          "Minimalist Scandinavian coffee table with clean lines and durable construction, featuring a lower shelf for extra storage.",
+      },
+      {
+        id: 203,
+        title: "Minimalist Floating Bookshelf",
+        price: 89.99,
+        originalPrice: 119.99,
+        coverImage:
+          "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?q=80&w=1470&auto=format&fit=crop",
+        hoverImage:
+          "https://images.unsplash.com/photo-1594026112284-02bb6f3352fe?q=80&w=1470&auto=format&fit=crop",
+        category: "Storage",
+        rating: 4.5,
+        inStock: true,
+        badge: "NEW",
+        description:
+          "Sleek, space-saving floating bookshelf that creates a modern display for your favorite books and decorative items.",
+      },
+      {
+        id: 204,
+        title: "Modern Queen Platform Bed Frame",
+        price: 299.99,
+        originalPrice: 349.99,
+        coverImage:
+          "https://images.unsplash.com/photo-1616627561950-9f746e330187?q=80&w=1374&auto=format&fit=crop",
+        hoverImage:
+          "https://images.unsplash.com/photo-1617325247661-675ab4b64ae2?q=80&w=1470&auto=format&fit=crop",
+        category: "Bedroom",
+        rating: 5.0,
+        inStock: true,
+        description:
+          "Low-profile queen platform bed with wooden slats that eliminates the need for a box spring, creating a clean modern aesthetic.",
+      },
+      {
+        id: 205,
+        title: "Compact Foldable Desk for Small Spaces",
+        price: 119.99,
+        originalPrice: 149.99,
+        coverImage:
+          "https://images.unsplash.com/photo-1519947486511-46149fa0a254?q=80&w=1374&auto=format&fit=crop",
+        hoverImage:
+          "https://images.unsplash.com/photo-1587212195700-b39bac3ba9f5?q=80&w=1376&auto=format&fit=crop",
+        category: "Home Office",
+        rating: 4.5,
+        inStock: true,
+        badge: "20%",
+        description:
+          "Space-saving foldable desk that can be easily stored when not in use, perfect for apartments and small home offices.",
+      },
+      {
+        id: 206,
+        title: "Modern Entertainment Center & TV Stand",
+        price: 199.99,
+        originalPrice: 249.99,
+        coverImage:
+          "https://images.unsplash.com/photo-1551298370-9d3d53740c72?q=80&w=1374&auto=format&fit=crop",
+        hoverImage:
+          "https://images.unsplash.com/photo-1581541234264-671cc782a76e?q=80&w=1374&auto=format&fit=crop",
+        category: "Entertainment",
+        rating: 4.0,
+        inStock: true,
+        description:
+          "Contemporary entertainment center with cable management system, adjustable shelving, and ample storage for media devices.",
+      },
+    ],
+  },
+
+  // Furniture categories
+  "bedroom-furniture": {
+    title: "Bedroom Furniture",
+    items: [
+      {
+        id: 301,
+        title: "King Size Upholstered Bed with Storage",
+        price: 599.99,
+        originalPrice: 699.99,
+        coverImage:
+          "https://images.unsplash.com/photo-1505693314120-0d443867891c?q=80&w=1470&auto=format&fit=crop",
+        hoverImage:
+          "https://images.unsplash.com/photo-1513694203232-719a280e022f?q=80&w=1469&auto=format&fit=crop",
+        category: "Bedroom",
+        rating: 4.5,
+        inStock: true,
+        isNew: true,
+        badge: "New",
+        description:
+          "Luxurious king size bed with padded headboard and built-in storage drawers, combining style with functionality.",
+      },
+      {
+        id: 302,
+        title: "Modern Bedside Table with Drawers",
+        price: 129.99,
+        originalPrice: 159.99,
+        coverImage:
+          "https://images.unsplash.com/photo-1618220179428-22790b461013?q=80&w=1527&auto=format&fit=crop",
+        hoverImage:
+          "https://images.unsplash.com/photo-1556228578-0d85b1a4d571?q=80&w=1470&auto=format&fit=crop",
+        category: "Bedroom",
+        rating: 4.0,
+        inStock: true,
+        badge: "Sale",
+        description:
+          "Sleek bedside table with two spacious drawers for storage, made from high-quality materials with a modern finish.",
+      },
+    ],
+  },
+
+  "home-office": {
+    title: "Home Office Furniture",
+    items: [
+      {
+        id: 401,
+        title: "L-Shaped Computer Desk with Storage",
+        price: 199.99,
+        originalPrice: 259.99,
+        coverImage:
+          "https://images.unsplash.com/photo-1518455027359-f3f8164ba6bd?q=80&w=1469&auto=format&fit=crop",
+        hoverImage:
+          "https://images.unsplash.com/photo-1593062096033-9a26b09da705?q=80&w=1470&auto=format&fit=crop",
+        category: "Home Office",
+        rating: 5.0,
+        inStock: true,
+        badge: "25%",
+        description:
+          "Spacious L-shaped desk with integrated storage solutions, perfect for multi-monitor setups and home office productivity.",
+      },
+      {
+        id: 402,
+        title: "Premium Ergonomic Office Chair",
+        price: 249.99,
+        originalPrice: 299.99,
+        coverImage:
+          "https://images.unsplash.com/photo-1596162954151-cdcb4c0f70fb?q=80&w=1374&auto=format&fit=crop",
+        hoverImage:
+          "https://images.unsplash.com/photo-1580480055273-228ff5388ef8?q=80&w=1374&auto=format&fit=crop",
+        category: "Home Office",
+        rating: 4.5,
+        inStock: true,
+        badge: "Best Seller",
+        description:
+          "Professional-grade ergonomic chair with breathable mesh back, adjustable headrest and lumbar support for all-day comfort.",
+      },
+    ],
+  },
+
+  "living-room": {
+    title: "Living Room Furniture",
+    items: [
+      {
+        id: 501,
+        title: "Modern L-Shaped Sectional Sofa",
+        price: 799.99,
+        originalPrice: 999.99,
+        coverImage:
+          "https://images.unsplash.com/photo-1550581190-9c1c48d21d6c?q=80&w=1469&auto=format&fit=crop",
+        hoverImage:
+          "https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?q=80&w=1470&auto=format&fit=crop",
+        category: "Living Room",
+        rating: 4.0,
+        inStock: true,
+        badge: "Trending",
+        description:
+          "Versatile L-shaped sectional sofa with premium upholstery, offering spacious seating and contemporary design for modern living rooms.",
+      },
+      {
+        id: 502,
+        title: "Wall-Mounted Entertainment Center",
+        price: 349.99,
+        originalPrice: 449.99,
+        coverImage:
+          "https://images.unsplash.com/photo-1585412727339-54e4bae3bbf9?q=80&w=1470&auto=format&fit=crop",
+        hoverImage:
+          "https://images.unsplash.com/photo-1616046386594-c152babc9e15?q=80&w=1480&auto=format&fit=crop",
+        category: "Living Room",
+        rating: 5.0,
+        inStock: true,
+        badge: "Hot Deal",
+        description:
+          "Space-saving wall-mounted entertainment center with floating shelves, cable management system, and ample storage for media devices.",
+      },
+    ],
+  },
+
+  "dining-room": {
+    title: "Dining Room Furniture",
+    items: [
+      {
+        id: 601,
+        title: "Extendable Dining Table with Leaf",
+        price: 449.99,
+        originalPrice: 599.99,
+        coverImage:
+          "https://images.unsplash.com/photo-1604578762246-41134e37f9cc?q=80&w=1470&auto=format&fit=crop",
+        hoverImage:
+          "https://images.unsplash.com/photo-1615876234886-9b2c0c2b0b1e?q=80&w=1374&auto=format&fit=crop",
+        category: "Dining Room",
+        rating: 4.5,
+        inStock: true,
+        badge: "New Arrival",
+        description:
+          "Versatile dining table with extendable leaf design, perfect for both everyday meals and dinner parties, comfortably seating 6 to 8 people.",
+      },
+      {
+        id: 602,
+        title: "Set of 4 Upholstered Dining Chairs",
+        price: 329.99,
+        originalPrice: 399.99,
+        coverImage:
+          "https://images.unsplash.com/photo-1601628828688-632f38a5a7d0?q=80&w=1374&auto=format&fit=crop",
+        hoverImage:
+          "https://images.unsplash.com/photo-1611486212557-88be5ff6f941?q=80&w=1470&auto=format&fit=crop",
+        category: "Dining Room",
+        rating: 4.0,
+        inStock: true,
+        badge: "Best Seller",
+        description:
+          "Elegant dining chairs with sturdy frames and comfortable upholstery, designed to complement a variety of dining table styles.",
+      },
+    ],
+  },
+
+  // Fiction Books category
+  "fiction-books": {
+    title: "Fiction Books",
+    items: [
+      {
+        id: 1001,
+        title: "The Midnight Library",
+        author: "Matt Haig",
+        price: 18.99,
+        originalPrice: 24.99,
+        coverImage:
+          "https://images.unsplash.com/photo-1544947950-fa07a98d237f?q=80&w=1374&auto=format&fit=crop",
+        hoverImage:
+          "https://images.unsplash.com/photo-1629992101753-56d196c8aabb?q=80&w=1374&auto=format&fit=crop",
+        category: "Literary Fiction",
+        rating: 4.7,
+        inStock: true,
+        isNew: false,
+        isBestseller: false,
+        discount: 24,
+        description:
+          "Between life and death there is a library, and within that library, the shelves go on forever. Every book provides a chance to try another life you could have lived.",
+      },
+      {
+        id: 1002,
+        title: "Eternal Gardens",
+        author: "Marcus Reid",
+        price: 18.5,
+        originalPrice: 22.0,
+        coverImage:
+          "https://images.unsplash.com/photo-1621351183012-e2f9972dd9bf?q=80&w=1374&auto=format&fit=crop",
+        category: "Fantasy",
+        rating: 4.8,
+        inStock: true,
+        isNew: true,
+        isBestseller: false,
+        description:
+          "An epic fantasy tale of magic, betrayal, and ancient powers awakening in a world on the brink of war.",
+      },
+      {
+        id: 1003,
+        title: "Whispers of the Ocean",
+        author: "Elizabeth Chen",
+        price: 15.99,
+        originalPrice: 19.99,
+        coverImage:
+          "https://images.unsplash.com/photo-1531072901881-d644216d4bf9?q=80&w=1374&auto=format&fit=crop",
+        category: "Literary Fiction",
+        rating: 4.5,
+        inStock: true,
+        isNew: false,
+        isBestseller: false,
+        description:
+          "A beautifully written story about family secrets, forgiveness, and finding oneself on a remote island.",
+      },
+      {
+        id: 1004,
+        title: "The Last Stargazer",
+        author: "James Peterson",
+        price: 17.25,
+        originalPrice: 21.5,
+        coverImage:
+          "https://images.unsplash.com/photo-1629992101753-56d196c8aabb?q=80&w=1374&auto=format&fit=crop",
+        category: "Science Fiction",
+        rating: 4.6,
+        inStock: true,
+        isNew: false,
+        isBestseller: true,
+        description:
+          "Set in a distant future where humanity seeks new homes among the stars while facing extinction.",
+      },
+      {
+        id: 1005,
+        title: "The Midnight Chronicles",
+        author: "Robert Blackwood",
+        price: 18.99,
+        originalPrice: 22.0,
+        coverImage:
+          "https://images.unsplash.com/photo-1512820790803-83ca734da794?q=80&w=1374&auto=format&fit=crop",
+        category: "Mystery & Thriller",
+        rating: 4.4,
+        inStock: true,
+        isNew: true,
+        isBestseller: false,
+        description:
+          "A detective races against time to solve a series of ritualistic murders before the killer strikes again.",
+      },
+      {
+        id: 1006,
+        title: "Love in Paris",
+        author: "Sophie Laurent",
+        price: 14.99,
+        originalPrice: 18.99,
+        coverImage:
+          "https://images.unsplash.com/photo-1600189261867-30e5ffe7b8da?q=80&w=1374&auto=format&fit=crop",
+        category: "Romance",
+        rating: 4.3,
+        inStock: true,
+        isNew: false,
+        isBestseller: false,
+        description:
+          "A heartwarming romance set in the city of lights, where two strangers find an unexpected connection.",
+      },
+    ],
+  },
+
+  // Non-Fiction category
+  "non-fiction": {
+    title: "Non-Fiction",
+    items: [
+      {
+        id: 2001,
+        title: "The Power of Habits",
+        author: "Dr. Michael Stevens",
+        price: 24.99,
+        originalPrice: 29.99,
+        coverImage:
+          "https://images.unsplash.com/photo-1589998059171-988d887df646?q=80&w=1376&auto=format&fit=crop",
+        category: "Self-Help",
+        rating: 4.8,
+        inStock: true,
+        isNew: false,
+        isBestseller: true,
+        description:
+          "Discover how to build positive habits and break negative ones to transform your life and achieve success.",
+      },
+      {
+        id: 2002,
+        title: "The Hidden History of Humanity",
+        author: "Prof. Sarah Johnson",
+        price: 32.5,
+        originalPrice: 39.99,
+        coverImage:
+          "https://images.unsplash.com/photo-1461360370896-922624d12aa1?q=80&w=1474&auto=format&fit=crop",
+        category: "History",
+        rating: 4.7,
+        inStock: true,
+        isNew: true,
+        isBestseller: false,
+        description:
+          "A groundbreaking exploration of forgotten civilizations and their lasting impact on our world today.",
+      },
+      {
+        id: 2003,
+        title: "Mindful Leadership",
+        author: "Thomas Zhang",
+        price: 26.99,
+        originalPrice: 32.0,
+        coverImage:
+          "https://images.unsplash.com/photo-1544947950-fa07a98d237f?q=80&w=1374&auto=format&fit=crop",
+        category: "Business",
+        rating: 4.5,
+        inStock: true,
+        isNew: false,
+        isBestseller: true,
+        description:
+          "Learn how to lead with compassion, presence, and purpose in today's fast-paced business environment.",
+      },
+      {
+        id: 2004,
+        title: "Cosmic Wonders: A Guide to the Universe",
+        author: "Dr. Elena Rivera",
+        price: 29.95,
+        originalPrice: 36.5,
+        coverImage:
+          "https://images.unsplash.com/photo-1462331940025-496dfbfc7564?q=80&w=1427&auto=format&fit=crop",
+        category: "Science",
+        rating: 4.9,
+        inStock: true,
+        isNew: true,
+        isBestseller: true,
+        description:
+          "An illustrated guide to the wonders of our universe, from quantum particles to distant galaxies.",
+      },
+      {
+        id: 2005,
+        title: "The Art of Slow Living",
+        author: "Emma Williams",
+        price: 19.99,
+        originalPrice: 24.5,
+        coverImage:
+          "https://images.unsplash.com/photo-1598901865264-4f18cac7e204?q=80&w=1374&auto=format&fit=crop",
+        category: "Lifestyle",
+        rating: 4.6,
+        inStock: true,
+        isNew: false,
+        isBestseller: false,
+        description:
+          "A practical guide to slowing down, finding balance, and embracing a more intentional and fulfilled life.",
+      },
+      {
+        id: 2006,
+        title: "Creativity and Innovation",
+        author: "Dr. James Robinson",
+        price: 45.99,
+        originalPrice: 59.99,
+        coverImage:
+          "https://images.unsplash.com/photo-1544947950-fa07a98d237f?q=80&w=1374&auto=format&fit=crop",
+        category: "Business",
+        rating: 4.7,
+        inStock: true,
+        isNew: false,
+        isBestseller: true,
+        description:
+          "A comprehensive handbook for business leaders looking to foster innovation and creative thinking.",
+      },
+    ],
+  },
+
+  // Children's Books category
+  "children-books": {
+    title: "Children's Books",
+    items: [
+      {
+        id: 3001,
+        title: "The Little Adventurer",
+        author: "Lisa Morgan",
+        price: 16.99,
+        originalPrice: 19.5,
+        coverImage:
+          "https://images.unsplash.com/photo-1633477189729-9290b3261d0a?q=80&w=1374&auto=format&fit=crop",
+        category: "Picture Book",
+        rating: 4.9,
+        inStock: true,
+        isNew: true,
+        isBestseller: true,
+        description:
+          "Join Sam on an exciting journey through magical lands filled with friendly creatures and valuable lessons.",
+      },
+      {
+        id: 3002,
+        title: "The Curious Caterpillar",
+        author: "David Wilson",
+        price: 14.5,
+        originalPrice: 17.99,
+        coverImage:
+          "https://images.unsplash.com/photo-1629992101753-56d196c8aabb?q=80&w=1374&auto=format&fit=crop",
+        category: "Early Readers",
+        rating: 4.8,
+        inStock: true,
+        isNew: false,
+        isBestseller: true,
+        description:
+          "A beautifully illustrated story about transformation, patience, and the wonders of nature.",
+      },
+      {
+        id: 3003,
+        title: "Dinosaur Detective",
+        author: "Alex Thompson",
+        price: 15.99,
+        originalPrice: 19.99,
+        coverImage:
+          "https://images.unsplash.com/photo-1621351183012-e2f9972dd9bf?q=80&w=1374&auto=format&fit=crop",
+        category: "Middle Grade",
+        rating: 4.7,
+        inStock: true,
+        isNew: true,
+        isBestseller: false,
+        description:
+          "Tim and his dinosaur friend solve mysteries in this exciting adventure series that combines fun and learning.",
+      },
+      {
+        id: 3004,
+        title: "The Magic Paintbrush",
+        author: "Sophia Lee",
+        price: 13.95,
+        originalPrice: 16.5,
+        coverImage:
+          "https://images.unsplash.com/photo-1471970471555-19d4b113e9ed?q=80&w=1430&auto=format&fit=crop",
+        category: "Fantasy",
+        rating: 4.6,
+        inStock: true,
+        isNew: false,
+        isBestseller: false,
+        description:
+          "A magical tale about a young artist who discovers that her paintings come to life at night.",
+      },
+      {
+        id: 3005,
+        title: "Space Explorers",
+        author: "Dr. Neil Adams",
+        price: 18.99,
+        originalPrice: 22.5,
+        coverImage:
+          "https://images.unsplash.com/photo-1614332287897-cdc485fa562d?q=80&w=1470&auto=format&fit=crop",
+        category: "Educational",
+        rating: 4.8,
+        inStock: true,
+        isNew: true,
+        isBestseller: true,
+        description:
+          "An interactive adventure through our solar system, perfect for young space enthusiasts.",
+      },
+    ],
+  },
+
+  // Book Accessories category
+  "book-accessories": {
+    title: "Book Accessories",
+    items: [
+      {
+        id: 4001,
+        title: "Modern Bookends Set",
+        author: null,
+        price: 24.99,
+        originalPrice: 32.0,
+        coverImage:
+          "https://images.unsplash.com/photo-1610116306796-6fea9f4fae38?q=80&w=1470&auto=format&fit=crop",
+        category: "Bookends",
+        rating: 4.5,
+        inStock: true,
+        isNew: true,
+        isBestseller: false,
+        description:
+          "Elegant metal bookends with a minimalist design, perfect for any bookshelf or desk.",
+      },
+      {
+        id: 4002,
+        title: "Oxford Premium Leather Bookmark Set",
+        author: null,
+        price: 18.99,
+        originalPrice: 24.5,
+        coverImage:
+          "https://images.unsplash.com/photo-1589998059171-988d887df646?q=80&w=1376&auto=format&fit=crop",
+        category: "Bookmarks",
+        rating: 4.8,
+        inStock: true,
+        isNew: false,
+        isBestseller: true,
+        description:
+          "Set of 3 handcrafted leather bookmarks with classic designs and durable construction.",
+      },
+      {
+        id: 4003,
+        title: "Adjustable Book Stand",
+        author: null,
+        price: 32.5,
+        originalPrice: 39.99,
+        coverImage:
+          "https://images.unsplash.com/photo-1598901865264-4f18cac7e204?q=80&w=1374&auto=format&fit=crop",
+        category: "Reading Aids",
+        rating: 4.7,
+        inStock: true,
+        isNew: true,
+        isBestseller: false,
+        description:
+          "Ergonomic book stand with adjustable angles and page holders, perfect for hands-free reading.",
+      },
+      {
+        id: 4004,
+        title: "Literary Candle Collection",
+        author: null,
+        price: 28.99,
+        originalPrice: 35.0,
+        coverImage:
+          "https://images.unsplash.com/photo-1603006905003-be475563bc59?q=80&w=1374&auto=format&fit=crop",
+        category: "Home Decor",
+        rating: 4.9,
+        inStock: true,
+        isNew: false,
+        isBestseller: true,
+        description:
+          "Set of 3 scented candles inspired by classic novels, perfect for creating a cozy reading atmosphere.",
+      },
+      {
+        id: 4005,
+        title: "Vintage Book Cover Tote Bag",
+        author: null,
+        price: 19.99,
+        originalPrice: 24.99,
+        coverImage:
+          "https://images.unsplash.com/photo-1544816155-12df9643f363?q=80&w=1374&auto=format&fit=crop",
+        category: "Book Bags",
+        rating: 4.6,
+        inStock: true,
+        isNew: false,
+        isBestseller: false,
+        description:
+          "Canvas tote bag featuring classic book cover designs, perfect for carrying your reading materials.",
+      },
+    ],
+  },
+};
+
+/**
+ * Loads products for a specific category into a modal
+ * @param {string} categoryId - The ID of the category to load
+ * @param {number} page - The page number to load (pagination)
+ */
+window.loadCategoryProducts = function (categoryId, page = 1) {
+  console.log(`📚 Loading products for category: ${categoryId}, page: ${page}`);
+
+  // Safety check for modal
+  const modal = document.getElementById(`${categoryId}-modal`);
+  if (!modal) {
+    console.error(`❌ Modal with ID ${categoryId}-modal not found`);
+    if (window.showToast) {
+      window.showToast(
+        `Error: Could not find modal for ${categoryId}`,
+        "error"
+      );
+    }
+    return;
+  }
+
+  // First make sure modal is visible
+  modal.style.display = "block";
+  modal.style.zIndex = "9999999";
+  modal.style.visibility = "visible";
+
+  // Find the products container
+  const modalProducts = modal.querySelector(`.modal-products`);
+  if (!modalProducts) {
+    console.error(
+      `❌ No .modal-products container found in modal #${categoryId}-modal`
+    );
+    return;
+  }
+
+  // Show loading indicator
+  modalProducts.innerHTML = `
+        <div class="modal-loading">
+            <div class="spinner" style="width: 40px; height: 40px; border: 4px solid rgba(0, 0, 0, 0.1); border-left-color: var(--book-accent, #8a4f7d); border-radius: 50%; animation: spin 1s linear infinite;"></div>
+        </div>
+    `;
+
+  // Define keyframes for spinner animation
+  if (!document.getElementById("spinnerAnimation")) {
+    const styleSheet = document.createElement("style");
+    styleSheet.id = "spinnerAnimation";
+    styleSheet.textContent = `
+            @keyframes spin {
+                to { transform: rotate(360deg); }
+            }
+        `;
+    document.head.appendChild(styleSheet);
+  }
+
+  // Get category data with delay to ensure loading indicator is visible
+  setTimeout(() => {
+    try {
+      // Get category data
+      const category = bookbyteCategories[categoryId];
+      if (!category) {
+        modalProducts.innerHTML =
+          '<div class="modal-error" style="text-align: center; padding: 30px;">Category not found</div>';
+        console.error(
+          `❌ Category ${categoryId} not found in bookbyteCategories data`
+        );
+        return;
+      }
+
+      // Pagination settings - always show exactly 3 products
+      const itemsPerPage = 3; // Changed from 6 to 3 products
+      const startIndex = (page - 1) * itemsPerPage;
+      const endIndex = startIndex + itemsPerPage;
+      const paginatedItems = category.items.slice(startIndex, endIndex);
+
+      // Clear previous content
+      modalProducts.innerHTML = "";
+
+      // Create product grid with inline style for reliability
+      const productGrid = document.createElement("div");
+      productGrid.className = "modal-product-grid";
+      productGrid.style.display = "grid";
+      productGrid.style.gridTemplateColumns =
+        "repeat(auto-fill, minmax(250px, 1fr))";
+      productGrid.style.gap = "25px";
+      productGrid.style.marginTop = "20px";
+
+      if (paginatedItems.length === 0) {
+        const noProductsMsg = document.createElement("div");
+        noProductsMsg.className = "no-products-message";
+        noProductsMsg.style.textAlign = "center";
+        noProductsMsg.style.padding = "40px";
+        noProductsMsg.style.gridColumn = "1 / -1";
+        noProductsMsg.textContent = "No products found in this category";
+        productGrid.appendChild(noProductsMsg);
+      } else {
+        console.log(
+          `📚 Creating product elements for ${paginatedItems.length} items`
+        );
+        paginatedItems.forEach((product) => {
+          try {
+            const productElement = createProductElement(product);
+            productGrid.appendChild(productElement);
+          } catch (productErr) {
+            console.error(`Error creating product element:`, productErr);
+            // Create a simplified fallback product element
+            const fallbackElement = document.createElement("div");
+            fallbackElement.className = "modal-product";
+            fallbackElement.style.padding = "15px";
+            fallbackElement.innerHTML = `
+                            <h3 style="margin-bottom: 10px;">${
+                              product.title || "Product"
+                            }</h3>
+                            <p>$${
+                              typeof product.price === "number"
+                                ? product.price.toFixed(2)
+                                : product.price
+                            }</p>
+                        `;
+            productGrid.appendChild(fallbackElement);
+          }
+        });
+      }
+
+      modalProducts.appendChild(productGrid);
+
+      // Update pagination
+      updatePagination(
+        categoryId,
+        page,
+        Math.ceil(category.items.length / itemsPerPage)
+      );
+
+      console.log(`✅ Successfully loaded products for ${categoryId}`);
+
+      // Add toast container if it doesn't exist
+      if (!document.querySelector(".toast-container")) {
+        const toastContainer = document.createElement("div");
+        toastContainer.className = "toast-container";
+        document.body.appendChild(toastContainer);
+      }
+    } catch (err) {
+      console.error(`❌ Error in loadCategoryProducts:`, err);
+      modalProducts.innerHTML = `
+                <div class="modal-error" style="text-align: center; padding: 30px; color: #d9534f;">
+                    <p>Error loading products.</p>                <button onclick="window.loadCategoryProducts('${categoryId}', ${page})" style="margin-top: 15px; padding: 8px 16px; background: var(--book-accent, #8a4f7d); color: white; border: none; border-radius: 4px; cursor: pointer;">
+                    Try Again
+                </button>
+                </div>
+            `;
+    }
+  }, 200); // Short delay to ensure loading state is visible
+};
+
+/**
+ * Creates a product element from product data
+ * @param {Object} product - The product data
+ * @returns {HTMLElement} - The product element
+ */
+window.createProductElement = function (product) {
+  const productDiv = document.createElement("div");
+  productDiv.className = "modal-product";
+  productDiv.dataset.productId = product.id;
+
+  // Create badge HTML - with fallbacks for different product formats
+  let badgeHtml = "";
+  if (product.isNew) {
+    badgeHtml += '<span class="new-badge">NEW</span>';
+  }
+  if (product.isBestseller) {
+    badgeHtml += '<span class="bestseller-badge">BESTSELLER</span>';
+  }
+
+  // Handle prices with safeguards
+  const formattedPrice =
+    typeof product.price === "number"
+      ? `$${product.price.toFixed(2)}`
+      : product.price;
+
+  const formattedOriginalPrice =
+    typeof product.originalPrice === "number"
+      ? `$${product.originalPrice.toFixed(2)}`
+      : product.originalPrice || "";
+
+  const displayOriginalPrice = product.originalPrice
+    ? `<span class="original-price">${formattedOriginalPrice}</span>`
+    : "";
+
+  // Handle image source with fallback
+  const imageSource =
+    product.coverImage ||
+    product.image ||
+    "https://images.unsplash.com/photo-1544947950-fa07a98d237f?q=80&w=1374&auto=format&fit=crop";
+
+  // Use custom style to ensure proper layout even if CSS has issues
+  productDiv.style.display = "flex";
+  productDiv.style.flexDirection = "column";
+  productDiv.style.backgroundColor = "#fff";
+  productDiv.style.borderRadius = "8px";
+  productDiv.style.boxShadow = "0 2px 8px rgba(0, 0, 0, 0.1)";
+  productDiv.style.overflow = "hidden";
+  productDiv.style.transition = "transform 0.2s, box-shadow 0.2s";
+
+  productDiv.innerHTML = `
+        <div class="modal-product-img" style="position: relative; overflow: hidden;">
+            <img src="${imageSource}" alt="${
+    product.title
+  }" style="width: 100%; height: 200px; object-fit: cover; transition: transform 0.3s ease;">
+            ${badgeHtml}
+            ${
+              product.discount
+                ? `<span class="discount-badge" style="position: absolute; top: 10px; right: 10px; background-color: #e94560; color: white; padding: 5px 8px; font-size: 11px; font-weight: 600; border-radius: 4px;">${product.discount}% OFF</span>`
+                : ""
+            }
+        </div>
+        <div class="modal-product-info" style="padding: 15px;">
+            <h3 style="margin: 0 0 5px; font-size: 16px; color: var(--book-primary);">${
+              product.title
+            }</h3>
+            ${
+              product.author
+                ? `<p class="author" style="margin: 0 0 8px; font-size: 14px; color: #666;">by ${product.author}</p>`
+                : ""
+            }
+            <div class="rating" style="margin-bottom: 10px; color: var(--book-accent);">
+                ${getRatingStars(product.rating)}
+            </div>
+            <div class="price-container" style="display: flex; align-items: center; gap: 8px; margin-bottom: 15px;">
+                <span class="current-price" style="font-weight: 700; color: var(--book-accent); font-size: 18px;">${formattedPrice}</span>
+                ${
+                  displayOriginalPrice
+                    ? `<del style="color: #999; font-size: 14px;">${displayOriginalPrice}</del>`
+                    : ""
+                }
+            </div>
+            <div class="product-actions" style="display: flex; justify-content: space-between;">
+                <button 
+                    class="btn btn-primary add-to-cart" 
+                    style="padding: 8px 12px; background: var(--book-primary); color: white; border: none; border-radius: 4px; cursor: pointer;" 
+                    data-action="add-to-cart" data-product-id="${product.id}">
+                    Add to Cart
+                </button>
+                <button 
+                    class="btn btn-secondary add-to-wishlist" 
+                    style="padding: 8px; background: transparent; border: 1px solid var(--book-primary); border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center;" 
+                    data-action="add-to-wishlist" data-product-id="${
+                      product.id
+                    }">
+                    <ion-icon name="heart-outline"></ion-icon>
+                </button>
+            </div>
+        </div>
+    `;
+
+  return productDiv;
+};
+
+/**
+ * Generates HTML for star ratings
+ * @param {number} rating - The rating value
+ * @returns {string} - HTML for star icons
+ */
+window.getRatingStars = function (rating) {
+  let starsHtml = "";
+  const fullStars = Math.floor(rating);
+  const hasHalfStar = rating % 1 >= 0.5;
+
+  for (let i = 0; i < fullStars; i++) {
+    starsHtml += '<ion-icon name="star"></ion-icon>';
+  }
+
+  if (hasHalfStar) {
+    starsHtml += '<ion-icon name="star-half-outline"></ion-icon>';
+  }
+
+  const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+  for (let i = 0; i < emptyStars; i++) {
+    starsHtml += '<ion-icon name="star-outline"></ion-icon>';
+  }
+
+  return starsHtml;
+};
+
+/**
+ * Updates the pagination controls for a category modal
+ * @param {string} categoryId - The ID of the category
+ * @param {number} currentPage - The current page number
+ * @param {number} totalPages - The total number of pages
+ */
+function updatePagination(categoryId, currentPage, totalPages) {
+  const paginationContainer = document.querySelector(
+    `#${categoryId}-modal .modal-pagination`
+  );
+  if (!paginationContainer) return;
+
+  paginationContainer.innerHTML = "";
+
+  if (totalPages <= 1) return;
+
+  // Previous button
+  const prevButton = document.createElement("button");
+  prevButton.className = "pagination-button prev";
+  prevButton.disabled = currentPage === 1;
+  prevButton.innerHTML = "&laquo; Prev";
+  prevButton.addEventListener("click", () => {
+    if (currentPage > 1) {
+      window.loadCategoryProducts(categoryId, currentPage - 1);
+    }
+  });
+  paginationContainer.appendChild(prevButton);
+
+  // Page numbers
+  const maxVisiblePages = 5;
+  let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+  let endPage = Math.min(startPage + maxVisiblePages - 1, totalPages);
+
+  if (endPage - startPage < maxVisiblePages - 1) {
+    startPage = Math.max(1, endPage - maxVisiblePages + 1);
+  }
+
+  // First page button if not visible
+  if (startPage > 1) {
+    const firstPageBtn = document.createElement("button");
+    firstPageBtn.className = "pagination-button";
+    firstPageBtn.textContent = "1";
+    firstPageBtn.addEventListener("click", () =>
+      window.loadCategoryProducts(categoryId, 1)
+    );
+    paginationContainer.appendChild(firstPageBtn);
+
+    if (startPage > 2) {
+      const ellipsis = document.createElement("span");
+      ellipsis.className = "pagination-ellipsis";
+      ellipsis.textContent = "...";
+      paginationContainer.appendChild(ellipsis);
+    }
+  }
+
+  // Page buttons
+  for (let i = startPage; i <= endPage; i++) {
+    const pageButton = document.createElement("button");
+    pageButton.className = `pagination-button ${
+      i === currentPage ? "active" : ""
+    }`;
+    pageButton.textContent = i;
+    pageButton.addEventListener("click", () =>
+      window.loadCategoryProducts(categoryId, i)
+    );
+    paginationContainer.appendChild(pageButton);
+  }
+
+  // Last page button if not visible
+  if (endPage < totalPages) {
+    if (endPage < totalPages - 1) {
+      const ellipsis = document.createElement("span");
+      ellipsis.className = "pagination-ellipsis";
+      ellipsis.textContent = "...";
+      paginationContainer.appendChild(ellipsis);
+    }
+
+    const lastPageBtn = document.createElement("button");
+    lastPageBtn.className = "pagination-button";
+    lastPageBtn.textContent = totalPages;
+    lastPageBtn.addEventListener("click", () =>
+      window.loadCategoryProducts(categoryId, totalPages)
+    );
+    paginationContainer.appendChild(lastPageBtn);
+  }
+
+  // Next button
+  const nextButton = document.createElement("button");
+  nextButton.className = "pagination-button next";
+  nextButton.disabled = currentPage === totalPages;
+  nextButton.innerHTML = "Next &raquo;";
+  nextButton.addEventListener("click", () => {
+    if (currentPage < totalPages) {
+      window.loadCategoryProducts(categoryId, currentPage + 1);
+    }
+  });
+  paginationContainer.appendChild(nextButton);
+}
+
+/**
+ * Opens a category modal and loads its products
+ * @param {string} categoryId - The ID of the category to open
+ */
+window.openCategoryModal = function (categoryId) {
+  console.log(`🔍 BookByte: Opening modal for category ${categoryId}`);
+
+  // Prevent default behavior if called from an event
+  if (event) {
+    event.preventDefault();
+    event.stopPropagation();
+  }
+
+  const modal = document.getElementById(`${categoryId}-modal`);
+  if (!modal) {
+    console.error(`❌ Modal with ID ${categoryId}-modal not found`);
+    if (window.showToast) {
+      window.showToast(
+        `Error: Could not find modal for ${categoryId}`,
+        "error"
+      );
+    }
+    return false;
+  }
+
+  // Close any open modals first to prevent stacking
+  document.querySelectorAll(".modal").forEach((m) => {
+    m.style.display = "none";
+  });
+
+  // Show the modal with forced styling to ensure visibility
+  modal.style.display = "block";
+  modal.style.zIndex = "9999999";
+  modal.style.visibility = "visible";
+  document.body.style.overflow = "hidden"; // Prevent page scrolling when modal is open
+
+  // Add a class for animation
+  modal.classList.add("modal-active");
+
+  // Load products with a small delay to ensure modal is visible first
+  setTimeout(() => {
+    window.loadCategoryProducts(categoryId);
+    console.log(`✅ Called loadCategoryProducts for ${categoryId}`);
+  }, 50);
+
+  // Close modal when clicked outside or on close button
+  const closeBtn = modal.querySelector(".close-modal");
+  if (closeBtn) {
+    closeBtn.onclick = function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      window.closeBookByteModal(modal);
+      return false;
+    };
+  }
+
+  window.onclick = function (event) {
+    if (event.target === modal) {
+      window.closeBookByteModal(modal);
+    }
+  };
+
+  // Add keyboard support for closing with Escape key
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape" || e.keyCode === 27) {
+      window.closeBookByteModal(modal);
+    }
+  });
+};
+
+/**
+ * Closes a modal window
+ * @param {HTMLElement} modal - The modal element to close
+ */
+window.closeBookByteModal = function (modal) {
+  if (!modal) return;
+
+  modal.classList.remove("modal-active");
+  modal.style.display = "none";
+  document.body.style.overflow = "auto"; // Restore scrolling
+};
+
+/**
+ * Get the current user's username
+ * @returns {Promise<string|null>} The username or null if not logged in
+ */
+async function getUsername() {
+  // First try the API endpoint
+  try {
+    const response = await fetch("/api/session-username");
+    const data = await response.json();
+    if (data.username) {
+      return data.username;
+    }
+  } catch (error) {
+    console.error("Error fetching session username:", error);
+  }
+
+  // If API fails, try localStorage
+  if (localStorage.getItem("username")) {
+    return localStorage.getItem("username").trim();
+  }
+
+  return null;
+}
+
+/**
+ * Adds a product to the cart
+ * @param {number} productId - The ID of the product to add
+ */
+async function addToCart(productId) {
+  console.log(`Adding product ${productId} to cart`);
+
+  try {
+    const username = await getUsername();
+    if (!username) {
+      window.location.href = "/login";
+      return;
+    }
+
+    // Use query parameters instead of request body
+    const response = await fetch(
+      `/api/cart/add?productId=${encodeURIComponent(
+        productId
+      )}&quantity=1&username=${encodeURIComponent(username)}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to add item to cart");
+    }
+
+    const result = await response.json();
+
+    if (result.success) {
+      // Get product name for toast message
+      const product = findProductById(productId);
+      const productName = product ? product.title : "Product";
+
+      // Update cart counter if it exists
+      const cartCounter = document.querySelector(".cart-counter");
+      if (cartCounter && result.data && result.data.cartCount !== undefined) {
+        cartCounter.textContent = result.data.cartCount;
+      } else if (typeof updateCartCounter === "function") {
+        updateCartCounter(1);
+      }
+
+      // Show success message
+      showToast("Success", `${productName} added to cart!`, "success");
+    } else {
+      throw new Error(result.message || "Failed to add item to cart");
+    }
+  } catch (error) {
+    console.error("Error adding to cart:", error);
+    showToast("Error", "Failed to add product to cart", "error");
+  }
+}
+
+/**
+ * Adds a product to the wishlist
+ * @param {number} productId - The ID of the product to add
+ */
+async function addToWishlist(productId) {
+  console.log(`Adding product ${productId} to wishlist`);
+
+  try {
+    const username = await getUsername();
+    if (!username) {
+      window.location.href = "/login";
+      return;
+    }
+
+    // Use query parameters instead of request body
+    const response = await fetch(
+      `/api/wishlist/add?productId=${encodeURIComponent(
+        productId
+      )}&username=${encodeURIComponent(username)}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to add item to wishlist");
+    }
+
+    const result = await response.json();
+
+    if (result.success) {
+      // Get product name for toast message
+      const product = findProductById(productId);
+      const productName = product ? product.title : "Product";
+
+      // Toggle heart icon if it exists
+      const wishlistButton = document.querySelector(
+        `button[data-action="add-to-wishlist"][data-product-id="${productId}"]`
+      );
+      if (wishlistButton) {
+        const icon = wishlistButton.querySelector("ion-icon");
+        if (icon) {
+          icon.name = icon.name === "heart-outline" ? "heart" : "heart-outline";
+        }
+      }
+
+      // Update wishlist counter if it exists
+      const wishlistCounter = document.querySelector(".wishlist-counter");
+      if (
+        wishlistCounter &&
+        result.data &&
+        result.data.wishlistCount !== undefined
+      ) {
+        wishlistCounter.textContent = result.data.wishlistCount;
+      } else if (typeof updateWishlistCounter === "function") {
+        updateWishlistCounter(1);
+      }
+
+      // Show success message
+      showToast("Success", `${productName} added to wishlist!`, "success");
+    } else {
+      throw new Error(result.message || "Failed to add item to wishlist");
+    }
+  } catch (error) {
+    console.error("Error adding to wishlist:", error);
+    showToast("Error", "Failed to add product to wishlist", "error");
+  }
+}
+
+/**
+ * Finds a product by its ID across all categories
+ * @param {number} productId - The ID of the product to find
+ * @returns {Object|null} - The product object or null if not found
+ */
+function findProductById(productId) {
+  for (const categoryId in bookbyteCategories) {
+    const category = bookbyteCategories[categoryId];
+    const product = category.items.find((item) => item.id === productId);
+    if (product) return product;
+  }
+  return null;
+}
+
+/**
+ * Displays a toast notification
+ * @param {string} message - The message to display
+ * @param {string} type - The type of toast (success, error, info)
+ */
+function showToast(title, message, type = "success") {
+  // Check if toast container exists, if not create it
+  let toastContainer = document.querySelector(".toast-container");
+  if (!toastContainer) {
+    toastContainer = document.createElement("div");
+    toastContainer.className = "toast-container";
+    document.body.appendChild(toastContainer);
+  }
+
+  const toast = document.createElement("div");
+  toast.className = `toast ${type}`;
+  toast.innerHTML = `
+        <div class="toast-content">
+            <div class="toast-title">${title}</div>
+            <div class="toast-message">${message}</div>
+        </div>
+    `;
+
+  toastContainer.appendChild(toast);
+
+  // Auto remove after 3 seconds
+  setTimeout(() => {
+    toast.classList.add("toast-fade-out");
+    setTimeout(() => {
+      toast.remove();
+      if (toastContainer.children.length === 0) {
+        toastContainer.remove();
+      }
+    }, 300);
+  }, 3000);
+}
+
+/**
+ * Updates the cart counter display
+ * @param {number} count - The number to add to the counter
+ */
+function updateCartCounter(count = 1) {
+  const cartCounters = document.querySelectorAll(".cart-counter");
+  cartCounters.forEach((counter) => {
+    let currentCount = parseInt(counter.textContent) || 0;
+    currentCount += count;
+    counter.textContent = currentCount;
+
+    // Add animation
+    counter.classList.add("cart-counter-update");
+
+    // Remove animation class after animation completes
+    setTimeout(() => {
+      counter.classList.remove("cart-counter-update");
+    }, 500);
+  });
+}
+
+/**
+ * Updates the wishlist counter display
+ * @param {number} count - The number to add to the counter
+ */
+function updateWishlistCounter(count = 1) {
+  const wishlistCounters = document.querySelectorAll(".wishlist-counter");
+  wishlistCounters.forEach((counter) => {
+    let currentCount = parseInt(counter.textContent) || 0;
+    currentCount += count;
+    counter.textContent = currentCount;
+
+    // Add animation
+    counter.classList.add("wishlist-counter-update");
+
+    // Remove animation class after animation completes
+    setTimeout(() => {
+      counter.classList.remove("wishlist-counter-update");
+    }, 500);
+  });
+}
+
+// Make functions available globally for the modal system
+// This ensures our functions are called correctly even if modal-unified.js tries to override them
+window.loadProductsForCategory = function (categoryId, modalElement) {
+  console.log(`Loading products for category: ${categoryId}`);
+
+  // Ensure modal is visible first (fixes race conditions)
+  const modal = document.getElementById(`${categoryId}-modal`) || modalElement;
+  if (modal) {
+    modal.style.display = "block";
+    modal.style.zIndex = "9999999";
+    modal.style.visibility = "visible";
+    document.body.style.overflow = "hidden"; // Prevent scrolling
+  }
+
+  // Load the products inside the modal
+  try {
+    // Call our specialized function directly to avoid any confusion
+    window.loadCategoryProducts(categoryId, 1);
+    console.log(
+      `✅ Loaded products for ${categoryId} using loadCategoryProducts`
+    );
+  } catch (err) {
+    console.error(`Error loading products for ${categoryId}:`, err);
+
+    // Fallback - try direct rendering if our function fails
+    try {
+      const modalProducts = modal?.querySelector(".modal-products");
+      if (
+        modalProducts &&
+        window.bookbyteCategories &&
+        window.bookbyteCategories[categoryId]
+      ) {
+        console.log(`🔄 Attempting fallback rendering for ${categoryId}`);
+
+        // Clear first
+        modalProducts.innerHTML = "";
+
+        // Create a simple grid
+        const gridDiv = document.createElement("div");
+        gridDiv.className = "modal-product-grid";
+
+        // Get just the first 6 items
+        const items = window.bookbyteCategories[categoryId].items.slice(0, 6);
+
+        // Create simple product cards
+        items.forEach((product) => {
+          const productDiv = document.createElement("div");
+          productDiv.className = "modal-product";
+          productDiv.innerHTML = `
+                        <div class="modal-product-img">
+                            <img src="${product.coverImage}" alt="${
+            product.title
+          }">
+                            ${
+                              product.isNew
+                                ? '<span class="new-badge">NEW</span>'
+                                : ""
+                            }
+                            ${
+                              product.isBestseller
+                                ? '<span class="bestseller-badge">BESTSELLER</span>'
+                                : ""
+                            }
+                            ${
+                              product.discount
+                                ? `<span class="discount-badge">${product.discount}% OFF</span>`
+                                : ""
+                            }
+                        </div>
+                        <div class="modal-product-info">
+                            <h3>${product.title}</h3>
+                            ${
+                              product.author
+                                ? `<p class="author">by ${product.author}</p>`
+                                : ""
+                            }
+                            <div class="price-container">
+                                <span class="current-price">$${product.price.toFixed(
+                                  2
+                                )}</span>
+                            </div>
+                        </div>
+                    `;
+          gridDiv.appendChild(productDiv);
+        });
+
+        modalProducts.appendChild(gridDiv);
+        console.log(`✅ Used fallback rendering for ${categoryId}`);
+      }
+    } catch (fallbackErr) {
+      console.error("Both rendering methods failed:", fallbackErr);
+    }
+  }
+};
+
+// Initialize event handlers when DOM is loaded
+document.addEventListener("DOMContentLoaded", function () {
+  // The onclick attributes in HTML are already set up to call openCategoryModal directly
+  // But we'll still add event listeners for buttons that might not have onclick attributes
+  const categoryButtons = document.querySelectorAll(
+    ".category-btn:not([onclick])"
+  );
+  categoryButtons.forEach((button) => {
+    button.addEventListener("click", function () {
+      const categoryId = this.getAttribute("data-category");
+      if (categoryId) {
+        // We'll use the modal.js function which will call our loadProductsForCategory
+        if (window.openCategoryModal) {
+          window.openCategoryModal(categoryId);
+        }
+      }
+    });
+  });
+
+  // Add event delegation for product actions (cart and wishlist buttons)
+  document.addEventListener("click", function (e) {
+    // Handle add to cart buttons
+    if (e.target && e.target.closest('[data-action="add-to-cart"]')) {
+      e.preventDefault();
+      const button = e.target.closest('[data-action="add-to-cart"]');
+      const productId = button.getAttribute("data-product-id");
+      if (productId) {
+        addToCart(parseInt(productId));
+      }
+    }
+
+    // Handle add to wishlist buttons
+    if (e.target && e.target.closest('[data-action="add-to-wishlist"]')) {
+      e.preventDefault();
+      const button = e.target.closest('[data-action="add-to-wishlist"]');
+      const productId = button.getAttribute("data-product-id");
+      if (productId) {
+        addToWishlist(parseInt(productId));
+      }
+    }
+  });
+
+  // Set up event handlers for data-action buttons (modern approach)
+  function initializeActionButtons() {
+    // Add event listeners to all add to cart buttons
+    document
+      .querySelectorAll('button[data-action="add-to-cart"]')
+      .forEach((button) => {
+        button.addEventListener("click", function (e) {
+          e.preventDefault();
+          const productId = this.getAttribute("data-product-id");
+          addToCart(productId);
+        });
+      });
+
+    // Add event listeners to all add to wishlist buttons
+    document
+      .querySelectorAll('button[data-action="add-to-wishlist"]')
+      .forEach((button) => {
+        button.addEventListener("click", function (e) {
+          e.preventDefault();
+          const productId = this.getAttribute("data-product-id");
+          addToWishlist(productId);
+        });
+      });
+  }
+
+  // Initialize buttons immediately and set up a MutationObserver to handle dynamically added buttons
+  initializeActionButtons();
+
+  // Set up MutationObserver to detect when new products are added to the DOM
+  const observer = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+      if (mutation.addedNodes.length) {
+        initializeActionButtons();
+      }
+    });
+  });
+
+  // Observe the entire document body for changes
+  observer.observe(document.body, { childList: true, subtree: true });
+
+  // Pre-load modal content for better UX (optional)
+  setTimeout(() => {
+    console.log("Pre-loading category data for faster response...");
+    Object.keys(bookbyteCategories).forEach((categoryId) => {
+      const modal = document.getElementById(`${categoryId}-modal`);
+      if (modal && !modal._preloaded) {
+        const modalProducts = modal.querySelector(".modal-products");
+        if (modalProducts) {
+          // Mark as preloaded so we don't do it twice
+          modal._preloaded = true;
+        }
+      }
+    });
+  }, 2000); // Delay preloading to not interfere with initial page load
+});

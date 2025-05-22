@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+>
+  <head th:replace="~{fragments/layout :: head('Our Books')}">
+    <title>Our Books</title>
+    <!-- Using global CSS since the head fragment doesn't support links parameter -->
+  </head>
+
+  <body>
+    <!-- Include the counter-unified.js script -->
+    <script th:src="@{/js/counter-unified.js}"></script>
+    <link rel="stylesheet" th:href="@{/css/pagination.css}" />
+
+    <!-- Toast notification container -->
+    <div class="toast-container"></div>
+
+    <div th:replace="~{fragments/layout :: navbar}"></div>
+    <div th:replace="~{fragments/layout :: page-title('Our Books')}"></div>
+    <div th:replace="~{fragments/layout :: alerts}"></div>
+
+    <main class="shop-page-container">
+      <!-- Product Filter Section -->
+      <div class="product-filter-container">
+        <div class="filter-top">
+          <div class="grid-options">
+            <button class="grid-view active" data-view="grid" title="Grid View">
+              <ion-icon name="grid-outline"></ion-icon>
+            </button>
+            <button class="grid-view" data-view="list" title="List View">
+              <ion-icon name="list-outline"></ion-icon>
+            </button>
+          </div>
+          <div class="sort-options">
+            <select name="sort" class="sort-select">
+              <option value="default">Default Sorting</option>
+              <option value="name-asc">Name: A to Z</option>
+              <option value="name-desc">Name: Z to A</option>
+              <option value="price-asc">Price: Low to High</option>
+              <option value="price-desc">Price: High to Low</option>
+              <option value="newest">Newest First</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="filter-sidebar">
+          <div class="filter-group">
+            <h3 class="filter-title">Categories</h3>
+            <div class="filter-options">
+              <div class="filter-option">
+                <input
+                  type="checkbox"
+                  id="cat-fiction"
+                  name="category"
+                  value="fiction"
+                />
+                <label for="cat-fiction">Fiction <span>(12)</span></label>
+              </div>
+              <div class="filter-option">
+                <input
+                  type="checkbox"
+                  id="cat-non-fiction"
+                  name="category"
+                  value="non-fiction"
+                />
+                <label for="cat-non-fiction"
+                  >Non-Fiction <span>(8)</span></label
+                >
+              </div>
+              <div class="filter-option">
+                <input
+                  type="checkbox"
+                  id="cat-accessories"
+                  name="category"
+                  value="accessories"
+                />
+                <label for="cat-accessories"
+                  >Book Accessories <span>(15)</span></label
+                >
+              </div>
+              <div class="filter-option">
+                <input
+                  type="checkbox"
+                  id="cat-collections"
+                  name="category"
+                  value="collections"
+                />
+                <label for="cat-collections"
+                  >Book Collections <span>(5)</span></label
+                >
+              </div>
+            </div>
+          </div>
+
+          <div class="filter-group">
+            <h3 class="filter-title">Price Range</h3>
+            <div class="price-range-slider">
+              <div class="range-inputs">
+                <input
+                  type="range"
+                  min="0"
+                  max="100"
+                  value="0"
+                  class="range-min"
+                />
+                <input
+                  type="range"
+                  min="0"
+                  max="100"
+                  value="100"
+                  class="range-max"
+                />
+              </div>
+              <div class="price-inputs">
+                <div class="field">
+                  <span>$</span>
+                  <input type="number" class="input-min" value="0" />
+                </div>
+                <div class="separator">-</div>
+                <div class="field">
+                  <span>$</span>
+                  <input type="number" class="input-max" value="100" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="filter-group">
+            <h3 class="filter-title">Genre</h3>
+            <div class="filter-options">
+              <div class="filter-option">
+                <input
+                  type="checkbox"
+                  id="genre-fantasy"
+                  name="genre"
+                  value="fantasy"
+                />
+                <label for="genre-fantasy">Fantasy <span>(5)</span></label>
+              </div>
+              <div class="filter-option">
+                <input
+                  type="checkbox"
+                  id="genre-mystery"
+                  name="genre"
+                  value="mystery"
+                />
+                <label for="genre-mystery"
+                  >Mystery & Thriller <span>(4)</span></label
+                >
+              </div>
+              <div class="filter-option">
+                <input
+                  type="checkbox"
+                  id="genre-romance"
+                  name="genre"
+                  value="romance"
+                />
+                <label for="genre-romance">Romance <span>(3)</span></label>
+              </div>
+              <div class="filter-option">
+                <input
+                  type="checkbox"
+                  id="genre-biography"
+                  name="genre"
+                  value="biography"
+                />
+                <label for="genre-biography">Biography <span>(2)</span></label>
+              </div>
+            </div>
+          </div>
+
+          <button class="filter-apply-btn">
+            <ion-icon name="filter-outline"></ion-icon>
+            Apply Filters
+          </button>
+        </div>
+      </div>
+
+      <!-- Product Grid Section -->
+      <div class="product-grid-container">
+        <div id="product-grid" class="product-grid view-grid">
+          <!-- Products will be rendered here by JS -->
+        </div>
+        <!-- Pagination (optional, can be implemented later) -->
+        <div class="pagination" id="pagination"></div>
+      </div>
+    </main>
+
+    <div th:replace="~{fragments/layout :: footer}"></div>
+    <div th:replace="~{fragments/layout :: scripts}"></div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // Grid/List View Switching
+        const gridViewBtns = document.querySelectorAll(".grid-view");
+        const productGrid = document.querySelector(".product-grid");
+
+        gridViewBtns.forEach((btn) => {
+          btn.addEventListener("click", () => {
+            gridViewBtns.forEach((b) => b.classList.remove("active"));
+            btn.classList.add("active");
+
+            if (btn.dataset.view === "grid") {
+              productGrid.classList.add("view-grid");
+              productGrid.classList.remove("view-list");
+            } else {
+              productGrid.classList.add("view-list");
+              productGrid.classList.remove("view-grid");
+            }
+          });
+        });
+
+        // Update Quick View button links to product detail pages
+        const viewBtns = document.querySelectorAll(
+          ".quick-action-btn.view-btn"
+        );
+
+        viewBtns.forEach((btn, index) => {
+          // Find product card parent
+          const productCard = btn.closest(".product-card");
+          if (productCard) {
+            // Get the product-title link href
+            const productLink = productCard.querySelector(".product-title a");
+            if (productLink && productLink.getAttribute("href")) {
+              // Convert the button to a link with the same href
+              btn.setAttribute("href", productLink.getAttribute("href"));
+              // Keep the original styling and icon
+              btn.classList.add("link-styled");
+            }
+          }
+        });
+
+        // Price Range Slider
+        const rangeMin = document.querySelector(".range-min");
+        const rangeMax = document.querySelector(".range-max");
+        const inputMin = document.querySelector(".input-min");
+        const inputMax = document.querySelector(".input-max");
+
+        rangeMin.addEventListener("input", () => {
+          inputMin.value = rangeMin.value;
+          if (parseInt(rangeMin.value) > parseInt(rangeMax.value)) {
+            rangeMin.value = rangeMax.value;
+            inputMin.value = rangeMax.value;
+          }
+        });
+
+        rangeMax.addEventListener("input", () => {
+          inputMax.value = rangeMax.value;
+          if (parseInt(rangeMax.value) < parseInt(rangeMin.value)) {
+            rangeMax.value = rangeMin.value;
+            inputMax.value = rangeMin.value;
+          }
+        });
+
+        inputMin.addEventListener("change", () => {
+          rangeMin.value = inputMin.value;
+        });
+
+        inputMax.addEventListener("change", () => {
+          rangeMax.value = inputMax.value;
+        });
+
+        // Add to Cart with Ajax
+        function showToast(title, message, type) {
+          const toastContainer = document.querySelector(".toast-container");
+          if (!toastContainer) return;
+
+          const toast = document.createElement("div");
+          toast.className = `toast ${type || "info"}`;
+
+          const toastTitle = document.createElement("div");
+          toastTitle.className = "toast-title";
+          toastTitle.textContent = title || "Notification";
+
+          const toastMessage = document.createElement("div");
+          toastMessage.className = "toast-message";
+          toastMessage.textContent = message;
+
+          const closeBtn = document.createElement("button");
+          closeBtn.className = "toast-close";
+          closeBtn.innerHTML = "&times;";
+          closeBtn.addEventListener("click", () => {
+            toast.classList.add("toast-fade-out");
+            setTimeout(() => {
+              toast.remove();
+            }, 300);
+          });
+
+          toast.appendChild(toastTitle);
+          toast.appendChild(toastMessage);
+          toast.appendChild(closeBtn);
+          toastContainer.appendChild(toast);
+
+          // Auto-remove after 3 seconds
+          setTimeout(() => {
+            toast.classList.add("toast-fade-out");
+            setTimeout(() => {
+              toast.remove();
+            }, 300);
+          }, 3000);
+        }
+
+        // Make showToast globally accessible
+        window.showToast = showToast;
+
+        // Add to Cart with Ajax and counter update
+        const addToCartBtns = document.querySelectorAll(".add-to-cart-btn");
+        addToCartBtns.forEach((btn) => {
+          if (!btn.classList.contains("out-of-stock")) {
+            // Replace the existing button with one that has data attributes
+            const productId = btn.getAttribute("data-product-id");
+            if (productId) {
+              btn.setAttribute("data-cart-action", "add");
+            }
+
+            btn.addEventListener("click", function () {
+              const productId = this.getAttribute("data-product-id");
+              if (!productId) {
+                console.error("No product ID found on button:", this);
+                return;
+              }
+
+              // Add product to cart using AJAX
+              fetch("/cart/add", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  "X-CSRF-TOKEN": document
+                    .querySelector('meta[name="_csrf"]')
+                    ?.getAttribute("content"),
+                },
+                body: JSON.stringify({ productId: productId, quantity: 1 }),
+              })
+                .then((response) => {
+                  if (!response.ok) {
+                    throw new Error("Network response was not ok");
+                  }
+                  return response.json();
+                })
+                .then((data) => {
+                  if (data.redirect) {
+                    window.location.href = data.redirect;
+                    return;
+                  }
+
+                  // Animation and UI update
+                  btn.classList.add("added");
+                  setTimeout(() => {
+                    btn.classList.remove("added");
+                    btn.innerHTML =
+                      '<ion-icon name="checkmark-outline"></ion-icon> Added to Cart';
+                    setTimeout(() => {
+                      btn.innerHTML =
+                        '<ion-icon name="cart-outline"></ion-icon> Add to Cart';
+                    }, 1500);
+                  }, 1000);
+
+                  // Show success message
+                  showToast("Success", "Product added to cart!", "success");
+
+                  // Update cart count using the unified counter system
+                  if (
+                    data.cartCount !== undefined &&
+                    typeof window.updateCartCounter === "function"
+                  ) {
+                    window.updateCartCounter(data.cartCount);
+                  }
+                })
+                .catch((error) => {
+                  console.error("Error adding to cart:", error);
+                  showToast(
+                    "Error",
+                    "Failed to add product to cart. Please try again.",
+                    "error"
+                  );
+                });
+            });
+          }
+        });
+
+        // Wishlist Toggle with Ajax
+        const wishlistBtns = document.querySelectorAll(".wishlist-btn");
+        wishlistBtns.forEach((btn) => {
+          // Add data attributes for consistency
+          const productId = btn.getAttribute("data-product-id");
+          if (productId) {
+            btn.setAttribute("data-wishlist-action", "toggle");
+          }
+
+          btn.addEventListener("click", function () {
+            const productId = this.getAttribute("data-product-id");
+            if (!productId) {
+              console.error("No product ID found on wishlist button:", this);
+              return;
+            }
+
+            const isActive = this.classList.contains("active");
+            const endpoint = isActive ? "/wishlist/remove" : "/wishlist/add";
+
+            // Toggle wishlist using AJAX
+            fetch(endpoint, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                "X-CSRF-TOKEN": document
+                  .querySelector('meta[name="_csrf"]')
+                  ?.getAttribute("content"),
+              },
+              body: JSON.stringify({ productId: productId }),
+            })
+              .then((response) => {
+                if (!response.ok) {
+                  throw new Error("Network response was not ok");
+                }
+                return response.json();
+              })
+              .then((data) => {
+                if (data.redirect) {
+                  window.location.href = data.redirect;
+                  return;
+                }
+
+                // Toggle UI state
+                btn.classList.toggle("active");
+                if (btn.classList.contains("active")) {
+                  btn.innerHTML = '<ion-icon name="heart"></ion-icon>';
+                  showToast("Success", "Product added to wishlist!", "success");
+                } else {
+                  btn.innerHTML = '<ion-icon name="heart-outline"></ion-icon>';
+                  showToast(
+                    "Success",
+                    "Product removed from wishlist!",
+                    "success"
+                  );
+                }
+
+                // Update wishlist count using the unified counter system
+                if (
+                  data.wishlistCount !== undefined &&
+                  typeof window.updateWishlistCounter === "function"
+                ) {
+                  window.updateWishlistCounter(data.wishlistCount);
+                }
+              })
+              .catch((error) => {
+                console.error("Error updating wishlist:", error);
+                showToast(
+                  "Error",
+                  "Failed to update wishlist. Please try again.",
+                  "error"
+                );
+              });
+          });
+        });
+      });
+    </script>
+    <script src="/js/product-list-fetch.js"></script>
+  </body>
+</html>

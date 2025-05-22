@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head th:replace="~{fragments/layout :: head('Admin - User Details')}">
+    <title>Admin - User Details</title>
+  </head>
+
+  <body>
+    <div th:replace="~{fragments/layout :: navbar}"></div>
+    <div th:replace="~{fragments/layout :: page-title('User Details')}"></div>
+    <div th:replace="~{fragments/layout :: alerts}"></div>
+
+    <!-- Admin Header Section -->
+    <div class="admin-header">
+      <div class="container">
+        <div class="admin-navigation">
+          <a th:href="@{/admin}" class="admin-nav-link">Dashboard</a>
+          <a th:href="@{/admin/products}" class="admin-nav-link">Products</a>
+          <a th:href="@{/admin/orders}" class="admin-nav-link">Orders</a>
+          <a th:href="@{/admin/users}" class="admin-nav-link active">Users</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- User Details Section -->
+    <section class="admin-content">
+      <div class="container">
+        <div class="admin-card">
+          <div class="card-header">
+            <h3>User Information</h3>
+            <a th:href="@{/admin/users}" class="btn btn-secondary"
+              >Back to Users</a
+            >
+          </div>
+          <div class="card-body">
+            <div class="user-profile">
+              <div class="profile-header">
+                <div class="profile-avatar">
+                  <span
+                    class="avatar-text"
+                    th:text="${#strings.substring(user.firstName, 0, 1) + #strings.substring(user.lastName, 0, 1)}"
+                    >JD</span
+                  >
+                </div>
+                <div class="profile-info">
+                  <h4 th:text="${user.firstName + ' ' + user.lastName}">
+                    John Doe
+                  </h4>
+                  <span
+                    class="badge"
+                    th:each="role : ${user.roles}"
+                    th:text="${role.name.name().replace('ROLE_', '')}"
+                    th:classappend="${role.getNameAsString() == 'ROLE_ADMIN' ? 'badge-admin' : 'badge-user'}"
+                  >
+                    USER
+                  </span>
+                </div>
+              </div>
+
+              <div class="profile-details">
+                <div class="detail-row">
+                  <span class="detail-label">ID:</span>
+                  <span class="detail-value" th:text="${user.id}">1</span>
+                </div>
+                <div class="detail-row">
+                  <span class="detail-label">Username:</span>
+                  <span class="detail-value" th:text="${user.username}"
+                    >johndoe</span
+                  >
+                </div>
+                <div class="detail-row">
+                  <span class="detail-label">Email:</span>
+                  <span class="detail-value" th:text="${user.email}"
+                    >john@example.com</span
+                  >
+                </div>
+                <div class="detail-row">
+                  <span class="detail-label">Phone:</span>
+                  <span
+                    class="detail-value"
+                    th:text="${user.phoneNumber ?: 'Not provided'}"
+                    >555-123-4567</span
+                  >
+                </div>
+                <div class="detail-row">
+                  <span class="detail-label">Registered:</span>
+                  <span
+                    class="detail-value"
+                    th:text="${#temporals.format(user.createdAt, 'dd-MMM-yyyy HH:mm')}"
+                    >01-Jan-2023 12:00</span
+                  >
+                </div>
+                <div class="detail-row">
+                  <span class="detail-label">Last Updated:</span>
+                  <span
+                    class="detail-value"
+                    th:text="${#temporals.format(user.updatedAt, 'dd-MMM-yyyy HH:mm')}"
+                    >01-Jan-2023 12:00</span
+                  >
+                </div>
+              </div>
+
+              <!-- Role Management -->
+              <div class="role-management">
+                <h5>Role Management</h5>
+                <form
+                  th:action="@{'/admin/users/' + ${user.id} + '/role'}"
+                  method="post"
+                >
+                  <input
+                    type="hidden"
+                    name="_csrf"
+                    th:value="${_csrf?.token}"
+                  />
+                  <div class="form-group">
+                    <label for="role">Update Role:</label>
+                    <select id="role" name="role" class="form-control">
+                      <option
+                        value="ROLE_USER"
+                        th:selected="${user.roles.?[nameAsString == 'ROLE_ADMIN'].isEmpty()}"
+                      >
+                        Regular User
+                      </option>
+                      <option
+                        value="ROLE_ADMIN"
+                        th:selected="${!user.roles.?[nameAsString == 'ROLE_ADMIN'].isEmpty()}"
+                      >
+                        Admin
+                      </option>
+                    </select>
+                  </div>
+                  <button type="submit" class="btn btn-primary">
+                    Update Role
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- User's Addresses -->
+        <div class="admin-card mt-4">
+          <div class="card-header">
+            <h3>Addresses</h3>
+          </div>
+          <div class="card-body">
+            <div class="address-list">
+              <div th:if="${user.addresses.empty}" class="no-content">
+                No addresses registered
+              </div>
+              <div th:each="address : ${user.addresses}" class="address-item">
+                <h5 th:text="${address.addressType}">Home</h5>
+                <p th:text="${address.streetAddress}">123 Main St</p>
+                <p
+                  th:text="${address.city + ', ' + address.state + ' ' + address.postalCode}"
+                >
+                  Anytown, CA 12345
+                </p>
+                <p th:text="${address.country}">USA</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- User's Orders -->
+        <div class="admin-card mt-4">
+          <div class="card-header">
+            <h3>Order History</h3>
+          </div>
+          <div class="card-body">
+            <div class="order-list">
+              <div th:if="${userOrders.empty}" class="no-content">
+                No orders found
+              </div>
+
+              <table th:if="${!userOrders.empty}" class="table table-striped">
+                <thead>
+                  <tr>
+                    <th>Order ID</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                    <th>Total</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr th:each="order : ${userOrders}">
+                    <td th:text="${order.id}">12345</td>
+                    <td
+                      th:text="${#temporals.format(order.createdAt, 'dd-MMM-yyyy')}"
+                    >
+                      01-Jan-2023
+                    </td>
+                    <td>
+                      <span
+                        class="badge"
+                        th:text="${order.status}"
+                        th:classappend="${'badge-' + order.status.name().toLowerCase()}"
+                        >PENDING</span
+                      >
+                    </td>
+                    <td th:text="${'$' + order.totalAmount}">$99.99</td>
+                    <td>
+                      <a
+                        th:href="@{'/admin/orders/' + ${order.id}}"
+                        class="btn btn-sm btn-info"
+                      >
+                        View Details
+                      </a>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div th:replace="~{fragments/layout :: footer}"></div>
+    <div th:replace="~{fragments/layout :: scripts}"></div>
+  </body>
+</html>

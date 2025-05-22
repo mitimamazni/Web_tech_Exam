@@ -1,0 +1,164 @@
+/* 
+ * FurniFind Navigation - Custom styling for navigation elements
+ * This file contains navigation-specific styles for the FurniFind e-commerce platform
+ */
+
+/* Import colors if not already imported */
+@import url("furnifind-colors.css");
+
+/* Desktop Navigation Menu */
+.desktop-navigation-menu {
+  background-color: var(--furnifind-dark);
+}
+
+.desktop-menu-category-list > .menu-category > .menu-title {
+  color: white;
+  font-family: var(--furnifind-heading-font);
+}
+
+.desktop-menu-category-list > .menu-category > .menu-title:hover {
+  color: var(--furnifind-accent);
+}
+
+.desktop-menu-category-list .dropdown-item a,
+.desktop-menu-category-list .dropdown-button {
+  color: var(--furnifind-dark);
+  transition: color 0.3s ease;
+}
+
+.desktop-menu-category-list .dropdown-item a:hover,
+.desktop-menu-category-list .dropdown-button:hover {
+  color: var(--furnifind-accent);
+  background-color: var(--furnifind-light);
+}
+
+.desktop-menu-category-list .dropdown-item ion-icon {
+  color: var(--furnifind-secondary);
+}
+
+/* Products icon button */
+.products-icon-btn {
+  background-color: var(--furnifind-accent);
+  color: white;
+  transition: all 0.3s ease;
+}
+
+.products-icon-btn:hover {
+  background-color: var(--furnifind-secondary);
+  transform: translateY(-2px);
+}
+
+/* Mobile Navigation */
+.mobile-bottom-navigation {
+  background-color: var(--furnifind-dark);
+}
+
+.mobile-bottom-navigation .action-btn {
+  color: white;
+}
+
+.mobile-bottom-navigation .action-btn.active {
+  color: var(--furnifind-accent);
+}
+
+.mobile-bottom-navigation .count {
+  background-color: var(--furnifind-secondary);
+  color: white;
+}
+
+/* Header and mini cart/wishlist */
+.mini-cart-header,
+.mini-wishlist-header {
+  background-color: var(--furnifind-primary);
+  color: white;
+}
+
+.mini-cart-button,
+.mini-wishlist-button {
+  background-color: var(--furnifind-secondary);
+  color: white;
+}
+
+.mini-cart-button:hover,
+.mini-wishlist-button:hover {
+  background-color: var(--furnifind-accent);
+}
+
+.mini-cart-button.checkout {
+  background-color: var(--furnifind-accent);
+}
+
+.mini-cart-button.checkout:hover {
+  background-color: var(--furnifind-dark);
+}
+
+/* Counter styling - cart and wishlist badges */
+.cart-btn .count,
+.wishlist-btn .count {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background-color: var(--furnifind-secondary);
+  color: white;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  font-size: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+/* Mobile counter styling */
+.mobile-bottom-navigation .cart-btn .count,
+.mobile-bottom-navigation .wishlist-btn .count {
+  position: absolute;
+  top: -3px;
+  right: -3px;
+  background-color: var(--furnifind-secondary);
+  color: white;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  font-size: 0.7rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Animation for counter updates */
+.counter-update,
+.cart-counter-update {
+  animation: counterPulse 0.5s ease-in-out;
+  background-color: var(--furnifind-secondary) !important;
+}
+
+@keyframes counterPulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.3);
+    background-color: var(--furnifind-primary);
+  }
+  100% {
+    transform: scale(1);
+    background-color: var(--furnifind-secondary);
+  }
+}
+
+/* Cart and wishlist tooltips */
+.cart-tooltip,
+.wishlist-tooltip {
+  background-color: var(--furnifind-dark);
+  color: white;
+}
+
+.cart-tooltip::before,
+.wishlist-tooltip::before {
+  border-bottom-color: var(--furnifind-dark);
+}

@@ -1,0 +1,657 @@
+/* 
+ * FurniFind Redesign - CSS Overrides
+ * This file contains design overrides for the FurniFind e-commerce platform
+ * It focuses on visual changes without altering functionality
+ */
+
+:root {
+  /* New color scheme - Modern Furniture Theme */
+  --furnifind-primary: #5c6a76; /* Slate blue-gray */
+  --furnifind-secondary: #a67c52; /* Warm wood brown */
+  --furnifind-accent: #e4a951; /* Golden accent */
+  --furnifind-light: #f9f7f3; /* Warm off-white */
+  --furnifind-dark: #2d3748; /* Dark charcoal */
+  --furnifind-gray: #8d9ca8; /* Soft gray */
+  --furnifind-success: #68a678; /* Natural green */
+  --furnifind-danger: #e27676; /* Soft red */
+  --furnifind-warning: #f2d076; /* Muted yellow */
+  --furnifind-info: #76a8c7; /* Calm blue */
+
+  /* Override existing variables for compatibility */
+  --book-primary: var(--furnifind-primary);
+  --book-secondary: var(--furnifind-secondary);
+  --book-accent: var(--furnifind-accent);
+  --book-dark: var(--furnifind-dark);
+  --book-light: var(--furnifind-light);
+  --coffee-accent: var(--furnifind-accent);
+  --coffee-dark: var(--furnifind-dark);
+  --bookbyte-primary: var(--furnifind-primary);
+  --bookbyte-secondary: var(--furnifind-secondary);
+  --bookbyte-accent: var(--furnifind-accent);
+  --bookbyte-light: var(--furnifind-light);
+  --bookbyte-dark: var(--furnifind-dark);
+
+  /* Typography */
+  --furnifind-heading-font: "Montserrat", sans-serif;
+  --furnifind-body-font: "Open Sans", sans-serif;
+}
+
+/* Global styles */
+body {
+  font-family: var(--furnifind-body-font);
+  background-color: var(--furnifind-light);
+  color: var(--furnifind-dark);
+  display: flex;
+  min-height: 100vh;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--furnifind-heading-font);
+}
+
+main {
+  width: 100%;
+  margin-left: 250px; /* Width of the sidebar */
+  transition: margin-left 0.3s ease;
+}
+
+/* Sidebar Navigation */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 250px;
+  background-color: var(--furnifind-dark);
+  color: white;
+  z-index: 1000;
+  transition: all 0.3s ease;
+  overflow-y: auto;
+}
+
+.sidebar-logo {
+  display: flex;
+  align-items: center;
+  padding: 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-logo h1 {
+  font-size: 1.5rem;
+  margin: 0;
+  color: white;
+  display: flex;
+  align-items: center;
+}
+
+.sidebar-logo ion-icon {
+  font-size: 1.8rem;
+  margin-right: 10px;
+  color: var(--furnifind-accent);
+}
+
+.sidebar-nav {
+  padding: 20px 0;
+}
+
+.sidebar-nav-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar-nav-item {
+  padding: 0;
+  margin-bottom: 5px;
+}
+
+.sidebar-nav-link {
+  display: flex;
+  align-items: center;
+  padding: 12px 20px;
+  color: rgba(255, 255, 255, 0.8);
+  text-decoration: none;
+  transition: all 0.3s;
+  border-left: 3px solid transparent;
+}
+
+.sidebar-nav-link:hover,
+.sidebar-nav-link.active {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: white;
+  border-left-color: var(--furnifind-accent);
+}
+
+.sidebar-nav-link ion-icon {
+  font-size: 1.2rem;
+  margin-right: 15px;
+}
+
+.sidebar-user-section {
+  padding: 15px 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.user-actions {
+  display: flex;
+  justify-content: space-between;
+}
+
+.user-actions a {
+  color: rgba(255, 255, 255, 0.8);
+  text-decoration: none;
+  transition: color 0.3s;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+}
+
+.user-actions a:hover {
+  color: var(--furnifind-accent);
+}
+
+.user-actions ion-icon {
+  margin-right: 5px;
+}
+
+/* Mobile sidebar toggle */
+.sidebar-toggle {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  z-index: 1001;
+  display: none;
+  background-color: var(--furnifind-primary);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    transform: translateX(-100%);
+  }
+
+  .sidebar.active {
+    transform: translateX(0);
+  }
+
+  main {
+    margin-left: 0;
+  }
+
+  .sidebar-toggle {
+    display: block;
+  }
+}
+
+/* Header styling */
+.header-top {
+  background-color: var(--furnifind-primary);
+  color: white;
+}
+
+.header-social-container .social-link {
+  color: rgba(255, 255, 255, 0.8);
+  transition: color 0.3s, transform 0.2s;
+}
+
+.header-social-container .social-link:hover {
+  color: white;
+  transform: translateY(-3px);
+}
+
+.header-alert-news {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
+
+.header-main {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  margin-left: 250px;
+}
+
+/* Hide the old desktop navigation menu */
+.desktop-navigation-menu {
+  display: none;
+}
+
+/* Add styles for the top utility bar */
+.utility-bar {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  background-color: var(--furnifind-primary);
+  padding: 10px 20px;
+  margin-left: 250px;
+}
+
+.utility-bar .user-actions {
+  display: flex;
+  gap: 20px;
+}
+
+.utility-bar .action-btn {
+  color: white;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (max-width: 768px) {
+  .header-main,
+  .utility-bar {
+    margin-left: 0;
+  }
+}
+
+/* Banner styling */
+.banner-img {
+  filter: brightness(0.9);
+  border-radius: 8px;
+  transition: transform 0.5s;
+  object-fit: cover;
+  height: 450px;
+}
+
+.slider-item:hover .banner-img {
+  transform: scale(1.02);
+}
+
+.banner-content {
+  background: linear-gradient(
+    135deg,
+    rgba(92, 106, 118, 0.85) 0%,
+    rgba(45, 55, 72, 0.7) 100%
+  );
+  border-radius: 8px;
+  padding: 2.5rem;
+  backdrop-filter: blur(3px);
+  max-width: 500px;
+}
+
+.banner-title {
+  color: white;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+  font-size: 2.2rem;
+  letter-spacing: 0.5px;
+  margin-bottom: 1rem;
+}
+
+.banner-subtitle {
+  color: var(--furnifind-accent);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  font-size: 0.9rem;
+}
+
+.banner-text {
+  color: rgba(255, 255, 255, 0.9);
+  margin: 1rem 0;
+  font-size: 1.1rem;
+}
+
+.banner-btn {
+  background-color: var(--furnifind-accent);
+  color: var(--furnifind-dark);
+  border-radius: 4px;
+  transition: all 0.3s;
+  padding: 0.8rem 2rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  display: inline-block;
+  border: none;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.banner-btn:hover {
+  background-color: white;
+  transform: translateY(-3px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Category styling */
+.category-item {
+  border-radius: 4px;
+  transition: transform 0.3s, box-shadow 0.3s;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  background-color: white;
+  overflow: hidden;
+}
+
+.category-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.category-img-box {
+  background-color: rgba(166, 124, 82, 0.1);
+  border-radius: 0;
+  padding: 1.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100px;
+}
+
+.category-img-box ion-icon {
+  font-size: 2.5rem;
+  color: var(--furnifind-secondary);
+  transition: color 0.3s, transform 0.3s;
+}
+
+.category-item:hover .category-img-box ion-icon {
+  color: var(--furnifind-accent);
+  transform: scale(1.1);
+}
+
+.category-content-box {
+  padding: 1rem;
+}
+
+.category-content-flex {
+  margin-bottom: 0.5rem;
+}
+
+.category-item-title {
+  font-weight: 600;
+  color: var(--furnifind-dark);
+  font-size: 1rem;
+}
+
+.category-item-amount {
+  color: var(--furnifind-gray);
+  font-size: 0.9rem;
+}
+
+.category-btn {
+  color: var(--furnifind-secondary);
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  letter-spacing: 0.5px;
+  position: relative;
+}
+
+.category-btn::after {
+  content: "";
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: var(--furnifind-accent);
+  transition: width 0.3s;
+}
+
+.category-btn:hover {
+  color: var(--furnifind-accent);
+}
+
+.category-btn:hover::after {
+  width: 100%;
+}
+
+/* Product styling */
+.product-grid .showcase,
+.showcase-container .showcase {
+  border-radius: 4px;
+  transition: transform 0.3s, box-shadow 0.3s;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+  background-color: white;
+  position: relative;
+}
+
+.product-grid .showcase:hover,
+.showcase-container .showcase:hover {
+  transform: translateY(-7px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+}
+
+.showcase-banner {
+  position: relative;
+  overflow: hidden;
+}
+
+.showcase-img,
+.product-img {
+  transition: transform 0.5s;
+  border-radius: 0;
+  object-fit: cover;
+  width: 100%;
+  height: 280px;
+}
+
+.showcase:hover .showcase-img,
+.showcase:hover .product-img.default {
+  transform: scale(1.05);
+}
+
+.product-img.hover {
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  transition: opacity 0.5s;
+}
+
+.showcase:hover .product-img.hover {
+  opacity: 1;
+}
+
+.showcase-content {
+  padding: 1.2rem;
+}
+
+.showcase-category {
+  font-size: 0.8rem;
+  color: var(--furnifind-gray);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+.showcase-title {
+  color: var(--furnifind-dark);
+  transition: color 0.3s;
+  font-weight: 600;
+  line-height: 1.4;
+  font-size: 1.1rem;
+  margin-bottom: 0.75rem;
+}
+
+.showcase-title:hover {
+  color: var(--furnifind-secondary);
+}
+
+.showcase-rating {
+  margin-bottom: 0.75rem;
+}
+
+.showcase-rating ion-icon {
+  color: var(--furnifind-accent);
+  font-size: 1.1rem;
+}
+
+.price-box {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.price-box .price {
+  color: var(--furnifind-secondary);
+  font-weight: 700;
+  font-size: 1.2rem;
+}
+
+.price-box del {
+  color: var(--furnifind-gray);
+  font-size: 0.95rem;
+}
+
+/* Add material indicators */
+.product-material {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  background-color: rgba(45, 55, 72, 0.85);
+  color: white;
+  padding: 4px 10px;
+  border-radius: 3px;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Badge styling */
+.showcase-badge {
+  background-color: var(--bookbyte-accent);
+  border-radius: 30px;
+  font-weight: 600;
+  color: var(--bookbyte-dark);
+}
+
+.showcase-badge.out {
+  background-color: var(--bookbyte-gray);
+  color: white;
+}
+
+.showcase-badge.new,
+.showcase-badge.angle.pink {
+  background-color: var(--bookbyte-secondary);
+  color: white;
+}
+
+/* Button styling */
+.btn-action {
+  background-color: white;
+  border-radius: 50%;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s, background 0.3s;
+}
+
+.btn-action:hover {
+  background-color: var(--bookbyte-accent);
+  transform: translateY(-5px);
+}
+
+.btn-action ion-icon {
+  color: var(--bookbyte-primary);
+}
+
+.btn-action:hover ion-icon {
+  color: white;
+}
+
+/* Testimonial section */
+.testimonial-card {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.9) 0%,
+    rgba(247, 250, 252, 0.8) 100%
+  );
+  border-radius: 12px;
+  border-left: 4px solid var(--bookbyte-secondary);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s;
+  padding: 1.5rem;
+}
+
+.testimonial-card:hover {
+  transform: translateY(-5px);
+}
+
+.testimonial-card img {
+  border-radius: 50%;
+  border: 3px solid var(--bookbyte-accent);
+}
+
+.testimonial-name {
+  color: var(--bookbyte-primary);
+  font-weight: 600;
+}
+
+.testimonial-title {
+  color: var(--bookbyte-secondary);
+}
+
+/* Quote section */
+.quote-section {
+  background-color: var(--bookbyte-primary);
+  padding: 3rem 0;
+}
+
+.literary-quote {
+  color: white;
+  font-family: var(--bookbyte-heading-font);
+  font-style: italic;
+  font-size: 1.5rem;
+  line-height: 1.6;
+  text-align: center;
+}
+
+.quote-author {
+  color: var(--bookbyte-accent);
+  font-size: 1rem;
+  margin-top: 1rem;
+  text-align: right;
+  font-style: normal;
+}
+
+/* Footer styling */
+footer {
+  background-color: var(--bookbyte-dark);
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.footer-nav {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.footer-nav-item {
+  transition: transform 0.3s;
+}
+
+.footer-nav-item:hover {
+  transform: translateX(5px);
+}
+
+/* Modal styling */
+.modal-content {
+  border-radius: 12px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+}
+
+.modal-header h2 {
+  color: var(--bookbyte-primary);
+}
+
+.close-modal {
+  color: var(--bookbyte-gray);
+  transition: color 0.3s, transform 0.3s;
+}
+
+.close-modal:hover {
+  color: var(--bookbyte-primary);
+  transform: rotate(90deg);
+}

@@ -1,0 +1,36 @@
+/* 
+ * FurniFind Colors - Color Scheme for FurniFind
+ * This file defines the color palette for the FurniFind e-commerce platform
+ */
+
+:root {
+  /* FurniFind color palette */
+  --furnifind-primary: #5c6a76; /* Slate blue-gray */
+  --furnifind-secondary: #a67c52; /* Warm wood brown */
+  --furnifind-accent: #e4a951; /* Golden accent */
+  --furnifind-light: #f9f7f3; /* Warm off-white */
+  --furnifind-dark: #2d3748; /* Dark charcoal */
+  --furnifind-gray: #8d9ca8; /* Soft gray */
+  --furnifind-success: #68a678; /* Natural green */
+  --furnifind-danger: #e27676; /* Soft red */
+  --furnifind-warning: #f2d076; /* Muted yellow */
+  --furnifind-info: #76a8c7; /* Calm blue */
+
+  /* Override existing variables for compatibility */
+  --book-primary: var(--furnifind-primary);
+  --book-secondary: var(--furnifind-secondary);
+  --book-accent: var(--furnifind-accent);
+  --book-dark: var(--furnifind-dark);
+  --book-light: var(--furnifind-light);
+  --coffee-accent: var(--furnifind-accent);
+  --coffee-dark: var(--furnifind-dark);
+  --bookbyte-primary: var(--furnifind-primary);
+  --bookbyte-secondary: var(--furnifind-secondary);
+  --bookbyte-accent: var(--furnifind-accent);
+  --bookbyte-light: var(--furnifind-light);
+  --bookbyte-dark: var(--furnifind-dark);
+
+  /* Typography */
+  --furnifind-heading-font: "Montserrat", sans-serif;
+  --furnifind-body-font: "Open Sans", sans-serif;
+}

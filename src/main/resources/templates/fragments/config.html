@@ -1,0 +1,8 @@
+<!-- Configuration script fragment to be included in all pages -->
+<div th:fragment="config-scripts" th:remove="tag">
+  <!-- Include the app configuration scripts -->
+  <script th:src="@{/js/config/app-config.js}"></script>
+
+  <!-- Inject server-side configuration -->
+  <script th:utext="${configScript}"></script>
+</div>

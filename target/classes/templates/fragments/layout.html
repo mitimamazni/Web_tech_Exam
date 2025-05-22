@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head th:fragment="head(title)">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- CSRF protection -->
+    <meta name="_csrf" th:content="${_csrf?.token}" />
+    <meta name="_csrf_header" th:content="${_csrf?.headerName}" />
+    <title th:text="${title} + ' - FurniFind'">FurniFind</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" th:href="@{/css/home.css}" />
+    <link rel="stylesheet" th:href="@{/css/modal.css}" />
+    <link rel="stylesheet" th:href="@{/css/cart-animation.css}" />
+    <link rel="stylesheet" th:href="@{/css/shop-pages.css}" />
+    <link rel="stylesheet" th:href="@{/css/auth-pages.css}" />
+    <link rel="stylesheet" th:href="@{/css/product-pages.css}" />
+    <link rel="stylesheet" th:href="@{/css/product-detail.css}" />
+    <link rel="stylesheet" th:href="@{/css/navigation.css}" />
+    <link rel="stylesheet" th:href="@{/css/error-pages.css}" />
+    <link rel="stylesheet" th:href="@{/css/cart-counter.css}" />
+    <link rel="stylesheet" th:href="@{/css/counter-animations-enhanced.css}" />
+    <link rel="stylesheet" th:href="@{/css/wishlist-counter.css}" />
+    <link rel="stylesheet" th:href="@{/css/wishlist-view.css}" />
+    <link rel="stylesheet" th:href="@{/css/furniture-cart.css}" />
+    <link rel="stylesheet" th:href="@{/css/furnifind-colors.css}" />
+    <link rel="stylesheet" th:href="@{/css/furnifind-styles.css}" />
+    <link rel="stylesheet" th:href="@{/css/furniture-branding.css}" />
+    <link rel="stylesheet" th:href="@{/css/furnifind-navigation.css}" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Open+Sans:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" th:href="@{/css/cart-view.css}" />
+    <link rel="stylesheet" th:href="@{/css/mini-wishlist.css}" />
+    <link rel="stylesheet" th:href="@{/css/toast-notifications.css}" />
+    <link rel="stylesheet" th:href="@{/css/profile-page.css}" />
+    <link rel="stylesheet" th:href="@{/css/order-pages.css}" />
+    <link rel="stylesheet" th:href="@{/css/admin-pages.css}" />
+    <link rel="stylesheet" th:href="@{/css/admin-order-items.css}" />
+    <link rel="stylesheet" th:href="@{/css/admin-analytics.css}" />
+    <link rel="stylesheet" th:href="@{/css/theme-migration.css}" />
+    <link rel="stylesheet" th:href="@{/css/book-admin.css}" />
+    <link rel="stylesheet" th:href="@{/css/wishlist-animations.css}" />
+    <link
+      rel="shortcut icon"
+      href="https://cdn-icons-png.flaticon.com/512/3249/3249937.png"
+      type="image/png"
+    />
+    <script th:src="@{/js/wishlist-storage.js}"></script>
+    <script th:src="@{/js/counter-unified.js}"></script>
+    <script th:src="@{/js/order-notifications.js}"></script>
+    <script th:src="@{/js/order-completion.js}"></script>
+    <script th:src="@{/js/furnifind-migration.js}"></script>
+    <!-- Ionicons - needed for admin dashboard and other book icons -->
+    <script
+      type="module"
+      src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"
+    ></script>
+    <script
+      nomodule
+      src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"
+    ></script>
+  </head>
+  <body>
+    <!-- Toast notification container -->
+    <div class="toast-container"></div>
+
+    <!-- Page Title Fragment -->
+    <div th:fragment="page-title(title)" class="page-title-section">
+      <div class="container">
+        <h1 class="page-title" th:text="${title}">Page Title</h1>
+      </div>
+    </div>
+
+    <!-- Header and Navigation -->
+    <header th:fragment="navbar">
+      <div class="overlay" data-overlay></div>
+
+      <!-- Header Top Section -->
+      <div class="header-top">
+        <div class="container">
+          <ul class="header-social-container">
+            <li>
+              <a href="#" class="social-link">
+                <ion-icon name="logo-facebook"></ion-icon>
+              </a>
+            </li>
+            <li>
+              <a href="#" class="social-link">
+                <ion-icon name="logo-twitter"></ion-icon>
+              </a>
+            </li>
+            <li>
+              <a href="#" class="social-link">
+                <ion-icon name="logo-instagram"></ion-icon>
+              </a>
+            </li>
+            <li>
+              <a href="#" class="social-link">
+                <ion-icon name="logo-linkedin"></ion-icon>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Header Main Section -->
+      <div class="header-main">
+        <div class="container">
+          <a th:href="@{/}" class="header-logo">
+            <h1
+              style="
+                font-size: 1.8rem;
+                color: var(--furnifind-primary);
+                font-family: 'Montserrat', sans-serif;
+                display: flex;
+                align-items: center;
+              "
+            >
+              <ion-icon
+                name="cube-outline"
+                style="
+                  font-size: 2rem;
+                  margin-right: 8px;
+                  color: var(--furnifind-secondary);
+                "
+              ></ion-icon>
+              <span style="font-weight: 700; letter-spacing: 0.05em"
+                >Furni<span style="color: var(--furnifind-accent)"
+                  >Find</span
+                ></span
+              >
+            </h1>
+          </a>
+
+          <div class="header-user-actions">
+            <!-- User Account Button -->
+            <div sec:authorize="!isAuthenticated()">
+              <a th:href="@{/login}" class="action-btn">
+                <ion-icon name="person-outline"></ion-icon>
+              </a>
+            </div>
+            <div sec:authorize="isAuthenticated()" class="dropdown">
+              <button
+                class="action-btn"
+                id="userDropdown"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
+                <ion-icon name="person-outline"></ion-icon>
+              </button>
+              <ul
+                class="dropdown-menu dropdown-menu-end"
+                aria-labelledby="userDropdown"
+              >
+                <li>
+                  <a class="dropdown-item" th:href="@{/profile}">My Profile</a>
+                </li>
+                <li>
+                  <a class="dropdown-item" th:href="@{/orders}">My Orders</a>
+                </li>
+                <li><hr class="dropdown-divider" /></li>
+                <li>
+                  <form th:action="@{/logout}" method="post">
+                    <button class="dropdown-item" type="submit">Logout</button>
+                  </form>
+                </li>
+              </ul>
+            </div>
+
+            <!-- Wishlist Button -->
+            <a th:href="@{/wishlist}" class="action-btn wishlist-btn">
+              <ion-icon name="heart-outline"></ion-icon>
+              <span
+                class="count wishlist-counter"
+                th:text="${wishlistItemCount != null ? wishlistItemCount : '0'}"
+                >0</span
+              >
+              <div class="wishlist-tooltip">View Wishlist</div>
+              <!-- Mini Wishlist Preview -->
+              <div class="mini-wishlist-preview">
+                <div class="mini-wishlist-header">
+                  <h4>Your Wishlist</h4>
+                </div>
+                <div class="mini-wishlist-items">
+                  <!-- Items will be loaded dynamically -->
+                  <div class="mini-wishlist-empty">Your wishlist is empty</div>
+                </div>
+                <div class="mini-wishlist-footer">
+                  <a th:href="@{/wishlist}" class="mini-wishlist-button"
+                    >View Wishlist</a
+                  >
+                </div>
+              </div>
+            </a>
+
+            <!-- Cart Button -->
+            <a th:href="@{/cart}" class="action-btn cart-btn">
+              <ion-icon name="bag-handle-outline"></ion-icon>
+              <span
+                class="count cart-counter"
+                th:text="${cartItemCount != null ? cartItemCount : '0'}"
+                >0</span
+              >
+              <div class="cart-tooltip">View Cart</div>
+              <!-- Mini Cart Preview -->
+              <div class="mini-cart-preview">
+                <div class="mini-cart-header">
+                  <h4>Your Cart</h4>
+                </div>
+                <div class="mini-cart-items">
+                  <!-- Items will be loaded dynamically -->
+                  <div class="mini-cart-empty">Your cart is empty</div>
+                </div>
+                <div class="mini-cart-footer">
+                  <a th:href="@{/cart}" class="mini-cart-button">View Cart</a>
+                  <a th:href="@{/checkout}" class="mini-cart-button checkout"
+                    >Checkout</a
+                  >
+                </div>
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Desktop Navigation Menu -->
+      <nav class="desktop-navigation-menu">
+        <div class="container">
+          <ul class="desktop-menu-category-list">
+            <li class="menu-category">
+              <a href="#" class="menu-title">Account</a>
+              <div class="dropdown-menu">
+                <div class="container">
+                  <ul>
+                    <li class="dropdown-item" sec:authorize="isAuthenticated()">
+                      <a th:href="@{/profile}">
+                        <ion-icon name="person-outline"></ion-icon>
+                        My Profile
+                      </a>
+                    </li>
+                    <li class="dropdown-item">
+                      <a th:href="@{/about}">
+                        <ion-icon name="information-circle-outline"></ion-icon>
+                        About Us
+                      </a>
+                    </li>
+                    <li class="dropdown-item" sec:authorize="isAuthenticated()">
+                      <form
+                        th:action="@{/logout}"
+                        method="post"
+                        style="margin: 0"
+                      >
+                        <button type="submit" class="dropdown-button">
+                          <ion-icon name="log-out-outline"></ion-icon>
+                          Logout
+                        </button>
+                      </form>
+                    </li>
+                    <li
+                      class="dropdown-item"
+                      sec:authorize="!isAuthenticated()"
+                    >
+                      <a th:href="@{/login}">
+                        <ion-icon name="log-in-outline"></ion-icon>
+                        Login
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </li>
+            <li class="menu-category">
+              <a th:href="@{/}" class="menu-title">
+                <ion-icon
+                  name="home-outline"
+                  style="font-size: 1.2em; margin-right: 5px"
+                ></ion-icon
+                >Home
+              </a>
+              <div class="dropdown-menu">
+                <div class="container">
+                  <ul>
+                    <li class="dropdown-item" sec:authorize="isAuthenticated()">
+                      <a th:href="@{/profile}">
+                        <ion-icon name="person-outline"></ion-icon>
+                        My Profile
+                      </a>
+                    </li>
+                    <li class="dropdown-item">
+                      <a th:href="@{/about}">
+                        <ion-icon name="information-circle-outline"></ion-icon>
+                        About Us
+                      </a>
+                    </li>
+                    <li class="dropdown-item" sec:authorize="isAuthenticated()">
+                      <form
+                        th:action="@{/logout}"
+                        method="post"
+                        style="margin: 0"
+                      >
+                        <button type="submit" class="dropdown-button">
+                          <ion-icon name="log-out-outline"></ion-icon>
+                          Logout
+                        </button>
+                      </form>
+                    </li>
+                    <li
+                      class="dropdown-item"
+                      sec:authorize="!isAuthenticated()"
+                    >
+                      <a th:href="@{/login}">
+                        <ion-icon name="log-in-outline"></ion-icon>
+                        Login
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </li>
+            <li class="menu-category">
+              <a th:href="@{/products}" class="menu-title">Products</a>
+            </li>
+            <li class="menu-category">
+              <a href="#" class="menu-title">Living Room</a>
+            </li>
+            <li class="menu-category">
+              <a href="#" class="menu-title">Bedroom</a>
+            </li>
+            <li class="menu-category">
+              <a href="#" class="menu-title">Dining & Kitchen</a>
+            </li>
+            <li sec:authorize="hasRole('ADMIN')" class="menu-category">
+              <a th:href="@{/admin}" class="menu-title">Admin Panel</a>
+            </li>
+            <li class="menu-category menu-category-right">
+              <a
+                th:href="@{/products}"
+                class="menu-title products-icon-btn"
+                title="Browse All Products"
+              >
+                <ion-icon name="grid-outline"></ion-icon>
+                <span>Browse</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+
+      <!-- Mobile Navigation -->
+      <div class="mobile-bottom-navigation">
+        <a th:href="@{/orders}" class="action-btn cart-btn">
+          <button class="action-btn" data-mobile-menu-open-btn>
+            <ion-icon name="menu-outline"></ion-icon>
+          </button>
+        </a>
+        <a th:href="@{/cart}" class="action-btn cart-btn">
+          <ion-icon name="bag-handle-outline"></ion-icon>
+          <span
+            class="count cart-counter"
+            th:text="${cartItemCount != null ? cartItemCount : '0'}"
+            >0</span
+          >
+        </a>
+        <a th:href="@{/}" class="action-btn">
+          <ion-icon name="home-outline"></ion-icon>
+        </a>
+        <a th:href="@{/products}" class="action-btn">
+          <ion-icon name="grid-outline"></ion-icon>
+        </a>
+        <a th:href="@{/wishlist}" class="action-btn wishlist-btn">
+          <ion-icon name="heart-outline"></ion-icon>
+          <span
+            class="count wishlist-counter"
+            th:text="${wishlistItemCount != null ? wishlistItemCount : '0'}"
+            >0</span
+          >
+          <div class="wishlist-tooltip">View Wishlist</div>
+        </a>
+        <div class="mobile-menu-dropdown">
+          <button class="action-btn mobile-menu-dropdown-btn">
+            <ion-icon name="ellipsis-vertical-outline"></ion-icon>
+          </button>
+          <div class="mobile-dropdown-content">
+            <a th:href="@{/profile}" sec:authorize="isAuthenticated()">
+              <ion-icon name="person-outline"></ion-icon> Profile
+            </a>
+            <a th:href="@{/about}">
+              <ion-icon name="information-circle-outline"></ion-icon> About Us
+            </a>
+            <form
+              th:action="@{/logout}"
+              method="post"
+              sec:authorize="isAuthenticated()"
+            >
+              <button type="submit" class="dropdown-menu-button">
+                <ion-icon name="log-out-outline"></ion-icon> Logout
+              </button>
+            </form>
+            <a th:href="@{/login}" sec:authorize="!isAuthenticated()">
+              <ion-icon name="log-in-outline"></ion-icon> Login
+            </a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Alert Messages -->
+    <div th:fragment="alerts" class="container mt-3">
+      <div class="notification-toast success-toast" th:if="${success != null}">
+        <div class="toast-banner">
+          <ion-icon name="checkmark-circle-outline"></ion-icon>
+        </div>
+        <div class="toast-detail">
+          <p class="toast-message" th:text="${success}">Success message</p>
+          <button class="toast-close-btn">
+            <ion-icon name="close-outline"></ion-icon>
+          </button>
+        </div>
+      </div>
+
+      <div class="notification-toast error-toast" th:if="${error != null}">
+        <div class="toast-banner">
+          <ion-icon name="alert-circle-outline"></ion-icon>
+        </div>
+        <div class="toast-detail">
+          <p class="toast-message" th:text="${error}">Error message</p>
+          <button class="toast-close-btn">
+            <ion-icon name="close-outline"></ion-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer th:fragment="footer" class="footer">
+      <!-- Footer navigation removed as requested -->
+
+      <div class="footer-bottom">
+        <div class="container">
+          <p class="copyright">
+            &copy; 2023-2025 <a href="#" class="copyright-link">FurniFind</a>.
+            All Rights Reserved
+          </p>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Common Scripts -->
+    <div th:fragment="scripts">
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+      <script th:src="@{/js/script.js}"></script>
+      <!-- Ionicons for the icons used throughout the site -->
+      <script
+        type="module"
+        src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"
+      ></script>
+      <script
+        nomodule
+        src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"
+      ></script>
+
+      <script>
+        document.addEventListener("DOMContentLoaded", function () {
+          // Mobile Menu Dropdown Toggle
+          const mobileMenuDropdownBtn = document.querySelector(
+            ".mobile-menu-dropdown-btn"
+          );
+          const mobileMenuDropdown = document.querySelector(
+            ".mobile-menu-dropdown"
+          );
+
+          if (mobileMenuDropdownBtn) {
+            mobileMenuDropdownBtn.addEventListener("click", function () {
+              mobileMenuDropdown.classList.toggle("active");
+            });
+
+            // Close dropdown when clicking outside
+            document.addEventListener("click", function (event) {
+              if (!event.target.closest(".mobile-menu-dropdown")) {
+                mobileMenuDropdown.classList.remove("active");
+              }
+            });
+          }
+
+          // Toast Notification Close
+          const toastCloseBtns = document.querySelectorAll(".toast-close-btn");
+          toastCloseBtns.forEach((btn) => {
+            btn.addEventListener("click", function () {
+              const toast = this.closest(".notification-toast");
+              toast.style.display = "none";
+            });
+          });
+
+          // Auto close success toasts after 5 seconds
+          const successToasts = document.querySelectorAll(".success-toast");
+          successToasts.forEach((toast) => {
+            setTimeout(() => {
+              toast.style.opacity = "0";
+              setTimeout(() => {
+                toast.style.display = "none";
+              }, 500);
+            }, 5000);
+          });
+        });
+      </script>
+
+      <!-- Cart & Wishlist Counters Scripts -->
+      <script>
+        document.addEventListener("DOMContentLoaded", function () {
+          // Initialize wishlist counter from localStorage
+          initializeWishlistCounter();
+
+          // Setup listeners for wishlist updates
+          document.addEventListener("wishlist:updated", function (event) {
+            updateWishlistCounter(event.detail.count);
+          });
+
+          // Setup cart counter if server-provided count is available
+          const cartCounters = document.querySelectorAll(".cart-counter");
+          if (cartCounters.length > 0) {
+            initializeCartCounters(cartCounters);
+          }
+
+          // Set up real-time updates for cart and wishlist from API and localStorage
+          setupCartUpdateEvents();
+          setupWishlistUpdateEvents();
+        });
+
+        // Initialize wishlist counter from localStorage
+        function initializeWishlistCounter() {
+          try {
+            const storedWishlist = localStorage.getItem("ecommerce_wishlist");
+            if (storedWishlist) {
+              const wishlist = JSON.parse(storedWishlist);
+              updateWishlistCounter(wishlist.count || 0);
+            } else {
+              updateWishlistCounter(0);
+            }
+          } catch (e) {
+            console.error("Error initializing wishlist counter:", e);
+            updateWishlistCounter(0);
+          }
+        }
+
+        // Set up event listeners for cart updates
+        function setupCartUpdateEvents() {
+          // Listen for add-to-cart button clicks
+          document.addEventListener("click", function (event) {
+            // Check if it's an add-to-cart button
+            if (
+              event.target.closest(
+                ".btn-add-cart, .add-to-cart-btn, .product-cart-btn"
+              )
+            ) {
+              // We'll update the cart counter when the server responds
+              const currentCount = parseInt(
+                document.querySelector(".cart-counter").textContent || "0"
+              );
+
+              // Optimistic update - we'll assume the cart count increases
+              // The actual count will be updated by the server response later
+              setTimeout(() => {
+                updateCartCounter(currentCount + 1);
+              }, 300); // Small delay to make animation more obvious
+            }
+          });
+
+          // Listen for custom cart:updated event
+          document.addEventListener("cart:updated", function (event) {
+            if (event.detail && event.detail.count !== undefined) {
+              updateCartCounter(event.detail.count);
+            }
+          });
+        }
+
+        // Set up event listeners for wishlist updates
+        function setupWishlistUpdateEvents() {
+          // Listen for wishlist button clicks
+          document.addEventListener("click", function (event) {
+            const wishlistBtn = event.target.closest(
+              ".wishlist-toggle, .product-wishlist-btn, .add-to-wishlist-btn, .btn-action"
+            );
+
+            // Check if it's a wishlist button by examining the button or its onclick attribute
+            if (
+              wishlistBtn &&
+              (wishlistBtn.classList.contains("wishlist-toggle") ||
+                wishlistBtn.classList.contains("product-wishlist-btn") ||
+                wishlistBtn.classList.contains("add-to-wishlist-btn") ||
+                (wishlistBtn.getAttribute("onclick") &&
+                  wishlistBtn
+                    .getAttribute("onclick")
+                    .includes("addToWishlist")))
+            ) {
+              // Get current wishlist count
+              const storedWishlist = localStorage.getItem("ecommerce_wishlist");
+              let currentCount = 0;
+              if (storedWishlist) {
+                try {
+                  const wishlist = JSON.parse(storedWishlist);
+                  currentCount = wishlist.count || 0;
+                } catch (e) {
+                  console.error("Error parsing wishlist data:", e);
+                }
+              }
+
+              // Try to get product ID from various attributes
+              let productId =
+                wishlistBtn.dataset.productId ||
+                wishlistBtn.getAttribute("data-product-id");
+
+              // If not found in data attributes, try to extract from onclick
+              if (!productId && wishlistBtn.getAttribute("onclick")) {
+                const match = wishlistBtn.getAttribute("onclick").match(/\d+/);
+                if (match) {
+                  productId = match[0];
+                }
+              }
+
+              // Check if product is already in wishlist
+              let inWishlist = false;
+              if (productId && storedWishlist) {
+                try {
+                  const wishlist = JSON.parse(storedWishlist);
+                  inWishlist = !!wishlist.items[productId];
+                } catch (e) {}
+              }
+
+              // Optimistic update with animation
+              if (inWishlist) {
+                // If product is in wishlist, we're removing it
+                setTimeout(() => {
+                  updateWishlistCounter(Math.max(0, currentCount - 1));
+                }, 100);
+              } else {
+                // If product is not in wishlist, we're adding it
+                setTimeout(() => {
+                  updateWishlistCounter(currentCount + 1);
+                }, 100);
+              }
+            }
+          });
+
+          // Listen for local storage changes (for wishlist)
+          window.addEventListener("storage", function (event) {
+            if (event.key === "ecommerce_wishlist") {
+              try {
+                const wishlistData = JSON.parse(event.newValue);
+                updateWishlistCounter(wishlistData.count || 0);
+              } catch (e) {
+                console.error("Error parsing wishlist data:", e);
+              }
+            }
+          });
+        }
+
+        // Update all wishlist counters in the UI
+        function updateWishlistCounter(count) {
+          const wishlistCounters =
+            document.querySelectorAll(".wishlist-counter");
+          wishlistCounters.forEach((counter) => {
+            // Ensure counter is visible
+            counter.style.display = "flex";
+            counter.style.zIndex = "100";
+
+            // Check if count has changed
+            const oldCount = parseInt(counter.textContent || "0");
+            if (oldCount !== count) {
+              // Update count with animation
+              counter.textContent = count;
+              counter.classList.add("counter-update");
+
+              // Animate the wishlist icon
+              const wishlistIcon = counter
+                .closest(".action-btn")
+                ?.querySelector('ion-icon[name="heart-outline"]');
+              if (wishlistIcon) {
+                wishlistIcon.style.animation = "none";
+                void wishlistIcon.offsetWidth; // Trigger reflow
+                wishlistIcon.style.animation = "counterPulse 0.5s ease-in-out";
+              }
+
+              // Remove animation class after animation completes
+              setTimeout(() => {
+                counter.classList.remove("counter-update");
+              }, 500);
+
+              // Adjust size based on count digits
+              if (count > 9) {
+                counter.style.width = "24px";
+              } else {
+                counter.style.width = count > 0 ? "22px" : "18px";
+                counter.style.fontSize = count > 0 ? "12px" : "10px";
+              }
+
+              // Update tooltip text
+              updateWishlistTooltip(count);
+            }
+          });
+        }
+
+        // Update wishlist tooltip text based on item count
+        function updateWishlistTooltip(count) {
+          const tooltips = document.querySelectorAll(".wishlist-tooltip");
+          tooltips.forEach((tooltip) => {
+            if (count === 0) {
+              tooltip.textContent = "Wishlist Empty";
+            } else if (count === 1) {
+              tooltip.textContent = "View Wishlist (1 item)";
+            } else {
+              tooltip.textContent = `View Wishlist (${count} items)`;
+            }
+          });
+        }
+
+        // Initialize cart counters with server data
+        function initializeCartCounters(cartCounters) {
+          cartCounters.forEach((counter) => {
+            // Make sure cart counters have proper styling
+            counter.style.display = "flex";
+            counter.style.zIndex = "100";
+
+            // Add animation when count changes
+            const currentCount = counter.textContent.trim();
+            counter.setAttribute("data-last-count", currentCount);
+
+            // Store initial count for change detection
+            window.lastCartCount = currentCount;
+
+            // If count is zero, still show the counter but smaller
+            if (currentCount === "0") {
+              counter.style.width = "18px";
+              counter.style.height = "18px";
+              counter.style.fontSize = "10px";
+            } else {
+              counter.style.width = "22px";
+              counter.style.height = "22px";
+            }
+          });
+        }
+
+        // Function to update cart counters
+        function updateCartCounter(count) {
+          const cartCounters = document.querySelectorAll(".cart-counter");
+          cartCounters.forEach((counter) => {
+            // Check if count has changed
+            const oldCount = parseInt(counter.textContent || "0");
+            if (oldCount !== count) {
+              // Always ensure counter is visible
+              counter.style.display = "flex";
+              counter.style.zIndex = "100";
+
+              counter.textContent = count;
+              counter.classList.add("cart-counter-update");
+
+              // Remove animation class after animation completes
+              setTimeout(() => {
+                counter.classList.remove("cart-counter-update");
+              }, 500);
+
+              // Adjust size based on count digits
+              if (count > 9) {
+                counter.style.width = "24px";
+              } else {
+                counter.style.width = count > 0 ? "22px" : "20px";
+                counter.style.fontSize = count > 0 ? "12px" : "10px";
+              }
+            }
+          });
+        }
+      </script>
+
+      <!-- Live Counter Synchronization -->
+      <script>
+        // Sync cart and wishlist counters across tabs/windows
+        (function () {
+          // Try to get any localStorage cart count if available
+          try {
+            const storedCartCount = localStorage.getItem("cartCount");
+            if (storedCartCount) {
+              const cartCounters = document.querySelectorAll(".cart-counter");
+              if (
+                cartCounters.length > 0 &&
+                cartCounters[0].textContent === "0"
+              ) {
+                updateCartCounter(parseInt(storedCartCount));
+              }
+            }
+
+            // Also sync wishlist count from localStorage
+            const wishlistCount = localStorage.getItem("wishlistCount");
+            if (wishlistCount) {
+              const wishlistCounters =
+                document.querySelectorAll(".wishlist-counter");
+              if (wishlistCounters.length > 0) {
+                updateWishlistCounter(parseInt(wishlistCount));
+              }
+            }
+          } catch (e) {
+            console.error("Error syncing counts from localStorage:", e);
+          }
+
+          // Listen for cart updates from other tabs
+          window.addEventListener("storage", function (event) {
+            if (event.key === "cartCount") {
+              updateCartCounter(parseInt(event.newValue || "0"));
+            }
+          });
+
+          // Function to save cart count to localStorage
+          function saveCartCount(count) {
+            try {
+              localStorage.setItem("cartCount", count.toString());
+            } catch (e) {
+              console.error("Error saving cart count to localStorage:", e);
+            }
+          }
+
+          // Override updateCartCounter to also save to localStorage
+          const originalUpdateCartCounter = window.updateCartCounter;
+          window.updateCartCounter = function (count) {
+            originalUpdateCartCounter(count);
+            saveCartCount(count);
+          };
+
+          // Also add wishlist counter synchronization
+          const originalUpdateWishlistCounter = window.updateWishlistCounter;
+          window.updateWishlistCounter = function (count) {
+            originalUpdateWishlistCounter(count);
+            try {
+              localStorage.setItem("wishlistCount", count.toString());
+            } catch (e) {
+              console.error("Error saving wishlist count to localStorage:", e);
+            }
+          };
+        })();
+      </script>
+    </div>
+  </body>
+</html>

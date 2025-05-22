@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+>
+  <head th:replace="~{fragments/layout :: head(title='About Us')}">
+    <title>About Us</title>
+  </head>
+
+  <body>
+    <div th:replace="~{fragments/layout :: navbar}"></div>
+    <div th:replace="~{fragments/layout :: page-title('About Us')}"></div>
+    <div th:replace="~{fragments/layout :: alerts}"></div>
+
+    <main class="shop-page-container">
+      <div class="about-us-content">
+        <section class="about-section">
+          <div class="container">
+            <div class="about-header">
+              <h2>Our Story</h2>
+              <div class="section-divider"></div>
+            </div>
+            <div class="about-story">
+              <div class="about-image">
+                <img
+                  src="https://images.unsplash.com/photo-1556228453-efd6c1ff04f6?w=600&auto=format&fit=crop"
+                  alt="FurniFind Modern Furniture Store"
+                />
+              </div>
+              <div class="about-text">
+                <p>
+                  FurniFind was established in 2018 with a clear vision: to
+                  offer modern, thoughtfully designed furniture that enhances
+                  living spaces. What began as a boutique showroom has evolved
+                  into a destination for interior enthusiasts and homeowners
+                  seeking quality craftsmanship and timeless design.
+                </p>
+                <p>
+                  Our story started when our founder, Alex Morgan, spent years
+                  studying furniture design across Scandinavia and Japan.
+                  Inspired by the minimalist aesthetics and functional beauty
+                  encountered, Alex created FurniFind as a space where people
+                  could experience furniture that perfectly balances form and
+                  function.
+                </p>
+                <p>
+                  Today, FurniFind represents our dedication to quality
+                  materials, sustainable practices, and creating furniture that
+                  transforms houses into homes.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="values-section">
+          <div class="container">
+            <div class="about-header">
+              <h2>Our Values</h2>
+              <div class="section-divider"></div>
+            </div>
+            <div class="values-grid">
+              <div class="value-card">
+                <ion-icon name="leaf-outline"></ion-icon>
+                <h3>Sustainability</h3>
+                <p>
+                  We source our furniture through direct relationships with
+                  manufacturers who practice sustainable production and use
+                  responsibly sourced wood and materials.
+                </p>
+              </div>
+              <div class="value-card">
+                <ion-icon name="ribbon-outline"></ion-icon>
+                <h3>Quality</h3>
+                <p>
+                  We meticulously select each piece in our collection to ensure
+                  that every furniture item meets our exacting standards of
+                  craftsmanship excellence.
+                </p>
+              </div>
+              <div class="value-card">
+                <ion-icon name="people-outline"></ion-icon>
+                <h3>Community</h3>
+                <p>
+                  We believe beautiful spaces bring people together. Our
+                  showrooms are designed to foster connection, conversation, and
+                  the shared joy of home decoration and design discovery.
+                </p>
+              </div>
+              <div class="value-card">
+                <ion-icon name="home-outline"></ion-icon>
+                <h3>Innovation</h3>
+                <p>
+                  We're committed to promoting innovative design and
+                  functionality through our design workshops, furniture
+                  showcases, and educational programs for interior enthusiasts
+                  of all ages.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="team-section">
+          <div class="container">
+            <div class="about-header">
+              <h2>Meet Our Team</h2>
+              <div class="section-divider"></div>
+            </div>
+            <div class="team-grid">
+              <div class="team-member">
+                <div class="member-image">
+                  <img
+                    src="https://images.unsplash.com/photo-1580489944761-15a19d654956?w=300&h=300&auto=format&fit=crop"
+                    alt="Emma Bennett"
+                  />
+                </div>
+                <h3>Emma Bennett</h3>
+                <p class="member-title">Founder & Design Director</p>
+                <p>
+                  With a background in interior design and furniture
+                  craftsmanship, Emma brings her passion for elegant living
+                  spaces to every aspect of FurniFind.
+                </p>
+              </div>
+              <div class="team-member">
+                <div class="member-image">
+                  <img
+                    src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=300&auto=format&fit=crop"
+                    alt="Daniel Rodriguez"
+                  />
+                </div>
+                <h3>Daniel Rodriguez</h3>
+                <p class="member-title">Product Manager</p>
+                <p>
+                  Daniel has an encyclopedic knowledge of furniture design
+                  across all styles and ensures our collection features both
+                  timeless classics and exciting new trends.
+                </p>
+              </div>
+              <div class="team-member">
+                <div class="member-image">
+                  <img
+                    src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=300&h=300&auto=format&fit=crop"
+                    alt="Sarah Chen"
+                  />
+                </div>
+                <h3>Sarah Chen</h3>
+                <p class="member-title">Customer Experience Director</p>
+                <p>
+                  Sarah coordinates our showroom experiences, design
+                  consultations, and community partnerships, bringing furniture
+                  enthusiasts together through shared interior design events.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="visit-section">
+          <div class="container">
+            <div class="about-header">
+              <h2>Visit Our Store</h2>
+              <div class="section-divider"></div>
+            </div>
+            <div class="store-info">
+              <div class="store-details">
+                <div class="info-group">
+                  <ion-icon name="location-outline"></ion-icon>
+                  <div>
+                    <h4>Address</h4>
+                    <p>456 Literary Avenue<br />New York, NY 10001</p>
+                  </div>
+                </div>
+                <div class="info-group">
+                  <ion-icon name="time-outline"></ion-icon>
+                  <div>
+                    <h4>Hours</h4>
+                    <p>
+                      Monday - Friday: 9AM - 8PM<br />Saturday - Sunday: 10AM -
+                      6PM
+                    </p>
+                  </div>
+                </div>
+                <div class="info-group">
+                  <ion-icon name="call-outline"></ion-icon>
+                  <div>
+                    <h4>Contact</h4>
+                    <p>Phone: (555) 123-4567<br />Email: info@furnifind.com</p>
+                  </div>
+                </div>
+              </div>
+              <div class="store-map">
+                <img
+                  src="https://images.unsplash.com/photo-1567027757540-7b572280fa22?w=600&auto=format&fit=crop"
+                  alt="Store Location Map"
+                />
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <div th:replace="~{fragments/layout :: footer}"></div>
+    <div th:replace="~{fragments/layout :: scripts}"></div>
+
+    <style>
+      .about-us-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem 1rem;
+      }
+
+      .about-section,
+      .values-section,
+      .team-section,
+      .visit-section {
+        margin-bottom: 4rem;
+      }
+
+      .about-header {
+        text-align: center;
+        margin-bottom: 2.5rem;
+      }
+
+      .about-header h2 {
+        font-family: var(--furnifind-heading-font);
+        color: var(--furnifind-primary);
+        font-size: 2.25rem;
+        margin: 0 0 1rem;
+      }
+
+      .section-divider {
+        height: 3px;
+        width: 60px;
+        background-color: var(--furnifind-secondary);
+        margin: 0 auto;
+      }
+
+      .about-story {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 3rem;
+        align-items: center;
+      }
+
+      .about-image img {
+        width: 100%;
+        border-radius: 8px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      .about-text p {
+        font-family: var(--furnifind-body-font);
+        color: var(--furnifind-dark);
+        line-height: 1.8;
+        margin-bottom: 1.5rem;
+      }
+
+      .values-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1.5rem;
+      }
+
+      .value-card {
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        padding: 2rem;
+        text-align: center;
+        transition: transform 0.3s ease;
+      }
+
+      .value-card:hover {
+        transform: translateY(-5px);
+      }
+
+      .value-card ion-icon {
+        font-size: 3rem;
+        color: var(--furnifind-secondary);
+        margin-bottom: 1.25rem;
+      }
+
+      .value-card h3 {
+        font-family: var(--furnifind-heading-font);
+        color: var(--furnifind-primary);
+        margin: 0 0 1rem;
+      }
+
+      .value-card p {
+        font-family: var(--furnifind-body-font);
+        color: var(--furnifind-dark);
+        line-height: 1.6;
+      }
+
+      .team-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 2rem;
+      }
+
+      .team-member {
+        text-align: center;
+      }
+
+      .member-image {
+        width: 220px;
+        height: 220px;
+        border-radius: 50%;
+        overflow: hidden;
+        margin: 0 auto 1.5rem;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      .member-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .team-member h3 {
+        font-family: var(--furnifind-heading-font);
+        color: var(--furnifind-primary);
+        margin: 0 0 0.5rem;
+      }
+
+      .member-title {
+        color: var(--furnifind-secondary);
+        font-weight: 600;
+        margin-bottom: 1rem;
+      }
+
+      .team-member p {
+        color: var(--furnifind-dark);
+        line-height: 1.6;
+      }
+
+      .store-info {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 3rem;
+        align-items: center;
+      }
+
+      .store-details {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+      }
+
+      .info-group {
+        display: flex;
+        align-items: flex-start;
+        gap: 1rem;
+      }
+
+      .info-group ion-icon {
+        font-size: 2.5rem;
+        color: var(--furnifind-secondary);
+      }
+
+      .info-group h4 {
+        font-family: var(--furnifind-heading-font);
+        color: var(--furnifind-primary);
+        margin: 0 0 0.5rem;
+      }
+
+      .info-group p {
+        color: var(--furnifind-dark);
+        line-height: 1.6;
+      }
+
+      .store-map img {
+        width: 100%;
+        border-radius: 8px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      @media (max-width: 992px) {
+        .values-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+
+      @media (max-width: 768px) {
+        .about-story,
+        .team-grid,
+        .store-info {
+          grid-template-columns: 1fr;
+        }
+
+        .values-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .about-image {
+          margin-bottom: 2rem;
+        }
+
+        .team-member {
+          margin-bottom: 2rem;
+        }
+      }
+    </style>
+  </body>
+</html>

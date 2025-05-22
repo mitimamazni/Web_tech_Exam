@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head
+    th:replace="~{fragments/layout :: head('Admin - ' + (${product.id != null ? 'Edit' : 'Add'}) + ' Product')}"
+  >
+    <title>Admin - Add/Edit Product</title>
+    <style>
+      .image-preview {
+        max-width: 150px;
+        max-height: 150px;
+        margin-top: 10px;
+        border: 1px solid #ddd;
+      }
+      .image-container {
+        display: inline-block;
+        margin: 10px;
+        position: relative;
+      }
+      .remove-image {
+        position: absolute;
+        top: 0;
+        right: 0;
+        background: rgba(255, 0, 0, 0.7);
+        color: white;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        text-align: center;
+        line-height: 20px;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div th:replace="~{fragments/layout :: navbar}"></div>
+    <div
+      th:replace="~{fragments/layout :: page-title(${product.id != null ? 'Edit Product' : 'Add New Product'})}"
+    ></div>
+    <div th:replace="~{fragments/layout :: alerts}"></div>
+
+    <!-- Admin Header Section -->
+    <div class="admin-header">
+      <div class="container">
+        <div class="admin-navigation">
+          <a th:href="@{/admin}" class="admin-nav-link">Dashboard</a>
+          <a th:href="@{/admin/products}" class="admin-nav-link active"
+            >Products</a
+          >
+          <a th:href="@{/admin/orders}" class="admin-nav-link">Orders</a>
+          <a th:href="@{/admin/users}" class="admin-nav-link">Users</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Product Form Section -->
+    <section class="admin-content">
+      <div class="container">
+        <div class="admin-card">
+          <div class="card-header">
+            <h3
+              th:text="${product.id != null ? 'Edit Product' : 'Add New Product'}"
+            >
+              Add/Edit Product
+            </h3>
+            <a th:href="@{/admin/products}" class="btn btn-secondary"
+              >Back to Products</a
+            >
+          </div>
+          <div class="card-body">
+            <form
+              th:action="@{${product.id != null ? '/admin/products/' + product.id + '/update' : '/admin/products/create'}}"
+              method="post"
+              enctype="multipart/form-data"
+              th:object="${product}"
+            >
+              <input type="hidden" name="_csrf" th:value="${_csrf?.token}" />
+              <input
+                type="hidden"
+                th:if="${product.id != null}"
+                th:field="*{id}"
+              />
+
+              <!-- Basic Information -->
+              <div class="form-section">
+                <h4>Basic Information</h4>
+                <div class="form-group">
+                  <label for="name">Product Name *</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="name"
+                    th:field="*{name}"
+                    required
+                  />
+                  <div
+                    class="error-message"
+                    th:if="${#fields.hasErrors('name')}"
+                    th:errors="*{name}"
+                  ></div>
+                </div>
+
+                <div class="form-group">
+                  <label for="description">Description</label>
+                  <textarea
+                    class="form-control"
+                    id="description"
+                    th:field="*{description}"
+                    rows="5"
+                  ></textarea>
+                  <div
+                    class="error-message"
+                    th:if="${#fields.hasErrors('description')}"
+                    th:errors="*{description}"
+                  ></div>
+                </div>
+
+                <div class="row">
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label for="price">Regular Price ($) *</label>
+                      <input
+                        type="number"
+                        class="form-control"
+                        id="price"
+                        th:field="*{price}"
+                        step="0.01"
+                        min="0"
+                        required
+                      />
+                      <div
+                        class="error-message"
+                        th:if="${#fields.hasErrors('price')}"
+                        th:errors="*{price}"
+                      ></div>
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label for="salePrice">Sale Price ($)</label>
+                      <input
+                        type="number"
+                        class="form-control"
+                        id="salePrice"
+                        th:field="*{salePrice}"
+                        step="0.01"
+                        min="0"
+                      />
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label for="stockQuantity">Stock Quantity *</label>
+                      <input
+                        type="number"
+                        class="form-control"
+                        id="stockQuantity"
+                        th:field="*{stockQuantity}"
+                        min="0"
+                        required
+                      />
+                      <div
+                        class="error-message"
+                        th:if="${#fields.hasErrors('stockQuantity')}"
+                        th:errors="*{stockQuantity}"
+                      ></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Category & Tags -->
+              <div class="form-section">
+                <h4>Category & Options</h4>
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="category">Category</label>
+                      <select
+                        class="form-control"
+                        id="category"
+                        name="categoryId"
+                      >
+                        <option value="">-- Select Category --</option>
+                        <option
+                          th:each="cat : ${categories}"
+                          th:value="${cat.id}"
+                          th:text="${cat.name}"
+                          th:selected="${product.category != null && product.category.id == cat.id}"
+                        ></option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label>Product Type</label>
+                      <div class="form-check">
+                        <input
+                          type="checkbox"
+                          class="form-check-input"
+                          id="isSubscription"
+                          th:field="*{isSubscription}"
+                        />
+                        <label class="form-check-label" for="isSubscription"
+                          >Subscription Product</label
+                        >
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label>Tags</label>
+                  <div class="tag-checkboxes">
+                    <div
+                      class="form-check form-check-inline"
+                      th:each="tag : ${tags}"
+                    >
+                      <input
+                        class="form-check-input"
+                        type="checkbox"
+                        th:id="${'tag-' + tag.id}"
+                        name="tagIds"
+                        th:value="${tag.id}"
+                        th:checked="${product.tags != null && product.tags.contains(tag)}"
+                      />
+                      <label
+                        class="form-check-label"
+                        th:for="${'tag-' + tag.id}"
+                        th:text="${tag.name}"
+                        >Tag name</label
+                      >
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Images -->
+              <div class="form-section">
+                <h4>Product Images</h4>
+
+                <!-- Current Images (for edit mode) -->
+                <div
+                  th:if="${product.id != null && !product.images.empty}"
+                  class="current-images"
+                >
+                  <h5>Current Images</h5>
+                  <div class="row">
+                    <div
+                      class="image-container"
+                      th:each="image : ${product.images}"
+                    >
+                      <img th:src="${image.imageUrl}" class="image-preview" />
+                      <input
+                        type="hidden"
+                        name="existingImageIds"
+                        th:value="${image.id}"
+                      />
+                      <div class="form-check">
+                        <input
+                          type="radio"
+                          class="form-check-input"
+                          name="primaryImageId"
+                          th:id="${'primary-' + image.id}"
+                          th:value="${image.id}"
+                          th:checked="${image.isPrimary}"
+                        />
+                        <label
+                          class="form-check-label"
+                          th:for="${'primary-' + image.id}"
+                          >Primary</label
+                        >
+                      </div>
+                      <div class="form-check">
+                        <input
+                          type="checkbox"
+                          class="form-check-input"
+                          name="deleteImageIds"
+                          th:id="${'delete-' + image.id}"
+                          th:value="${image.id}"
+                        />
+                        <label
+                          class="form-check-label"
+                          th:for="${'delete-' + image.id}"
+                          >Delete</label
+                        >
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- New Images Upload -->
+                <div class="form-group">
+                  <label for="imageFiles">Add New Images</label>
+                  <input
+                    type="file"
+                    class="form-control-file"
+                    id="imageFiles"
+                    name="imageFiles"
+                    multiple
+                    accept="image/*"
+                  />
+                  <small class="form-text text-muted"
+                    >You can select multiple images. The first image will be set
+                    as primary if no primary is selected.</small
+                  >
+                </div>
+              </div>
+
+              <!-- Status -->
+              <div class="form-section">
+                <div class="form-group">
+                  <div class="form-check">
+                    <input
+                      type="checkbox"
+                      class="form-check-input"
+                      id="active"
+                      th:field="*{active}"
+                    />
+                    <label class="form-check-label" for="active"
+                      >Product Active</label
+                    >
+                    <small class="form-text text-muted"
+                      >Inactive products will not be visible to
+                      customers.</small
+                    >
+                  </div>
+                </div>
+              </div>
+
+              <!-- Submit Buttons -->
+              <div class="form-actions">
+                <button type="submit" class="btn btn-primary">
+                  <i class="fas fa-save"></i> Save Product
+                </button>
+                <a th:href="@{/admin/products}" class="btn btn-secondary"
+                  >Cancel</a
+                >
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div th:replace="~{fragments/layout :: footer}"></div>
+    <div th:replace="~{fragments/layout :: scripts}"></div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // Preview uploaded images before submission
+        const imageInput = document.getElementById("imageFiles");
+        const previewContainer = document.createElement("div");
+        previewContainer.className = "image-preview-container";
+        previewContainer.style.marginTop = "10px";
+
+        imageInput.after(previewContainer);
+
+        imageInput.addEventListener("change", function () {
+          previewContainer.innerHTML = "";
+
+          if (this.files) {
+            Array.from(this.files).forEach((file) => {
+              const reader = new FileReader();
+              const imageContainer = document.createElement("div");
+              imageContainer.className = "image-container";
+
+              reader.onload = function (e) {
+                const img = document.createElement("img");
+                img.src = e.target.result;
+                img.className = "image-preview";
+                imageContainer.appendChild(img);
+              };
+
+              reader.readAsDataURL(file);
+              previewContainer.appendChild(imageContainer);
+            });
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,1108 @@
+<!DOCTYPE html>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+>
+  <head th:replace="~{fragments/layout :: head('Shopping Cart')}">
+    <title>Shopping Cart | FurniFind</title>
+    <!-- Using global CSS since the head fragment doesn't support links parameter -->
+  </head>
+
+  <body>
+    <!-- Additional CSS and scripts properly placed inside the body -->
+    <link rel="stylesheet" th:href="@{/css/cart-removal-animation.css}" />
+    <link rel="stylesheet" th:href="@{/css/book-cart.css}" />
+    <script th:src="@{/js/counter-unified.js}"></script>
+    <div th:replace="~{fragments/layout :: navbar}"></div>
+    <div th:replace="~{fragments/layout :: page-title('Shopping Cart')}"></div>
+
+    <main class="shop-page-container">
+      <!-- Toast notification container -->
+      <div class="toast-container"></div>
+
+      <!-- Alert Messages -->
+      <div th:if="${success}" class="notification-toast success-toast">
+        <div class="toast-banner">
+          <ion-icon name="checkmark-circle-outline"></ion-icon>
+        </div>
+        <div class="toast-detail">
+          <p class="toast-message" th:text="${success}">Success message</p>
+          <button class="toast-close-btn">
+            <ion-icon name="close-outline"></ion-icon>
+          </button>
+        </div>
+      </div>
+
+      <!-- Dynamic Cart Content Container -->
+      <div class="cart-container">
+        <div class="cart-items-container"></div>
+        <div class="cart-summary-container"></div>
+      </div>
+
+      <script th:inline="javascript">
+        /*<![CDATA[*/
+        var username = /*[[${sessionUsername}]]*/ "";
+        // Validate username is not null, undefined, empty, or "null"/"undefined" strings
+        if (
+          username === null ||
+          username === undefined ||
+          username === "null" ||
+          username === "undefined" ||
+          username === ""
+        ) {
+          // Try to get it from localStorage as fallback
+          username = localStorage.getItem("username") || "";
+        }
+
+        // Make username globally available for counter system
+        window.username = username;
+
+        // Add username to local storage for cart system
+        if (username && username.trim() !== "") {
+          localStorage.setItem("username", username);
+        }
+
+        // Add username as data attribute for counter system to find
+        document.documentElement.setAttribute("data-username", username || "");
+
+        // Log username for debugging
+        console.log("Cart page initialized with username:", username);
+        /*]]>*/
+
+        function fetchCartWithSessionFallback() {
+          if (!username) {
+            username = localStorage.getItem("username");
+          }
+          if (!username) {
+            // Try to get from session via API
+            fetch("/api/session-username")
+              .then((res) => res.json())
+              .then((data) => {
+                if (data.username) {
+                  username = data.username;
+                  localStorage.setItem("username", username);
+                  loadCart(username);
+                } else {
+                  showCartLoginError();
+                }
+              })
+              .catch(showCartLoginError);
+            return;
+          }
+          loadCart(username);
+        }
+
+        function showCartLoginError() {
+          const container = document.querySelector(".cart-items-container");
+          if (container) {
+            container.innerHTML = `<div class='cart-error'><ion-icon name='person-circle-outline'></ion-icon>
+            <p>Could not determine your username. Please <a href='/auth/login'>log in</a> again.</p></div>`;
+            document.querySelector(".cart-summary-container").innerHTML = "";
+          }
+        }
+
+        function loadCart(username) {
+          console.log("Loading cart for user:", username);
+
+          const itemsContainer = document.querySelector(
+            ".cart-items-container"
+          );
+          const summaryContainer = document.querySelector(
+            ".cart-summary-container"
+          );
+
+          if (!itemsContainer || !summaryContainer) {
+            console.error("Cart containers not found in DOM");
+            return;
+          }
+
+          itemsContainer.innerHTML =
+            '<div class="loading-spinner">Loading your cart...</div>';
+          summaryContainer.innerHTML = "";
+
+          console.log("Fetching cart from API...");
+
+          fetch(`/api/cart?username=${encodeURIComponent(username)}`)
+            .then((res) => {
+              console.log("Cart API response status:", res.status);
+              return res.json();
+            })
+            .then((data) => {
+              console.log("Cart data received:", data);
+
+              // Perform more detailed data validation
+              if (!data) {
+                throw new Error("No data returned from API");
+              }
+
+              if (!data.success) {
+                console.error(
+                  "API reported unsuccessful operation:",
+                  data.message || "Unknown error"
+                );
+              }
+
+              // Validate cart items exists and is an array
+              if (
+                !data.success ||
+                !data.data ||
+                !Array.isArray(data.data.items) ||
+                data.data.items.length === 0
+              ) {
+                itemsContainer.innerHTML = `
+                <div class='empty-state'>
+                  <div class='empty-state-icon'><ion-icon name='bag-handle-outline'></ion-icon></div>
+                  <h3 class='empty-state-title'>Your cart is empty</h3>
+                  <p class='empty-state-text'>Looks like you haven't added any products to your cart yet.</p>
+                  <a href='/products' class='btn-primary'>Continue Shopping</a>
+                </div>`;
+                return;
+              }
+
+              // Calculate cart summary totals properly
+              const cartSummary = calculateCartSummary(data.data.items);
+
+              const itemsHtml = `
+                <div class="cart-items-section">
+                  <div class="cart-summary-header">
+                    <h3 class="summary-title">Your Cart (${
+                      data.data.items.length
+                    } items)</h3>
+                  </div>
+                  ${data.data.items
+                    .map(
+                      (item) => `
+                    <div class="cart-item-card" data-product-id="${
+                      item.productId
+                    }">
+                      <div class="cart-item-image">
+                        <img src="${item.imageUrl}" alt="${item.name}" />
+                      </div>
+                      <div class="cart-item-details">
+                        <div>
+                          <h4 class="cart-item-name" data-product-id="${
+                            item.productId
+                          }">${
+                        item.name && item.name !== "null"
+                          ? item.name
+                          : "Loading product name..."
+                      }</h4>
+                          <div class="cart-item-price">$${formatPrice(
+                            item.price
+                          )}</div>
+                        </div>
+                        <div class="cart-quantity-controls">
+                          <button class="qty-btn" onclick="updateQuantity(${
+                            item.productId
+                          }, ${item.quantity - 1})" ${
+                        item.quantity <= 1
+                          ? 'title="Remove item"'
+                          : 'title="Decrease quantity"'
+                      }>
+                            ${
+                              item.quantity <= 1
+                                ? '<ion-icon name="trash-outline" style="font-size: 14px;"></ion-icon>'
+                                : "-"
+                            }
+                          </button>
+                          <input type="number" class="qty-input" value="${
+                            item.quantity
+                          }" min="1" onchange="updateQuantity(${
+                        item.productId
+                      }, this.value)" />
+                          <button class="qty-btn" onclick="updateQuantity(${
+                            item.productId
+                          }, ${
+                        item.quantity + 1
+                      })" title="Increase quantity">+</button>
+                          <div class="cart-item-subtotal">Subtotal: $${formatPrice(
+                            getItemSubtotal(item)
+                          )}</div>
+                        </div>
+                      </div>
+                      <div class="cart-actions">
+                        <button class="remove-btn" onclick="removeFromCart(${
+                          item.productId
+                        })" title="Remove Item">
+                          <ion-icon name="trash-outline"></ion-icon>
+                        </button>
+                      </div>
+                    </div>
+                  `
+                    )
+                    .join("")}
+                </div>
+              `;
+
+              const summaryHtml = `
+                <div class="cart-summary-section">
+                  <div class="cart-summary-header">
+                    <h3 class="summary-title">Order Summary</h3>
+                  </div>
+                  <div class="summary-item">
+                    <span>Subtotal (${data.data.items.length} items)</span>
+                    <span>$${formatPrice(cartSummary.subtotal)}</span>
+                  </div>
+                  <div class="summary-item">
+                    <span>Shipping</span>
+                    <span>Free</span>
+                  </div>
+                  <div class="summary-item">
+                    <span>Tax (18%)</span>
+                    <span>$${formatPrice(cartSummary.tax)}</span>
+                  </div>
+                  <div class="summary-total">
+                    <span>Total</span>
+                    <span class="total-price">$${formatPrice(
+                      cartSummary.total
+                    )}</span>
+                  </div>
+                  <button class="checkout-btn" onclick="checkoutOrder()">
+                    <ion-icon name="card-outline"></ion-icon>
+                    Proceed to Checkout
+                  </button>
+                </div>
+              `;
+
+              itemsContainer.innerHTML = itemsHtml;
+              summaryContainer.innerHTML = summaryHtml;
+
+              // Update cart counter via events
+              const itemCount = data.data.items.length;
+              document.dispatchEvent(
+                new CustomEvent("cart:updated", {
+                  detail: { count: itemCount },
+                })
+              );
+
+              // Update unified counter system directly
+              if (
+                window.CounterSystem &&
+                typeof window.CounterSystem.updateCartCount === "function"
+              ) {
+                window.CounterSystem.updateCartCount(itemCount);
+              }
+
+              // Fetch any missing product names from API
+              setTimeout(fetchMissingProductNames, 100);
+            })
+            .catch((error) => {
+              console.error("Error loading cart:", error);
+              itemsContainer.innerHTML = `
+                <div class='cart-error'>
+                  <ion-icon name='alert-circle-outline'></ion-icon>
+                  <p>Failed to load your cart. Please try again later.</p>
+                  <p class="error-details">Error details: ${
+                    error.message || "Unknown error"
+                  }</p>
+                  <button class='retry-btn' onclick='fetchCartWithSessionFallback()'>Retry</button>
+                  <button class='retry-btn' onclick='location.reload()'>Reload Page</button>
+                </div>`;
+
+              // Try to log more details for troubleshooting
+              if (error.stack) {
+                console.error("Stack trace:", error.stack);
+              }
+
+              // Also show a toast notification
+              if (typeof showToast === "function") {
+                showToast("Error", "Failed to load cart data", "error");
+              }
+            });
+        }
+
+        // Enhanced utility function for cart API calls with robust error handling
+        async function safeCartApiCall(
+          url,
+          method = "POST",
+          data = null,
+          retryCount = 0
+        ) {
+          // Make sure username is included in cart API calls
+          if (
+            url.includes("/cart/") &&
+            !url.includes("username=") &&
+            username
+          ) {
+            url +=
+              (url.includes("?") ? "&" : "?") +
+              `username=${encodeURIComponent(username)}`;
+          }
+          try {
+            // Initialize responseData at the beginning
+            let responseData = null;
+
+            // Make the fetch request
+            const response = await fetch(url, {
+              method: method,
+              headers: {
+                "Content-Type": "application/json",
+                Accept: "application/json",
+              },
+              ...(data ? { body: JSON.stringify(data) } : {}),
+              credentials: "same-origin",
+            });
+
+            // Check if response is OK
+            if (!response.ok) {
+              // Handle authentication errors
+              if (
+                response.status === 401 ||
+                response.status === 403 ||
+                response.status === 302
+              ) {
+                handleSessionTimeout();
+                throw new Error("Session expired");
+              }
+
+              throw new Error(`API Error: ${response.status}`);
+            }
+
+            // Check content type to detect if we got HTML instead of JSON
+            const contentType = response.headers.get("content-type");
+            if (!contentType || !contentType.includes("application/json")) {
+              console.error("Unexpected response format:", contentType);
+
+              // Try to get text to see what was returned
+              const text = await response.text();
+              console.error(
+                "Response was not JSON:",
+                text.substring(0, 150) + (text.length > 150 ? "..." : "")
+              );
+
+              // Check if HTML response contains login form (actual session timeout)
+              if (
+                (text.includes("<title>Login</title>") ||
+                  text.includes("<h1>Login</h1>") ||
+                  text.includes("login-form")) &&
+                text.includes("username") &&
+                text.includes("password")
+              ) {
+                console.warn(
+                  "Received login page HTML instead of JSON - session timeout detected"
+                );
+                handleSessionTimeout();
+                throw new Error("Session expired");
+              }
+
+              // For cart operations, HTML response might be successful operation with redirect
+              if (
+                url.includes("/cart/") &&
+                (url.includes("/update") ||
+                  url.includes("/remove") ||
+                  url.includes("/clear"))
+              ) {
+                console.log(
+                  "Cart operation returned HTML but likely succeeded - treating as success"
+                );
+                return {
+                  success: true,
+                  message: "Operation completed successfully",
+                };
+              }
+
+              // Try to parse as JSON anyway (server might have wrong content type)
+              try {
+                responseData = JSON.parse(text);
+                console.log(
+                  "Successfully parsed text response as JSON:",
+                  responseData
+                );
+                return responseData;
+              } catch (e) {
+                // If this is a cart operation and we got HTML, assume success
+                if (url.includes("/cart/")) {
+                  return { success: true, message: "Operation completed" };
+                }
+                throw new Error("Server returned non-JSON response");
+              }
+            }
+
+            // Parse JSON response
+            responseData = await response.json();
+            return responseData;
+          } catch (error) {
+            console.error("API call failed:", error);
+
+            // Retry on network errors or server errors
+            const shouldRetry =
+              retryCount < 2 &&
+              (error.message.includes("NetworkError") ||
+                error.message.includes("API Error: 5") ||
+                error.message.includes("Failed to fetch") ||
+                error.name === "TypeError" ||
+                error.message.includes("network"));
+
+            if (shouldRetry) {
+              console.log(`Retrying API call (${retryCount + 1}/2)...`);
+
+              // Wait with exponential backoff before retry
+              await new Promise((resolve) =>
+                setTimeout(resolve, 1000 * Math.pow(2, retryCount))
+              );
+
+              // Retry with incremented count
+              return safeCartApiCall(url, method, data, retryCount + 1);
+            }
+
+            throw error;
+          }
+        }
+
+        /**
+         * Handle session timeouts by redirecting to login page
+         */
+        function handleSessionTimeout() {
+          // Show message to user
+          showToast(
+            "Session Expired",
+            "Your session has expired. Please log in again.",
+            "error"
+          );
+
+          // Wait a moment to ensure toast is visible, then redirect
+          setTimeout(() => {
+            const currentUrl = encodeURIComponent(window.location.pathname);
+            window.location.href = `/login?redirect=${currentUrl}`;
+          }, 2000);
+        }
+
+        async function updateQuantity(productId, quantity) {
+          quantity = parseInt(quantity);
+
+          // If quantity is 0 or negative, remove the item from cart
+          if (isNaN(quantity) || quantity <= 0) {
+            removeFromCart(productId);
+            return;
+          }
+
+          try {
+            const data = await safeCartApiCall(
+              `/cart/update?productId=${productId}&quantity=${quantity}`,
+              "POST"
+            );
+
+            if (data.success) {
+              // Refresh cart to show updated items
+              loadCart(username);
+              showToast("Success", "Quantity updated", "success");
+
+              // Dispatch cart:updated event to update counter system
+              document.dispatchEvent(
+                new CustomEvent("cart:updated", {
+                  detail: {
+                    count:
+                      data.data?.itemCount ||
+                      data.data?.items?.length ||
+                      quantity,
+                  },
+                })
+              );
+
+              // Update counter using unified counter system if available
+              if (
+                window.CounterSystem &&
+                typeof window.CounterSystem.updateCartCount === "function"
+              ) {
+                window.CounterSystem.updateCartCount(
+                  data.data?.itemCount || data.data?.items?.length || quantity
+                );
+              }
+            } else {
+              showToast(
+                "Error",
+                data.message || "Failed to update quantity",
+                "error"
+              );
+            }
+          } catch (error) {
+            console.error("Error updating quantity:", error);
+
+            // If the backend operation likely succeeded but just returned HTML
+            if (error.message.includes("non-JSON response")) {
+              // Assume the operation worked and reload the cart
+              loadCart(username);
+              showToast("Success", "Quantity updated", "success");
+            } else {
+              showToast("Error", "Failed to update quantity", "error");
+            }
+          }
+        }
+
+        async function removeFromCart(productId) {
+          try {
+            const responseData = await safeCartApiCall(
+              `/cart/remove?productId=${productId}`,
+              "POST"
+            );
+
+            if (responseData && responseData.success) {
+              // Refresh cart to show updated items
+              loadCart(username);
+              showToast("Success", "Item removed from cart", "success");
+
+              // Fetch the new cart count for the notification system
+              fetch(`/api/cart/count?username=${encodeURIComponent(username)}`)
+                .then((res) => res.json())
+                .then((data) => {
+                  // Dispatch cart:updated event
+                  const newCount = data.data !== undefined ? data.data : 0;
+                  document.dispatchEvent(
+                    new CustomEvent("cart:updated", {
+                      detail: { count: newCount },
+                    })
+                  );
+
+                  // Update counter using unified counter system if available
+                  if (
+                    window.CounterSystem &&
+                    typeof window.CounterSystem.updateCartCount === "function"
+                  ) {
+                    window.CounterSystem.updateCartCount(newCount);
+                  }
+                })
+                .catch((err) =>
+                  console.error("Error fetching cart count:", err)
+                );
+            } else {
+              showToast(
+                "Error",
+                responseData.message || "Failed to remove item",
+                "error"
+              );
+            }
+          } catch (error) {
+            console.error("Error removing item:", error);
+
+            // If the backend operation likely succeeded but just returned HTML
+            if (error.message.includes("non-JSON response")) {
+              // Assume the operation worked and reload the cart
+              loadCart(username);
+              showToast("Success", "Item removed from cart", "success");
+            } else {
+              showToast("Error", "Failed to remove item", "error");
+            }
+          }
+        }
+
+        function showToast(title, message, type = "success") {
+          const toastContainer = document.querySelector(".toast-container");
+          if (!toastContainer) {
+            console.error("Toast container not found");
+            return;
+          }
+
+          const toast = document.createElement("div");
+          toast.className = `notification-toast ${type}-toast`;
+
+          toast.innerHTML = `
+            <div class="toast-banner">
+              <ion-icon name="${
+                type === "success"
+                  ? "checkmark-circle-outline"
+                  : "alert-circle-outline"
+              }"></ion-icon>
+            </div>
+            <div class="toast-detail">
+              <p class="toast-message">${message}</p>
+              <button class="toast-close-btn">
+                <ion-icon name="close-outline"></ion-icon>
+              </button>
+            </div>
+          `;
+
+          toastContainer.appendChild(toast);
+
+          // Add event listener to close button
+          const closeBtn = toast.querySelector(".toast-close-btn");
+          if (closeBtn) {
+            closeBtn.addEventListener("click", function () {
+              toast.remove();
+            });
+          }
+
+          // Auto remove toast after 3 seconds
+          setTimeout(() => {
+            toast.style.opacity = "0";
+            setTimeout(() => {
+              toast.remove();
+            }, 300);
+          }, 3000);
+        }
+
+        function checkoutOrder() {
+          console.log("Starting checkout process");
+          // Show a loading indicator to improve UX while transitioning
+          const checkoutBtn = document.querySelector(".checkout-btn");
+          if (checkoutBtn) {
+            checkoutBtn.innerHTML =
+              '<ion-icon name="hourglass-outline"></ion-icon> Loading...';
+            checkoutBtn.disabled = true;
+          }
+
+          // First check if cart has items
+          const cartItemsContainer = document.querySelector(
+            ".cart-items-container"
+          );
+          if (cartItemsContainer && cartItemsContainer.children.length === 0) {
+            console.log("Cart appears to be empty");
+            showToast(
+              "Empty Cart",
+              "Your cart is empty. Please add items before checkout.",
+              "error"
+            );
+            if (checkoutBtn) {
+              checkoutBtn.innerHTML =
+                'Proceed to Checkout <ion-icon name="card-outline"></ion-icon>';
+              checkoutBtn.disabled = false;
+            }
+            return;
+          }
+
+          // Check if the user is authenticated first before redirecting
+          console.log("Checking authentication status");
+          fetch("/api/auth/check-session", {
+            method: "GET",
+            credentials: "same-origin",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          })
+            .then((response) => {
+              console.log("Auth check response status:", response.status);
+              if (response.ok) {
+                return response.json().then((data) => {
+                  console.log(
+                    "Authentication successful, user:",
+                    data.username
+                  );
+                  // User is authenticated, safe to redirect to checkout
+                  console.log("Redirecting to checkout page");
+                  window.location.href = "/orders/checkout";
+                });
+              } else {
+                // User not authenticated, redirect to login
+                console.log("User not authenticated, redirecting to login");
+                showToast(
+                  "Authentication Required",
+                  "Please login to continue to checkout",
+                  "error"
+                );
+                setTimeout(() => {
+                  window.location.href = "/login?redirect=/orders/checkout";
+                }, 1500);
+              }
+            })
+            .catch((error) => {
+              console.error("Error checking authentication:", error);
+              // Reset button state
+              if (checkoutBtn) {
+                checkoutBtn.innerHTML =
+                  'Proceed to Checkout <ion-icon name="card-outline"></ion-icon>';
+                checkoutBtn.disabled = false;
+              }
+              // Show error toast
+              showToast(
+                "Error",
+                "Unable to proceed to checkout. Please try again later.",
+                "error"
+              );
+            });
+        }
+
+        /**
+         * Fetch product name from API for items showing "Loading product name..."
+         */
+        function fetchMissingProductNames() {
+          const productNameElements =
+            document.querySelectorAll(".cart-item-name");
+
+          productNameElements.forEach((element) => {
+            if (element.textContent.trim() === "Loading product name...") {
+              const productId = element.getAttribute("data-product-id");
+
+              if (productId) {
+                fetch(`/api/products/${productId}`)
+                  .then((response) => response.json())
+                  .then((data) => {
+                    if (data.success && data.data && data.data.name) {
+                      element.textContent = data.data.name;
+                    } else {
+                      // If API call fails or returns no name, show category-based name if possible
+                      const categoryName =
+                        data.data && data.data.category
+                          ? data.data.category.name
+                          : null;
+                      element.textContent = categoryName
+                        ? `${categoryName} Product`
+                        : "Product";
+                    }
+                  })
+                  .catch((error) => {
+                    console.error(
+                      `Error fetching product name for ID ${productId}:`,
+                      error
+                    );
+                    element.textContent = "Product";
+                  });
+              }
+            }
+          });
+        }
+
+        // Initialize the cart when the DOM is loaded
+        document.addEventListener("DOMContentLoaded", function () {
+          console.log("DOM fully loaded - initializing cart...");
+
+          // Call fetchCartWithSessionFallback to load the cart
+          fetchCartWithSessionFallback();
+
+          // Also refresh the counter system
+          if (
+            window.CounterSystem &&
+            typeof window.CounterSystem.refresh === "function"
+          ) {
+            setTimeout(() => {
+              console.log("Refreshing counter system...");
+              window.CounterSystem.refresh();
+            }, 500);
+          }
+        });
+
+        // Remove duplicate event listener to avoid potential issues
+        // document.addEventListener("DOMContentLoaded", fetchCartWithSessionFallback);
+
+        /**
+         * Calculate cart summary totals
+         * @param {Array} items - Cart items
+         * @returns {Object} Cart summary with subtotal, tax, and total
+         */
+        function calculateCartSummary(items) {
+          // Calculate subtotal from all items
+          const subtotal = items.reduce((total, item) => {
+            return total + getItemSubtotal(item);
+          }, 0);
+
+          // Calculate tax (18%)
+          const tax = subtotal * 0.18;
+
+          // Calculate grand total
+          const total = subtotal + tax;
+
+          return {
+            subtotal,
+            tax,
+            total,
+          };
+        }
+
+        /**
+         * Get normalized subtotal for an item (price * quantity)
+         * @param {Object} item - Cart item
+         * @returns {number} Subtotal for this item
+         */
+        function getItemSubtotal(item) {
+          const price = parseItemPrice(item.price);
+          const quantity = parseInt(item.quantity) || 1;
+          return price * quantity;
+        }
+
+        /**
+         * Parse price value from various formats
+         * @param {any} priceValue - Price value to parse
+         * @returns {number} Normalized price as a number
+         */
+        function parseItemPrice(priceValue) {
+          if (typeof priceValue === "number") {
+            return priceValue;
+          } else if (typeof priceValue === "string") {
+            // Remove any non-numeric characters except decimal point
+            const cleanValue = priceValue.replace(/[^0-9.]/g, "");
+            return parseFloat(cleanValue) || 0;
+          }
+          return 0;
+        }
+
+        /**
+         * Format price to 2 decimal places
+         * @param {number|string} price - Price to format
+         * @returns {string} Formatted price with 2 decimal places
+         */
+        function formatPrice(price) {
+          if (typeof price === "string") {
+            price = parseFloat(price.replace(/[^0-9.]/g, "")) || 0;
+          }
+          return (price || 0).toFixed(2);
+        }
+
+        // Handle session timeouts
+        function handleSessionTimeout() {
+          // Clear local storage username
+          localStorage.removeItem("username");
+
+          // Show a user-friendly message
+          const confirmLogin = confirm(
+            "Your session has expired. Would you like to log in again?"
+          );
+
+          if (confirmLogin) {
+            // Redirect to login page with return URL
+            window.location.href = `/login?redirect=${encodeURIComponent(
+              window.location.pathname
+            )}`;
+          }
+        }
+
+        // Enhanced API request handler with proper error handling
+        async function safeApiCall(
+          url,
+          method,
+          showSuccess = false,
+          successMessage = ""
+        ) {
+          try {
+            // CSRF protection removed
+
+            const response = await fetch(url, {
+              method: method || "GET",
+              headers: {
+                Accept: "application/json",
+              },
+              credentials: "same-origin",
+            });
+
+            // Handle non-2xx responses
+            if (!response.ok) {
+              // Session timeout detection
+              if (response.status === 401 || response.status === 302) {
+                handleSessionTimeout();
+                throw new Error("Session expired");
+              }
+              throw new Error(`Request failed with status ${response.status}`);
+            }
+
+            // Check for JSON content type
+            const contentType = response.headers.get("content-type");
+            if (!contentType || !contentType.includes("application/json")) {
+              // Handle HTML response (usually means a redirect happened)
+              const text = await response.text();
+              console.error(
+                "Non-JSON response:",
+                text.substring(0, 100) + "..."
+              );
+
+              // Check if this looks like a login page
+              if (
+                text.includes("<title>Login</title>") ||
+                text.includes("<h1>Login</h1>")
+              ) {
+                handleSessionTimeout();
+                throw new Error("Session expired, redirect to login page");
+              }
+
+              throw new Error("Server returned non-JSON response");
+            }
+
+            const data = await response.json();
+
+            // Show success message if requested
+            if (showSuccess && data.success) {
+              showToast(
+                "Success",
+                successMessage || "Operation successful",
+                "success"
+              );
+            }
+
+            return data;
+          } catch (error) {
+            console.error("API call failed:", error);
+            throw error;
+          }
+        }
+      </script>
+
+      <style>
+        /* Debug styling - uncomment for troubleshooting */
+        .cart-container {
+          min-height: 200px;
+          /* border: 2px dashed #ff6b6b; */
+        }
+
+        .cart-items-container {
+          min-height: 100px;
+          /* border: 2px dashed #4ecdc4; */
+        }
+
+        .cart-summary-container {
+          min-height: 100px;
+          /* border: 2px dashed #1a535c; */
+        }
+
+        /* Add loading spinner styling */
+        .loading-spinner {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          min-height: 200px;
+          color: var(--book-primary);
+          font-weight: 500;
+          font-family: var(--book-body-font);
+          font-size: 1.125rem;
+          background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cpath fill='none' stroke='%231e3a8a' stroke-width='2' stroke-linecap='round' d='M20 4c8.8 0 16 7.2 16 16s-7.2 16-16 16S4 28.8 4 20 11.2 4 20 4'%3E%3CanimateTransform attributeName='transform' type='rotate' from='0 20 20' to='360 20 20' dur='1s' repeatCount='indefinite'/%3E%3C/path%3E%3C/svg%3E");
+          background-repeat: no-repeat;
+          background-position: center 20px;
+          background-size: 40px;
+          padding-top: 80px;
+        }
+
+        .checkout-success {
+          text-align: center;
+          padding: 3rem 1rem;
+          max-width: 600px;
+          margin: 0 auto;
+          font-family: var(--book-body-font);
+        }
+
+        .checkout-icon {
+          font-size: 4rem;
+          color: var(--book-accent);
+          margin-bottom: 1rem;
+        }
+
+        .checkout-icon ion-icon {
+          width: 80px;
+          height: 80px;
+        }
+
+        .checkout-title {
+          font-size: 1.8rem;
+          font-family: var(--book-title-font);
+          color: var(--book-primary);
+          margin-bottom: 1rem;
+        }
+
+        .checkout-text {
+          font-size: 1.2rem;
+          margin-bottom: 1rem;
+          color: var(--book-text);
+        }
+
+        .checkout-subtext {
+          font-size: 0.9rem;
+          color: var(--book-muted);
+          font-style: italic;
+          margin-bottom: 2rem;
+        }
+
+        /* Additional styling for cart items */
+        .cart-item-name {
+          font-size: 1.125rem;
+          font-weight: 600;
+          font-family: var(--book-heading-font);
+          margin-bottom: 0.25rem;
+          color: var(--book-primary);
+          max-width: 100%;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          line-clamp: 2;
+          -webkit-box-orient: vertical;
+          line-height: 1.4;
+        }
+
+        .cart-item-price {
+          color: var(--book-accent);
+          font-weight: 600;
+          font-size: 1.25rem;
+          margin: 0.5rem 0;
+        }
+
+        .cart-item-subtotal {
+          margin-top: 0.5rem;
+          font-weight: 500;
+          color: var(--book-text);
+        }
+
+        .total-price {
+          color: var(--book-accent);
+          font-size: 1.35rem;
+          font-weight: 700;
+          font-family: var(--book-heading-font);
+        }
+
+        /* Error styling */
+        .cart-error {
+          text-align: center;
+          padding: 2rem 1rem;
+          background-color: #fff8f8;
+          border: 1px solid #ffebeb;
+          border-radius: 8px;
+          margin: 2rem auto;
+          max-width: 600px;
+          font-family: var(--book-body-font);
+        }
+
+        .cart-error ion-icon {
+          font-size: 3rem;
+          color: #f44336;
+          margin-bottom: 1rem;
+        }
+
+        .cart-error p {
+          margin: 0.5rem 0;
+          color: var(--book-text);
+        }
+
+        .error-details {
+          background-color: #f9f9f9;
+          padding: 8px;
+          border-radius: 4px;
+          font-family: monospace;
+          font-size: 0.9rem;
+          margin: 1rem 0;
+          white-space: pre-wrap;
+          word-break: break-word;
+          max-height: 100px;
+          overflow-y: auto;
+        }
+
+        .retry-btn {
+          display: inline-block;
+          background-color: var(--book-primary);
+          color: white;
+          border: none;
+          padding: 0.5rem 1rem;
+          border-radius: 4px;
+          cursor: pointer;
+          margin: 1rem 0.5rem 0 0.5rem;
+          font-weight: 500;
+          transition: background-color 0.2s;
+        }
+
+        .retry-btn:hover {
+          background-color: var(--book-secondary);
+        }
+      </style>
+    </main>
+
+    <div th:replace="~{fragments/layout :: footer}"></div>
+    <div th:replace="~{fragments/layout :: scripts}"></div>
+
+    <!-- Include cart persistence script -->
+    <script th:src="@{/js/cart-persistence.js}"></script>
+    <script th:src="@{/js/order-notifications.js}"></script>
+    <script>
+      // Ensure cart is loaded even if DOMContentLoaded event has issues
+      console.log("Cart page: Running fallback initialization");
+      // Wait a moment to ensure all resources and scripts are loaded
+      setTimeout(function () {
+        if (typeof fetchCartWithSessionFallback === "function") {
+          console.log("Executing fallback cart loader");
+          fetchCartWithSessionFallback();
+        }
+      }, 1000);
+    </script>
+  </body>
+</html>

@@ -3,6 +3,9 @@ deployment link : http://138.197.91.58/
 
 FurniFind is a full-featured e-commerce web application designed for discovering and purchasing stylish furniture online. Built with Spring Boot and Thymeleaf, it offers a seamless shopping experience for customers and robust management tools for administrators.
 🌐 Live Demo: http://138.197.91.58
+#Admin Credentials
+Username: admin
+Password: 1234
 
 📦 Features
 🛍️ Customer Experience
